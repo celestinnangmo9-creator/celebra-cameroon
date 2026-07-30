@@ -6,6 +6,8 @@
 
 <!-- Flatpickr CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<!-- GLightbox CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" />
 <style>
   /* Premium Show Page Styling */
   .venue-show-container {
@@ -373,7 +375,9 @@
   <!-- Premium Gallery -->
   <div class="premium-gallery">
     <div class="main-img-wrapper">
-      <img src="{{ $venue->main_image }}" alt="{{ $venue->title }}">
+      <a href="{{ $venue->main_image }}" class="glightbox" data-gallery="venue-gallery" data-title="{{ $venue->title }}">
+        <img src="{{ $venue->main_image }}" alt="{{ $venue->title }}">
+      </a>
     </div>
     
     @php
@@ -386,15 +390,30 @@
       <div class="sub-img-wrapper" style="{{ $idx === 1 ? 'border-top-right-radius: 20px;' : ($idx === 3 ? 'border-bottom-right-radius: 20px;' : '') }}">
         <!-- If it's a video, just show a thumbnail or video tag, for now assuming image -->
         @if(Str::endsWith($img, ['.mp4', '.mov', '.avi']))
-          <video src="{{ $img }}" style="width: 100%; height: 100%; object-fit: cover;" muted autoplay loop></video>
+          <a href="{{ $img }}" class="glightbox" data-gallery="venue-gallery" data-type="video" style="display: block; width: 100%; height: 100%;">
+            <video src="{{ $img }}" style="width: 100%; height: 100%; object-fit: cover;" muted autoplay loop></video>
+          </a>
         @else
-          <img src="{{ $img }}" alt="Gallery Image">
+          <a href="{{ $img }}" class="glightbox" data-gallery="venue-gallery" style="display: block; width: 100%; height: 100%;">
+            <img src="{{ $img }}" alt="Gallery Image">
+          </a>
         @endif
       </div>
     @endforeach
 
-    @if(count($gallery) > 0)
-      <button class="show-all-photos-btn">
+    <!-- Hidden images for the lightbox if there are more than 4 -->
+    <div style="display: none;">
+      @foreach(array_slice($gallery, 4) as $hiddenImg)
+        @if(Str::endsWith($hiddenImg, ['.mp4', '.mov', '.avi']))
+          <a href="{{ $hiddenImg }}" class="glightbox" data-gallery="venue-gallery" data-type="video"></a>
+        @else
+          <a href="{{ $hiddenImg }}" class="glightbox" data-gallery="venue-gallery"></a>
+        @endif
+      @endforeach
+    </div>
+
+    @if(count($gallery) > 0 || $venue->main_image)
+      <button class="show-all-photos-btn" onclick="document.querySelector('.glightbox').click()">
         <i class="fa-solid fa-images"></i> Afficher toutes les photos
       </button>
     @endif
@@ -595,6 +614,19 @@
       subtotal.innerText = formatMoney(total);
       totalPrice.innerText = formatMoney(total);
     }
+  });
+</script>
+
+<!-- GLightbox JS -->
+<script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const lightbox = GLightbox({
+      selector: '.glightbox',
+      touchNavigation: true,
+      loop: true,
+      zoomable: true
+    });
   });
 </script>
 <!-- Schedule Visit Modal -->

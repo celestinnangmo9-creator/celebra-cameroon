@@ -376,7 +376,7 @@ a {
   border-radius: var(--radius-lg);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) auto;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)) auto;
   gap: 1rem;
   align-items: center;
 }
@@ -469,7 +469,7 @@ a {
 
 .venues-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
   gap: 2rem;
   margin-top: 1.5rem;
 }
@@ -779,7 +779,7 @@ a {
   max-width: 1280px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
   gap: 3rem;
 }
 
@@ -829,7 +829,7 @@ a {
   display: none;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   body {
     padding-bottom: 70px;
   }
