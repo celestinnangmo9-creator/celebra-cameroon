@@ -5,29 +5,29 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Head, useForm, Link } from '@inertiajs/react';
 
-export default function CreateVenue({ auth, regionsAndCities, categories, availableAmenities }) {
-    const initialRegion = Object.keys(regionsAndCities)[0];
-    const initialCity = regionsAndCities[initialRegion][0];
-
+export default function EditVenue({ auth, venue, regionsAndCities, categories, availableAmenities }) {
     const { data, setData, post, processing, errors } = useForm({
-        title: '',
-        category: categories[0] || '',
-        region: initialRegion,
-        city: initialCity,
-        district: '',
-        address: '',
-        capacity: '',
-        price_per_day: '',
-        price_per_hour: '',
-        description: '',
+        _method: 'PUT',
+        title: venue.title || '',
+        category: venue.category || categories[0] || '',
+        region: venue.region || Object.keys(regionsAndCities)[0],
+        city: venue.city || regionsAndCities[venue.region || Object.keys(regionsAndCities)[0]][0],
+        district: venue.district || '',
+        address: venue.address || '',
+        capacity: venue.capacity || '',
+        price_per_day: venue.price_per_day || '',
+        price_per_hour: venue.price_per_hour || '',
+        description: venue.description || '',
+        status: venue.status || 'active',
         main_image: null,
         gallery: [],
-        amenities: [],
+        amenities: venue.amenities || [],
     });
 
     const submit = (e) => {
         e.preventDefault();
-        post(route('venues.store'));
+        // Nous utilisons un POST avec _method='PUT' pour que Laravel gère l'upload de fichiers
+        post(route('venues.update', venue.id));
     };
 
     const handleRegionChange = (e) => {
@@ -51,9 +51,9 @@ export default function CreateVenue({ auth, regionsAndCities, categories, availa
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">Publier un nouvel espace</h2>}
+            header={<h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">Modifier l'espace : {venue.title}</h2>}
         >
-            <Head title="Ajouter une salle" />
+            <Head title={`Modifier ${venue.title}`} />
 
             <div className="py-12">
                 <div className="mx-auto max-w-4xl sm:px-6 lg:px-8">
@@ -62,10 +62,10 @@ export default function CreateVenue({ auth, regionsAndCities, categories, availa
                             
                             <div className="mb-8">
                                 <h3 className="text-2xl font-bold flex items-center gap-2">
-                                    <svg className="w-6 h-6 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                    Détails de l'espace
+                                    <svg className="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                    Édition de l'espace
                                 </h3>
-                                <p className="text-sm text-gray-500 mt-1">Remplissez ce formulaire pour ajouter votre salle, jardin ou terrasse au catalogue Celebra Cameroon.</p>
+                                <p className="text-sm text-gray-500 mt-1">Mettez à jour les informations, tarifs ou ajoutez de nouvelles photos.</p>
                             </div>
 
                             <form onSubmit={submit} className="space-y-6">
@@ -79,9 +79,7 @@ export default function CreateVenue({ auth, regionsAndCities, categories, availa
                                         value={data.title}
                                         className="mt-1 block w-full"
                                         autoComplete="title"
-                                        isFocused={true}
                                         onChange={(e) => setData('title', e.target.value)}
-                                        placeholder="Ex: Palais des Lumières & Espace Banquet"
                                         required
                                     />
                                     <InputError message={errors.title} className="mt-2" />
@@ -95,7 +93,7 @@ export default function CreateVenue({ auth, regionsAndCities, categories, availa
                                             id="category"
                                             name="category"
                                             value={data.category}
-                                            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-emerald-500 dark:focus:border-emerald-600 focus:ring-emerald-500 dark:focus:ring-emerald-600 rounded-md shadow-sm"
+                                            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-amber-500 dark:focus:border-amber-600 focus:ring-amber-500 dark:focus:ring-amber-600 rounded-md shadow-sm"
                                             onChange={(e) => setData('category', e.target.value)}
                                             required
                                         >
@@ -113,7 +111,7 @@ export default function CreateVenue({ auth, regionsAndCities, categories, availa
                                             id="region"
                                             name="region"
                                             value={data.region}
-                                            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-emerald-500 dark:focus:border-emerald-600 focus:ring-emerald-500 dark:focus:ring-emerald-600 rounded-md shadow-sm"
+                                            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-amber-500 dark:focus:border-amber-600 focus:ring-amber-500 dark:focus:ring-amber-600 rounded-md shadow-sm"
                                             onChange={handleRegionChange}
                                             required
                                         >
@@ -131,7 +129,7 @@ export default function CreateVenue({ auth, regionsAndCities, categories, availa
                                             id="city"
                                             name="city"
                                             value={data.city}
-                                            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-emerald-500 dark:focus:border-emerald-600 focus:ring-emerald-500 dark:focus:ring-emerald-600 rounded-md shadow-sm"
+                                            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-amber-500 dark:focus:border-amber-600 focus:ring-amber-500 dark:focus:ring-amber-600 rounded-md shadow-sm"
                                             onChange={(e) => setData('city', e.target.value)}
                                             required
                                         >
@@ -143,7 +141,7 @@ export default function CreateVenue({ auth, regionsAndCities, categories, availa
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     {/* District */}
                                     <div>
                                         <InputLabel htmlFor="district" value="Quartier *" />
@@ -154,7 +152,6 @@ export default function CreateVenue({ auth, regionsAndCities, categories, availa
                                             value={data.district}
                                             className="mt-1 block w-full"
                                             onChange={(e) => setData('district', e.target.value)}
-                                            placeholder="Ex: Bonapriso, Bastos..."
                                             required
                                         />
                                         <InputError message={errors.district} className="mt-2" />
@@ -170,17 +167,34 @@ export default function CreateVenue({ auth, regionsAndCities, categories, availa
                                             value={data.address}
                                             className="mt-1 block w-full"
                                             onChange={(e) => setData('address', e.target.value)}
-                                            placeholder="Ex: Avenue des Palmiers"
                                             required
                                         />
                                         <InputError message={errors.address} className="mt-2" />
+                                    </div>
+
+                                    {/* Status */}
+                                    <div>
+                                        <InputLabel htmlFor="status" value="Statut de la salle *" />
+                                        <select
+                                            id="status"
+                                            name="status"
+                                            value={data.status}
+                                            className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-amber-500 dark:focus:border-amber-600 focus:ring-amber-500 dark:focus:ring-amber-600 rounded-md shadow-sm"
+                                            onChange={(e) => setData('status', e.target.value)}
+                                            required
+                                        >
+                                            <option value="active">Actif (En location)</option>
+                                            <option value="maintenance">En maintenance</option>
+                                            <option value="booked">Réservé</option>
+                                        </select>
+                                        <InputError message={errors.status} className="mt-2" />
                                     </div>
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     {/* Capacity */}
                                     <div>
-                                        <InputLabel htmlFor="capacity" value="Capacité max. (Invités) *" />
+                                        <InputLabel htmlFor="capacity" value="Capacité max. *" />
                                         <TextInput
                                             id="capacity"
                                             type="number"
@@ -188,7 +202,6 @@ export default function CreateVenue({ auth, regionsAndCities, categories, availa
                                             value={data.capacity}
                                             className="mt-1 block w-full"
                                             onChange={(e) => setData('capacity', e.target.value)}
-                                            placeholder="Ex: 300"
                                             required
                                         />
                                         <InputError message={errors.capacity} className="mt-2" />
@@ -196,7 +209,7 @@ export default function CreateVenue({ auth, regionsAndCities, categories, availa
 
                                     {/* Price / Day */}
                                     <div>
-                                        <InputLabel htmlFor="price_per_day" value="Tarif par jour (FCFA) *" />
+                                        <InputLabel htmlFor="price_per_day" value="Tarif / jour (FCFA) *" />
                                         <TextInput
                                             id="price_per_day"
                                             type="number"
@@ -204,7 +217,6 @@ export default function CreateVenue({ auth, regionsAndCities, categories, availa
                                             value={data.price_per_day}
                                             className="mt-1 block w-full"
                                             onChange={(e) => setData('price_per_day', e.target.value)}
-                                            placeholder="Ex: 250000"
                                             required
                                         />
                                         <InputError message={errors.price_per_day} className="mt-2" />
@@ -212,7 +224,7 @@ export default function CreateVenue({ auth, regionsAndCities, categories, availa
 
                                     {/* Price / Hour */}
                                     <div>
-                                        <InputLabel htmlFor="price_per_hour" value="Tarif par heure (Facultatif)" />
+                                        <InputLabel htmlFor="price_per_hour" value="Tarif / heure (Facultatif)" />
                                         <TextInput
                                             id="price_per_hour"
                                             type="number"
@@ -220,7 +232,6 @@ export default function CreateVenue({ auth, regionsAndCities, categories, availa
                                             value={data.price_per_hour}
                                             className="mt-1 block w-full"
                                             onChange={(e) => setData('price_per_hour', e.target.value)}
-                                            placeholder="Ex: 35000"
                                         />
                                         <InputError message={errors.price_per_hour} className="mt-2" />
                                     </div>
@@ -233,42 +244,71 @@ export default function CreateVenue({ auth, regionsAndCities, categories, availa
                                         id="description"
                                         name="description"
                                         value={data.description}
-                                        className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-emerald-500 dark:focus:border-emerald-600 focus:ring-emerald-500 dark:focus:ring-emerald-600 rounded-md shadow-sm"
+                                        className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-amber-500 dark:focus:border-amber-600 focus:ring-amber-500 dark:focus:ring-amber-600 rounded-md shadow-sm"
                                         rows="4"
                                         onChange={(e) => setData('description', e.target.value)}
-                                        placeholder="Décrivez l'ambiance, l'insonorisation, les conditions d'accès, etc."
                                         required
                                     ></textarea>
                                     <InputError message={errors.description} className="mt-2" />
                                 </div>
 
-                                <div>
-                                    <InputLabel htmlFor="main_image" value="Image principale (Photo depuis la galerie ou caméra) *" />
-                                    <input
-                                        id="main_image"
-                                        type="file"
-                                        accept="image/*"
-                                        name="main_image"
-                                        className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 dark:file:bg-gray-700 dark:file:text-emerald-400"
-                                        onChange={(e) => setData('main_image', e.target.files[0])}
-                                        required
-                                    />
-                                    <InputError message={errors.main_image} className="mt-2" />
-                                </div>
+                                <div className="border border-gray-200 dark:border-gray-700 rounded-xl p-6 bg-gray-50/50 dark:bg-gray-800/50">
+                                    <h4 className="font-semibold text-lg mb-4 text-gray-800 dark:text-gray-200">Gestion des Médias</h4>
+                                    
+                                    {/* Main Image */}
+                                    <div className="mb-6 flex flex-col md:flex-row gap-6 items-start">
+                                        <div className="w-full md:w-1/3">
+                                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 font-medium">Image principale actuelle :</p>
+                                            {venue.main_image ? (
+                                                <img src={venue.main_image} alt="Main" className="w-full h-32 object-cover rounded-lg shadow-sm" />
+                                            ) : (
+                                                <div className="w-full h-32 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center text-sm text-gray-500">Aucune</div>
+                                            )}
+                                        </div>
+                                        <div className="w-full md:w-2/3">
+                                            <InputLabel htmlFor="main_image" value="Remplacer l'image principale (Optionnel)" />
+                                            <input
+                                                id="main_image"
+                                                type="file"
+                                                accept="image/*"
+                                                name="main_image"
+                                                className="mt-2 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100 dark:file:bg-gray-700 dark:file:text-amber-400"
+                                                onChange={(e) => setData('main_image', e.target.files[0])}
+                                            />
+                                            <p className="text-xs text-gray-500 mt-1">Laissez vide pour conserver l'image actuelle.</p>
+                                            <InputError message={errors.main_image} className="mt-2" />
+                                        </div>
+                                    </div>
 
-                                <div>
-                                    <InputLabel htmlFor="gallery" value="Autres Photos & Vidéos (Sélectionnez plusieurs fichiers)" />
-                                    <input
-                                        id="gallery"
-                                        type="file"
-                                        multiple
-                                        accept="image/*,video/*"
-                                        name="gallery"
-                                        className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 dark:file:bg-gray-700 dark:file:text-emerald-400"
-                                        onChange={(e) => setData('gallery', Array.from(e.target.files))}
-                                    />
-                                    <p className="text-xs text-gray-500 mt-1">Images max 10Mo, Vidéos max 50Mo</p>
-                                    <InputError message={errors.gallery} className="mt-2" />
+                                    {/* Gallery */}
+                                    <div className="flex flex-col md:flex-row gap-6 items-start border-t border-gray-200 dark:border-gray-700 pt-6">
+                                        <div className="w-full md:w-1/3">
+                                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 font-medium">Galerie actuelle :</p>
+                                            <div className="grid grid-cols-2 gap-2">
+                                                {venue.gallery_images && venue.gallery_images.length > 0 ? (
+                                                    venue.gallery_images.map((img, idx) => (
+                                                        <img key={idx} src={img} alt={`Gallery ${idx}`} className="w-full h-16 object-cover rounded shadow-sm" />
+                                                    ))
+                                                ) : (
+                                                    <span className="text-sm text-gray-500 col-span-2">Aucune image supplémentaire</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="w-full md:w-2/3">
+                                            <InputLabel htmlFor="gallery" value="Ajouter de nouvelles photos/vidéos à la galerie (Optionnel)" />
+                                            <input
+                                                id="gallery"
+                                                type="file"
+                                                multiple
+                                                accept="image/*,video/*"
+                                                name="gallery"
+                                                className="mt-2 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100 dark:file:bg-gray-700 dark:file:text-amber-400"
+                                                onChange={(e) => setData('gallery', Array.from(e.target.files))}
+                                            />
+                                            <p className="text-xs text-gray-500 mt-1">Ces nouvelles images s'ajouteront à la galerie existante.</p>
+                                            <InputError message={errors.gallery} className="mt-2" />
+                                        </div>
+                                    </div>
                                 </div>
 
                                 {/* Amenities */}
@@ -280,8 +320,9 @@ export default function CreateVenue({ auth, regionsAndCities, categories, availa
                                                 <input
                                                     type="checkbox"
                                                     value={amenity}
+                                                    checked={data.amenities.includes(amenity)}
                                                     onChange={handleCheckboxChange}
-                                                    className="w-4 h-4 text-emerald-600 bg-white border-gray-300 rounded focus:ring-emerald-500 dark:focus:ring-emerald-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                    className="w-4 h-4 text-amber-600 bg-white border-gray-300 rounded focus:ring-amber-500 dark:focus:ring-amber-600 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                                                 />
                                                 <span className="text-sm text-gray-700 dark:text-gray-300 font-medium">{amenity}</span>
                                             </label>
@@ -291,17 +332,17 @@ export default function CreateVenue({ auth, regionsAndCities, categories, availa
 
                                 {/* Submit Actions */}
                                 <div className="flex items-center gap-4 pt-4 border-t border-gray-100 dark:border-gray-800">
-                                    <PrimaryButton disabled={processing} className="px-8 py-3 bg-emerald-600 hover:bg-emerald-700 focus:bg-emerald-700 active:bg-emerald-800">
-                                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                                        Publier l'annonce
+                                    <PrimaryButton disabled={processing} className="px-8 py-3 bg-amber-600 hover:bg-amber-700 focus:bg-amber-700 active:bg-amber-800">
+                                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                                        Enregistrer les modifications
                                     </PrimaryButton>
                                     
-                                    <Link
-                                        href={route('dashboard')}
+                                    <a
+                                        href={`/venues/${venue.id}`}
                                         className="px-6 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
                                     >
                                         Annuler
-                                    </Link>
+                                    </a>
                                 </div>
                             </form>
                         </div>

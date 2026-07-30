@@ -14,6 +14,7 @@ class Venue extends Model
         'title',
         'slug',
         'category',
+        'region',
         'city',
         'district',
         'address',

@@ -40,6 +40,11 @@
   font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
+img, video {
+  max-width: 100%;
+  height: auto;
+}
+
 body {
   background-color: var(--bg-main);
   color: var(--text-main);
@@ -140,20 +145,127 @@ a {
   font-weight: 600;
   font-size: 0.95rem;
   color: var(--text-muted);
-  transition: color 0.2s ease;
+  transition: color 0.3s ease;
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  position: relative;
+  padding-bottom: 4px;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  transition: width 0.3s ease;
+  border-radius: 3px;
+}
+
+.nav-link:hover::after, .nav-link.active::after {
+  width: 100%;
 }
 
 .nav-link:hover, .nav-link.active {
-  color: var(--primary);
+  color: var(--text-main);
 }
 
 .nav-actions {
   display: flex;
   align-items: center;
   gap: 1rem;
+}
+
+/* User Menu Pill (Airbnb Style) */
+.user-menu-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.4rem 0.4rem 0.4rem 1rem;
+  border-radius: 40px;
+  border: 1px solid var(--glass-border);
+  background: var(--bg-card);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.user-menu-btn:hover {
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+  transform: translateY(-1px);
+}
+
+.user-menu-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.user-menu-dropdown {
+  position: relative;
+}
+
+.user-menu-content {
+  position: absolute;
+  top: calc(100% + 0.8rem);
+  right: 0;
+  width: 260px;
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  box-shadow: 0 15px 35px -5px rgba(0,0,0,0.15), 0 5px 15px -5px rgba(0,0,0,0.1);
+  display: none; /* toggled via JS */
+  flex-direction: column;
+  padding: 0.5rem 0;
+  z-index: 1050;
+  transform-origin: top right;
+  animation: dropdownFadeIn 0.2s ease forwards;
+}
+
+@keyframes dropdownFadeIn {
+  from { opacity: 0; transform: scale(0.95) translateY(-10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.user-menu-content.show {
+  display: flex;
+}
+
+.user-menu-content a, .user-menu-content button {
+  padding: 0.8rem 1.5rem;
+  text-align: left;
+  color: var(--text-main);
+  background: transparent;
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.user-menu-content a:hover, .user-menu-content button:hover {
+  background: rgba(16, 185, 129, 0.08); /* slight primary tint */
+  color: var(--primary);
+  padding-left: 1.8rem; /* subtle slide effect */
+}
+
+.user-menu-divider {
+  height: 1px;
+  background: var(--glass-border);
+  margin: 0.5rem 0;
 }
 
 /* ------------------ Buttons ------------------ */
@@ -325,9 +437,9 @@ a {
 }
 
 .category-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-6px) scale(1.02);
   border-color: var(--primary);
-  box-shadow: var(--shadow-hover);
+  box-shadow: 0 15px 30px -10px rgba(5, 150, 105, 0.2);
   color: var(--primary);
 }
 
@@ -375,9 +487,9 @@ a {
 }
 
 .venue-card:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow-hover);
-  border-color: rgba(5, 150, 105, 0.3);
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15), 0 0 15px rgba(5, 150, 105, 0.1);
+  border-color: rgba(5, 150, 105, 0.4);
 }
 
 .venue-image-wrapper {
@@ -713,23 +825,107 @@ a {
   }
 }
 
+.mobile-bottom-bar {
+  display: none;
+}
+
 @media (max-width: 768px) {
+  body {
+    padding-bottom: 70px;
+  }
+
+  .mobile-bottom-bar {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid #e2e8f0;
+    z-index: 2000;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    padding-bottom: env(safe-area-inset-bottom, 0.5rem);
+    box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .mobile-bottom-bar {
+      background: rgba(15, 23, 42, 0.95);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  .bottom-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    font-size: 0.7rem;
+    font-weight: 600;
+    gap: 0.2rem;
+    flex: 1;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  
+  .bottom-nav-item i {
+    font-size: 1.2rem;
+  }
+
+  .bottom-nav-item.active,
+  .bottom-nav-item:hover {
+    color: var(--primary);
+  }
+
+  .bottom-nav-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    top: -20px;
+  }
+
+  .bottom-nav-fab {
+    width: 55px;
+    height: 55px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 15px rgba(5, 150, 105, 0.4);
+    transition: transform 0.2s ease;
+  }
+  
+  .bottom-nav-fab:hover {
+    transform: scale(1.05);
+    color: white;
+  }
+
   /* Header & Nav */
   .nav-container {
     flex-wrap: wrap;
     position: relative;
   }
-  .nav-links {
-    display: none;
+  .nav-links, .nav-actions {
+    display: none !important; /* Replaced by bottom bar */
   }
   #mobile-menu-btn {
-    display: inline-flex !important;
+    display: none !important; /* Replaced by bottom bar */
   }
-  .nav-actions {
-    margin-top: 1rem;
-    width: 100%;
-    justify-content: center;
-    gap: 0.5rem;
+  .nav-container.mobile-menu-active .nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
   }
   
   /* Hero */

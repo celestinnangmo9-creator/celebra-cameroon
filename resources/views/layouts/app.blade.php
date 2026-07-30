@@ -12,6 +12,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
+  <!-- AOS Animation Library -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  
   <!-- Custom Design System CSS -->
   <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ time() }}">
   @yield('styles')
@@ -30,30 +33,49 @@
       </button>
 
       <ul class="nav-links" id="nav-links">
-        <li><a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}"><i class="fa-solid fa-house"></i> Accueil</a></li>
-        <li><a href="{{ route('venues.index') }}" class="nav-link {{ request()->routeIs('venues.*') && !request()->routeIs('venues.create') ? 'active' : '' }}"><i class="fa-solid fa-building"></i> Lieux & Salles</a></li>
-        <li><a href="{{ route('messages.index') }}" class="nav-link {{ request()->routeIs('messages.*') ? 'active' : '' }}"><i class="fa-solid fa-comments"></i> Messagerie</a></li>
-        <li><a href="{{ route('bookings.index') }}" class="nav-link {{ request()->routeIs('bookings.*') ? 'active' : '' }}"><i class="fa-solid fa-calendar-check"></i> Réservations</a></li>
+        <li><a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Accueil</a></li>
+        <li><a href="{{ route('venues.index') }}" class="nav-link {{ request()->routeIs('venues.*') && !request()->routeIs('venues.create') ? 'active' : '' }}">Lieux & Salles</a></li>
         <li><a href="{{ route('about') }}" class="nav-link {{ request()->routeIs('about') ? 'active' : '' }}">À Propos</a></li>
       </ul>
 
       <div class="nav-actions">
-        <button id="theme-toggle-btn" class="btn btn-ghost" title="Basculer le mode sombre/clair">
+        <a href="{{ route('venues.create') }}" class="nav-link" style="font-weight: 600;">Mettre mon espace en ligne</a>
+        
+        <button id="theme-toggle-btn" class="btn btn-ghost" title="Basculer le mode sombre/clair" style="border-radius: 50%; width: 40px; height: 40px; padding: 0;">
           <i class="fa-solid fa-moon"></i>
         </button>
 
-        @auth
-          <a href="{{ route('venues.create') }}" class="btn btn-accent"><i class="fa-solid fa-plus"></i> Publier un lieu</a>
-          <a href="{{ route('dashboard') }}" class="btn btn-outline" title="Tableau de bord"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
-          <form action="{{ route('logout') }}" method="POST" style="display:inline;">
-            @csrf
-            <button type="submit" class="btn btn-ghost" title="Déconnexion"><i class="fa-solid fa-right-from-bracket"></i></button>
-          </form>
-        @else
-          <a href="{{ route('login') }}" class="btn btn-ghost"><i class="fa-solid fa-user"></i> Connexion</a>
-          <a href="{{ route('register') }}" class="btn btn-primary">Inscription</a>
-          <a href="{{ route('venues.create') }}" class="btn btn-accent"><i class="fa-solid fa-plus"></i> Publier un lieu</a>
-        @endauth
+        <div class="user-menu-dropdown">
+          <button class="user-menu-btn" id="desktop-user-btn">
+            <i class="fa-solid fa-bars" style="margin-left: 0.2rem; font-size: 1.1rem;"></i>
+            <div class="user-menu-avatar">
+              @auth
+                <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=059669&color=fff" alt="" style="border-radius: 50%; width: 100%; height: 100%;">
+              @else
+                <i class="fa-solid fa-user"></i>
+              @endauth
+            </div>
+          </button>
+          <div class="user-menu-content" id="desktop-user-menu">
+            @auth
+              <a href="{{ route('dashboard') }}" style="font-weight: 600;">Tableau de bord</a>
+              <a href="{{ route('messages.index') }}">Messagerie</a>
+              <a href="{{ route('bookings.index') }}">Mes réservations</a>
+              <div class="user-menu-divider"></div>
+              <a href="{{ route('venues.create') }}">Publier un lieu</a>
+              <div class="user-menu-divider"></div>
+              <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit">Déconnexion</button>
+              </form>
+            @else
+              <a href="{{ route('login') }}" style="font-weight: 600;">Connexion</a>
+              <a href="{{ route('register') }}">Inscription</a>
+              <div class="user-menu-divider"></div>
+              <a href="{{ route('venues.create') }}">Mettre mon espace en ligne</a>
+            @endauth
+          </div>
+        </div>
       </div>
     </div>
   </header>
@@ -104,13 +126,23 @@
       </div>
 
       <div>
-        <h4 style="color: #fff; margin-bottom: 1.2rem;">Villes Principales</h4>
-        <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.9rem;">
-          <li><a href="{{ route('venues.index', ['city' => 'Douala']) }}"><i class="fa-solid fa-location-dot" style="color:var(--primary);"></i> Douala (Bonapriso, Akwa, Bastos)</a></li>
-          <li><a href="{{ route('venues.index', ['city' => 'Yaoundé']) }}"><i class="fa-solid fa-location-dot" style="color:var(--primary);"></i> Yaoundé (Bastos, Golf)</a></li>
-          <li><a href="{{ route('venues.index', ['city' => 'Kribi']) }}"><i class="fa-solid fa-location-dot" style="color:var(--primary);"></i> Kribi (Bord de mer, Plage)</a></li>
-          <li><a href="{{ route('venues.index', ['city' => 'Bafoussam']) }}"><i class="fa-solid fa-location-dot" style="color:var(--primary);"></i> Bafoussam & Ouest</a></li>
-        </ul>
+        <h4 style="color: #fff; margin-bottom: 1.2rem;">Les 10 Villes Principales</h4>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.9rem;">
+          <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
+            <li><a href="{{ route('venues.index', ['city' => 'Douala']) }}"><i class="fa-solid fa-location-dot" style="color:var(--primary); width:16px;"></i> Douala</a></li>
+            <li><a href="{{ route('venues.index', ['city' => 'Yaoundé']) }}"><i class="fa-solid fa-location-dot" style="color:var(--primary); width:16px;"></i> Yaoundé</a></li>
+            <li><a href="{{ route('venues.index', ['city' => 'Bafoussam']) }}"><i class="fa-solid fa-location-dot" style="color:var(--primary); width:16px;"></i> Bafoussam</a></li>
+            <li><a href="{{ route('venues.index', ['city' => 'Bamenda']) }}"><i class="fa-solid fa-location-dot" style="color:var(--primary); width:16px;"></i> Bamenda</a></li>
+            <li><a href="{{ route('venues.index', ['city' => 'Garoua']) }}"><i class="fa-solid fa-location-dot" style="color:var(--primary); width:16px;"></i> Garoua</a></li>
+          </ul>
+          <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
+            <li><a href="{{ route('venues.index', ['city' => 'Maroua']) }}"><i class="fa-solid fa-location-dot" style="color:var(--primary); width:16px;"></i> Maroua</a></li>
+            <li><a href="{{ route('venues.index', ['city' => 'Ngaoundéré']) }}"><i class="fa-solid fa-location-dot" style="color:var(--primary); width:16px;"></i> Ngaoundéré</a></li>
+            <li><a href="{{ route('venues.index', ['city' => 'Kribi']) }}"><i class="fa-solid fa-location-dot" style="color:var(--primary); width:16px;"></i> Kribi</a></li>
+            <li><a href="{{ route('venues.index', ['city' => 'Limbe']) }}"><i class="fa-solid fa-location-dot" style="color:var(--primary); width:16px;"></i> Limbe</a></li>
+            <li><a href="{{ route('venues.index', ['city' => 'Buea']) }}"><i class="fa-solid fa-location-dot" style="color:var(--primary); width:16px;"></i> Buea</a></li>
+          </ul>
+        </div>
       </div>
 
       <div>
@@ -127,42 +159,94 @@
   </footer>
 
   <script src="{{ asset('js/app.js') }}"></script>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <nav class="mobile-bottom-bar">
+    <a href="{{ route('home') }}" class="bottom-nav-item {{ request()->routeIs('home') ? 'active' : '' }}">
+      <i class="fa-solid fa-house"></i>
+      <span>Accueil</span>
+    </a>
+    <a href="{{ route('venues.index') }}" class="bottom-nav-item {{ request()->routeIs('venues.*') && !request()->routeIs('venues.create') ? 'active' : '' }}">
+      <i class="fa-solid fa-building"></i>
+      <span>Salles</span>
+    </a>
+    
+    <div class="bottom-nav-center">
+      <a href="{{ route('venues.create') }}" class="bottom-nav-fab">
+        <i class="fa-solid fa-plus"></i>
+      </a>
+    </div>
+
+    <a href="{{ route('messages.index') }}" class="bottom-nav-item {{ request()->routeIs('messages.*') ? 'active' : '' }}">
+      <div style="position:relative;">
+        <i class="fa-solid fa-comment-dots"></i>
+        @auth
+          <span style="position: absolute; top: -5px; right: -8px; background: #ef4444; color: white; border-radius: 50%; width: 14px; height: 14px; font-size: 0.6rem; display: flex; align-items: center; justify-content: center;">2</span>
+        @endauth
+      </div>
+      <span>Messages</span>
+    </a>
+    
+    @auth
+      <a href="{{ route('dashboard') }}" class="bottom-nav-item">
+        <i class="fa-solid fa-user"></i>
+        <span>Profil</span>
+      </a>
+    @else
+      <a href="{{ route('login') }}" class="bottom-nav-item">
+        <i class="fa-solid fa-user"></i>
+        <span>Connexion</span>
+      </a>
+    @endauth
+  </nav>
+
   <script>
     // Responsive Menu Toggle
     const mobileBtn = document.getElementById('mobile-menu-btn');
-    const navLinks = document.getElementById('nav-links');
+    const navContainer = document.querySelector('.nav-container');
     
     if (mobileBtn) {
       mobileBtn.addEventListener('click', () => {
-        navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
-        navLinks.style.flexDirection = 'column';
-        navLinks.style.position = 'absolute';
-        navLinks.style.top = '100%';
-        navLinks.style.left = '0';
-        navLinks.style.right = '0';
-        navLinks.style.background = 'var(--bg-card)';
-        navLinks.style.padding = '1rem';
-        navLinks.style.borderBottom = '1px solid var(--glass-border)';
-        navLinks.style.boxShadow = 'var(--shadow-subtle)';
-        navLinks.style.zIndex = '999';
+        navContainer.classList.toggle('mobile-menu-active');
       });
     }
 
     // Handle window resize to reset menu
     window.addEventListener('resize', () => {
       if (window.innerWidth > 768) {
-        navLinks.style.display = 'flex';
-        navLinks.style.flexDirection = 'row';
-        navLinks.style.position = 'static';
-        navLinks.style.background = 'transparent';
-        navLinks.style.padding = '0';
-        navLinks.style.borderBottom = 'none';
-        navLinks.style.boxShadow = 'none';
-      } else {
-        navLinks.style.display = 'none';
+        navContainer.classList.remove('mobile-menu-active');
       }
     });
+    // Desktop User Menu Dropdown Toggle
+    const desktopUserBtn = document.getElementById('desktop-user-btn');
+    const desktopUserMenu = document.getElementById('desktop-user-menu');
+    
+    if (desktopUserBtn) {
+      desktopUserBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        desktopUserMenu.classList.toggle('show');
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!desktopUserBtn.contains(e.target) && !desktopUserMenu.contains(e.target)) {
+          desktopUserMenu.classList.remove('show');
+        }
+      });
+    }
   </script>
+
+  <!-- AOS Animation Initialization -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({
+      duration: 800, // duration of animation
+      once: true, // whether animation should happen only once - while scrolling down
+      offset: 50, // offset (in px) from the original trigger point
+      easing: 'ease-out-cubic' // easing for the animation
+    });
+  </script>
+
   @yield('scripts')
 </body>
 </html>

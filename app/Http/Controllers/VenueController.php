@@ -15,15 +15,30 @@ class VenueController extends Controller
         $featuredVenues = Venue::where('is_featured', true)->where('status', 'active')->take(6)->get();
         $latestVenues = Venue::where('status', 'active')->latest()->take(6)->get();
         
-        $cities = ['Douala', 'Yaoundé', 'Kribi', 'Limbe', 'Bafoussam'];
-        $categories = ['Salle de fête', 'Espace vert', 'Bureau & Coworking', 'Terrasse VIP', 'Pavillon / Villa'];
+        $regionsAndCities = [
+            'Adamaoua' => ['Ngaoundéré', 'Banyo', 'Meiganga', 'Tignère', 'Tibati'],
+            'Centre' => ['Yaoundé', 'Bafia', 'Mbalmayo', 'Obala', 'Monatélé', 'Eseka', 'Akonolinga'],
+            'Est' => ['Bertoua', 'Batouri', 'Abong-Mbang', 'Yokadouma', 'Lomié'],
+            'Extrême-Nord' => ['Maroua', 'Yagoua', 'Kousséri', 'Mokolo', 'Kaélé', 'Mora'],
+            'Littoral' => ['Douala', 'Edéa', 'Nkongsamba', 'Yabassi', 'Melong', 'Loum'],
+            'Nord' => ['Garoua', 'Guider', 'Figuil', 'Pitoa', 'Tcholliré'],
+            'Nord-Ouest' => ['Bamenda', 'Kumbo', 'Wum', 'Ndop', 'Mbengwi'],
+            'Ouest' => ['Bafoussam', 'Dschang', 'Foumban', 'Mbouda', 'Bangangté', 'Bandjoun'],
+            'Sud' => ['Ebolowa', 'Kribi', 'Sangmélima', 'Ambam', 'Campo'],
+            'Sud-Ouest' => ['Buea', 'Limbe', 'Kumba', 'Tiko', 'Mamfe']
+        ];
+        $categories = ['Salle de fête', 'Salle de Conférence', 'Espace vert', 'Bureau & Coworking', 'Terrasse VIP', 'Pavillon / Villa'];
 
-        return view('home', compact('featuredVenues', 'latestVenues', 'cities', 'categories'));
+        return view('home', compact('featuredVenues', 'latestVenues', 'regionsAndCities', 'categories'));
     }
 
     public function index(Request $request)
     {
         $query = Venue::where('status', 'active');
+
+        if ($request->filled('region')) {
+            $query->where('region', $request->region);
+        }
 
         if ($request->filled('city')) {
             $query->where('city', $request->city);
@@ -57,10 +72,21 @@ class VenueController extends Controller
 
         $venues = $query->latest()->paginate(9)->withQueryString();
 
-        $cities = ['Douala', 'Yaoundé', 'Kribi', 'Limbe', 'Bafoussam'];
-        $categories = ['Salle de fête', 'Espace vert', 'Bureau & Coworking', 'Terrasse VIP', 'Pavillon / Villa'];
+        $regionsAndCities = [
+            'Adamaoua' => ['Ngaoundéré', 'Banyo', 'Meiganga', 'Tignère', 'Tibati'],
+            'Centre' => ['Yaoundé', 'Bafia', 'Mbalmayo', 'Obala', 'Monatélé', 'Eseka', 'Akonolinga'],
+            'Est' => ['Bertoua', 'Batouri', 'Abong-Mbang', 'Yokadouma', 'Lomié'],
+            'Extrême-Nord' => ['Maroua', 'Yagoua', 'Kousséri', 'Mokolo', 'Kaélé', 'Mora'],
+            'Littoral' => ['Douala', 'Edéa', 'Nkongsamba', 'Yabassi', 'Melong', 'Loum'],
+            'Nord' => ['Garoua', 'Guider', 'Figuil', 'Pitoa', 'Tcholliré'],
+            'Nord-Ouest' => ['Bamenda', 'Kumbo', 'Wum', 'Ndop', 'Mbengwi'],
+            'Ouest' => ['Bafoussam', 'Dschang', 'Foumban', 'Mbouda', 'Bangangté', 'Bandjoun'],
+            'Sud' => ['Ebolowa', 'Kribi', 'Sangmélima', 'Ambam', 'Campo'],
+            'Sud-Ouest' => ['Buea', 'Limbe', 'Kumba', 'Tiko', 'Mamfe']
+        ];
+        $categories = ['Salle de fête', 'Salle de Conférence', 'Espace vert', 'Bureau & Coworking', 'Terrasse VIP', 'Pavillon / Villa'];
 
-        return view('venues.index', compact('venues', 'cities', 'categories'));
+        return view('venues.index', compact('venues', 'regionsAndCities', 'categories'));
     }
 
     public function show($id)
@@ -71,17 +97,42 @@ class VenueController extends Controller
             ->take(3)
             ->get();
 
-        return view('venues.show', compact('venue', 'similarVenues'));
+        // Fetch bookings to disable dates in calendar
+        $bookings = \App\Models\Booking::where('venue_id', $venue->id)
+            ->whereIn('status', ['confirmed', 'pending'])
+            ->get();
+
+        $bookedDates = [];
+        foreach ($bookings as $booking) {
+            $period = \Carbon\CarbonPeriod::create($booking->start_date, $booking->end_date);
+            foreach ($period as $date) {
+                $bookedDates[] = $date->format('Y-m-d');
+            }
+        }
+        $bookedDates = array_unique($bookedDates);
+
+        return view('venues.show', compact('venue', 'similarVenues', 'bookedDates'));
     }
 
     public function create()
     {
-        $cities = ['Douala', 'Yaoundé', 'Kribi', 'Limbe', 'Bafoussam'];
-        $categories = ['Salle de fête', 'Espace vert', 'Bureau & Coworking', 'Terrasse VIP', 'Pavillon / Villa'];
+        $regionsAndCities = [
+            'Adamaoua' => ['Ngaoundéré', 'Banyo', 'Meiganga', 'Tignère', 'Tibati'],
+            'Centre' => ['Yaoundé', 'Bafia', 'Mbalmayo', 'Obala', 'Monatélé', 'Eseka', 'Akonolinga'],
+            'Est' => ['Bertoua', 'Batouri', 'Abong-Mbang', 'Yokadouma', 'Lomié'],
+            'Extrême-Nord' => ['Maroua', 'Yagoua', 'Kousséri', 'Mokolo', 'Kaélé', 'Mora'],
+            'Littoral' => ['Douala', 'Edéa', 'Nkongsamba', 'Yabassi', 'Melong', 'Loum'],
+            'Nord' => ['Garoua', 'Guider', 'Figuil', 'Pitoa', 'Tcholliré'],
+            'Nord-Ouest' => ['Bamenda', 'Kumbo', 'Wum', 'Ndop', 'Mbengwi'],
+            'Ouest' => ['Bafoussam', 'Dschang', 'Foumban', 'Mbouda', 'Bangangté', 'Bandjoun'],
+            'Sud' => ['Ebolowa', 'Kribi', 'Sangmélima', 'Ambam', 'Campo'],
+            'Sud-Ouest' => ['Buea', 'Limbe', 'Kumba', 'Tiko', 'Mamfe']
+        ];
+        $categories = ['Salle de fête', 'Salle de Conférence', 'Espace vert', 'Bureau & Coworking', 'Terrasse VIP', 'Pavillon / Villa'];
         $availableAmenities = ['Climatisation', 'Groupe Électrogène', 'Sonorisation Haute Fidélité', 'Service Traiteur', 'Parking Sécurisé', 'Fibre Optique / Wifi', 'Écran LED Géant', 'Piscine Privée', 'Régie Lumières DJ'];
 
         return Inertia::render('Venues/Create', [
-            'cities' => $cities,
+            'regionsAndCities' => $regionsAndCities,
             'categories' => $categories,
             'availableAmenities' => $availableAmenities
         ]);
@@ -92,6 +143,7 @@ class VenueController extends Controller
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'category' => 'required|string',
+            'region' => 'required|string',
             'city' => 'required|string',
             'district' => 'required|string',
             'address' => 'required|string',
@@ -124,6 +176,7 @@ class VenueController extends Controller
             'title' => $data['title'],
             'slug' => Str::slug($data['title']) . '-' . rand(100, 999),
             'category' => $data['category'],
+            'region' => $data['region'],
             'city' => $data['city'],
             'district' => $data['district'],
             'address' => $data['address'],
@@ -152,11 +205,27 @@ class VenueController extends Controller
             return redirect()->route('venues.index')->with('error', 'Vous n\'êtes pas autorisé à modifier cette annonce.');
         }
 
-        $cities = ['Douala', 'Yaoundé', 'Kribi', 'Limbe', 'Bafoussam'];
-        $categories = ['Salle de fête', 'Espace vert', 'Bureau & Coworking', 'Terrasse VIP', 'Pavillon / Villa'];
+        $regionsAndCities = [
+            'Adamaoua' => ['Ngaoundéré', 'Banyo', 'Meiganga', 'Tignère', 'Tibati'],
+            'Centre' => ['Yaoundé', 'Bafia', 'Mbalmayo', 'Obala', 'Monatélé', 'Eseka', 'Akonolinga'],
+            'Est' => ['Bertoua', 'Batouri', 'Abong-Mbang', 'Yokadouma', 'Lomié'],
+            'Extrême-Nord' => ['Maroua', 'Yagoua', 'Kousséri', 'Mokolo', 'Kaélé', 'Mora'],
+            'Littoral' => ['Douala', 'Edéa', 'Nkongsamba', 'Yabassi', 'Melong', 'Loum'],
+            'Nord' => ['Garoua', 'Guider', 'Figuil', 'Pitoa', 'Tcholliré'],
+            'Nord-Ouest' => ['Bamenda', 'Kumbo', 'Wum', 'Ndop', 'Mbengwi'],
+            'Ouest' => ['Bafoussam', 'Dschang', 'Foumban', 'Mbouda', 'Bangangté', 'Bandjoun'],
+            'Sud' => ['Ebolowa', 'Kribi', 'Sangmélima', 'Ambam', 'Campo'],
+            'Sud-Ouest' => ['Buea', 'Limbe', 'Kumba', 'Tiko', 'Mamfe']
+        ];
+        $categories = ['Salle de fête', 'Salle de Conférence', 'Espace vert', 'Bureau & Coworking', 'Terrasse VIP', 'Pavillon / Villa'];
         $availableAmenities = ['Climatisation', 'Groupe Électrogène', 'Sonorisation Haute Fidélité', 'Service Traiteur', 'Parking Sécurisé', 'Fibre Optique / Wifi', 'Écran LED Géant', 'Piscine Privée', 'Régie Lumières DJ'];
 
-        return view('venues.edit', compact('venue', 'cities', 'categories', 'availableAmenities'));
+        return Inertia::render('Venues/Edit', [
+            'venue' => $venue,
+            'regionsAndCities' => $regionsAndCities,
+            'categories' => $categories,
+            'availableAmenities' => $availableAmenities
+        ]);
     }
 
     public function update(Request $request, $id)
@@ -170,6 +239,7 @@ class VenueController extends Controller
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'category' => 'required|string',
+            'region' => 'required|string',
             'city' => 'required|string',
             'district' => 'required|string',
             'address' => 'required|string',
@@ -178,21 +248,30 @@ class VenueController extends Controller
             'price_per_hour' => 'nullable|numeric|min:0',
             'description' => 'required|string',
             'amenities' => 'nullable|array',
-            'main_image' => 'required|url',
-            'gallery' => 'nullable|string',
+            'main_image' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:10240',
+            'gallery' => 'nullable|array',
+            'gallery.*' => 'file|mimes:jpg,jpeg,png,webp,mp4,mov,avi|max:51200',
             'status' => 'required|in:active,maintenance,booked',
         ]);
 
-        $gallery = [];
-        if (!empty($data['gallery'])) {
-            $gallery = array_map('trim', explode(',', $data['gallery']));
-        } else {
-            $gallery = $venue->gallery_images;
+        $mainImagePath = $venue->main_image;
+        if ($request->hasFile('main_image')) {
+            $path = $request->file('main_image')->store('venues', 'public');
+            $mainImagePath = '/storage/' . $path;
+        }
+
+        $galleryPaths = $venue->gallery_images ?? [];
+        if ($request->hasFile('gallery')) {
+            foreach ($request->file('gallery') as $file) {
+                $path = $file->store('venues', 'public');
+                $galleryPaths[] = '/storage/' . $path;
+            }
         }
 
         $venue->update([
             'title' => $data['title'],
             'category' => $data['category'],
+            'region' => $data['region'],
             'city' => $data['city'],
             'district' => $data['district'],
             'address' => $data['address'],
@@ -201,8 +280,8 @@ class VenueController extends Controller
             'price_per_hour' => $data['price_per_hour'] ?? null,
             'description' => $data['description'],
             'amenities' => $data['amenities'] ?? [],
-            'main_image' => $data['main_image'],
-            'gallery_images' => $gallery,
+            'main_image' => $mainImagePath,
+            'gallery_images' => $galleryPaths,
             'status' => $data['status'],
         ]);
 

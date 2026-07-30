@@ -32,13 +32,28 @@
           <input type="text" name="search" class="form-control" value="{{ request('search') }}" placeholder="Ex: Bonapriso, Piscine...">
         </div>
 
+        <!-- Region -->
+        <div class="form-group">
+          <label class="form-label">Région</label>
+          <select name="region" id="region-select" class="form-control">
+            <option value="">Toutes les régions</option>
+            @foreach($regionsAndCities as $region => $cities)
+              <option value="{{ $region }}" {{ request('region') == $region ? 'selected' : '' }}>{{ $region }}</option>
+            @endforeach
+          </select>
+        </div>
+
         <!-- City -->
         <div class="form-group">
           <label class="form-label">Ville</label>
-          <select name="city" class="form-control">
+          <select name="city" id="city-select" class="form-control">
             <option value="">Toutes les villes</option>
-            @foreach($cities as $c)
-              <option value="{{ $c }}" {{ request('city') == $c ? 'selected' : '' }}>{{ $c }}</option>
+            @foreach($regionsAndCities as $region => $cities)
+              <optgroup label="{{ $region }}" data-region="{{ $region }}">
+                @foreach($cities as $c)
+                  <option value="{{ $c }}" {{ request('city') == $c ? 'selected' : '' }}>{{ $c }}</option>
+                @endforeach
+              </optgroup>
             @endforeach
           </select>
         </div>
@@ -132,4 +147,35 @@
   </div>
 
 </div>
+@endsection
+
+@section('scripts')
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const regionSelect = document.getElementById('region-select');
+    const citySelect = document.getElementById('city-select');
+    
+    if (regionSelect && citySelect) {
+      const allOptgroups = Array.from(citySelect.querySelectorAll('optgroup'));
+      
+      regionSelect.addEventListener('change', function() {
+        const selectedRegion = this.value;
+        
+        // Reset city select if changing to a new region
+        // Wait, keep current value if it's the initial load, only reset if user actually changes it interactively?
+        // Let's just handle display:
+        allOptgroups.forEach(optgroup => {
+          if (!selectedRegion || optgroup.dataset.region === selectedRegion) {
+            optgroup.style.display = '';
+          } else {
+            optgroup.style.display = 'none';
+          }
+        });
+      });
+      
+      // Trigger initially
+      regionSelect.dispatchEvent(new Event('change'));
+    }
+  });
+</script>
 @endsection
