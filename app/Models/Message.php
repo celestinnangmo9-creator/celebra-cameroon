@@ -14,6 +14,7 @@ class Message extends Model
         'receiver_id',
         'venue_id',
         'content',
+        'attachment',
         'is_read',
     ];
 

@@ -27,3 +27,7 @@ Homestead.yaml
 Thumbs.db
 /node_portable/
 /node_portable22_net/
+/node/
+/node22/
+*.zip
+/.agents/

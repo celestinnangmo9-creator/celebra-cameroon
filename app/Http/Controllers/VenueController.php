@@ -116,6 +116,10 @@ class VenueController extends Controller
 
     public function create()
     {
+        if (!Auth::user()->isHost()) {
+            return redirect()->route('home')->with('error', 'Seuls les hôtes ou propriétaires peuvent publier un espace.');
+        }
+
         $regionsAndCities = [
             'Adamaoua' => ['Ngaoundéré', 'Banyo', 'Meiganga', 'Tignère', 'Tibati'],
             'Centre' => ['Yaoundé', 'Bafia', 'Mbalmayo', 'Obala', 'Monatélé', 'Eseka', 'Akonolinga'],
@@ -140,6 +144,10 @@ class VenueController extends Controller
 
     public function store(Request $request)
     {
+        if (!Auth::user()->isHost()) {
+            return redirect()->route('home')->with('error', 'Action non autorisée. Devenez hôte pour publier un espace.');
+        }
+
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'category' => 'required|string',

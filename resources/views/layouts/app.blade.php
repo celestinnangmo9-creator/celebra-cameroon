@@ -18,8 +18,92 @@
   <!-- Custom Design System CSS -->
   <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ time() }}">
   @yield('styles')
+  
+  <style>
+    /* Premium Page Loader */
+    #page-loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: var(--bg-main, #f8fafc);
+      z-index: 999999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s;
+      backdrop-filter: blur(10px);
+    }
+    
+    #page-loader.loaded {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .loader-content {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .loader-logo {
+      width: 90px;
+      height: auto;
+      z-index: 2;
+      animation: pulse-logo 2s infinite ease-in-out alternate;
+    }
+
+    .loader-spinner {
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-top-color: var(--primary, #059669);
+      border-right-color: var(--accent, #d97706);
+      animation: spin 1.5s linear infinite;
+      z-index: 1;
+      box-shadow: 0 0 20px rgba(5, 150, 105, 0.2);
+    }
+    
+    .loader-spinner::before {
+      content: '';
+      position: absolute;
+      top: 10px; left: 10px; right: 10px; bottom: 10px;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-top-color: var(--accent, #d97706);
+      border-left-color: var(--primary, #059669);
+      animation: spin-reverse 2s linear infinite;
+    }
+
+    @keyframes pulse-logo {
+      0% { transform: scale(0.9); opacity: 0.8; filter: drop-shadow(0 0 10px rgba(5, 150, 105, 0.3)); }
+      100% { transform: scale(1.1); opacity: 1; filter: drop-shadow(0 0 25px rgba(5, 150, 105, 0.6)); }
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes spin-reverse {
+      0% { transform: rotate(360deg); }
+      100% { transform: rotate(0deg); }
+    }
+  </style>
 </head>
 <body>
+  <!-- Page Loader -->
+  <div id="page-loader">
+    <div class="loader-content">
+      <img src="{{ asset('images/logo.png') }}" alt="Celebra Cameroon Loader" class="loader-logo">
+      <div class="loader-spinner"></div>
+    </div>
+  </div>
 
   <!-- Header & Navigation -->
   <header class="header">
@@ -39,7 +123,9 @@
       </ul>
 
       <div class="nav-actions">
-        <a href="{{ route('venues.create') }}" class="nav-link" style="font-weight: 600;">Mettre mon espace en ligne</a>
+        @if(!Auth::check() || Auth::user()->isHost())
+          <a href="{{ route('venues.create') }}" class="nav-link" style="font-weight: 600;">Mettre mon espace en ligne</a>
+        @endif
         
         <button id="theme-toggle-btn" class="btn btn-ghost" title="Basculer le mode sombre/clair" style="border-radius: 50%; width: 40px; height: 40px; padding: 0;">
           <i class="fa-solid fa-moon"></i>
@@ -62,8 +148,10 @@
               <a href="{{ route('messages.index') }}">Messagerie</a>
               <a href="{{ route('bookings.index') }}">Mes réservations</a>
               <div class="user-menu-divider"></div>
-              <a href="{{ route('venues.create') }}">Publier un lieu</a>
-              <div class="user-menu-divider"></div>
+              @if(Auth::user()->isHost())
+                <a href="{{ route('venues.create') }}">Publier un lieu</a>
+                <div class="user-menu-divider"></div>
+              @endif
               <form action="{{ route('logout') }}" method="POST">
                 @csrf
                 <button type="submit">Déconnexion</button>
@@ -115,6 +203,7 @@
     </div>
   </div>
 
+  @if(!request()->routeIs('login') && !request()->routeIs('register'))
   <!-- Footer -->
   <footer class="footer">
     <div class="footer-container">
@@ -157,9 +246,11 @@
       &copy; {{ date('Y') }} Celebra Cameroon. Tous droits réservés. Inspiré et conçu pour le marché camerounais.
     </div>
   </footer>
+  @endif
 
   <script src="{{ asset('js/app.js') }}"></script>
 
+  @if(!isset($hideMobileNav) || !$hideMobileNav)
   <!-- Mobile Bottom Navigation Bar -->
   <nav class="mobile-bottom-bar">
     <a href="{{ route('home') }}" class="bottom-nav-item {{ request()->routeIs('home') ? 'active' : '' }}">
@@ -171,17 +262,22 @@
       <span>Salles</span>
     </a>
     
+    @if(Auth::check() && Auth::user()->isHost())
     <div class="bottom-nav-center">
       <a href="{{ route('venues.create') }}" class="bottom-nav-fab">
         <i class="fa-solid fa-plus"></i>
       </a>
     </div>
+    @endif
 
     <a href="{{ route('messages.index') }}" class="bottom-nav-item {{ request()->routeIs('messages.*') ? 'active' : '' }}">
       <div style="position:relative;">
         <i class="fa-solid fa-comment-dots"></i>
         @auth
-          <span style="position: absolute; top: -5px; right: -8px; background: #ef4444; color: white; border-radius: 50%; width: 14px; height: 14px; font-size: 0.6rem; display: flex; align-items: center; justify-content: center;">2</span>
+          @php $unreadCount = \App\Models\Message::where('receiver_id', Auth::id())->where('is_read', false)->count(); @endphp
+          @if($unreadCount > 0)
+            <span style="position: absolute; top: -5px; right: -8px; background: #ef4444; color: white; border-radius: 50%; padding: 0 4px; min-width: 14px; height: 14px; font-size: 0.6rem; display: flex; align-items: center; justify-content: center; font-weight: bold;">{{ $unreadCount }}</span>
+          @endif
         @endauth
       </div>
       <span>Messages</span>
@@ -199,6 +295,7 @@
       </a>
     @endauth
   </nav>
+  @endif
 
   <script>
     // Responsive Menu Toggle
@@ -234,6 +331,33 @@
         }
       });
     }
+
+    // Dynamic Sticky Header
+    const header = document.querySelector('.header');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        header.classList.add('header-scrolled');
+      } else {
+        header.classList.remove('header-scrolled');
+      }
+    });
+
+    // Page Loader Logic
+    window.addEventListener('load', () => {
+      const loader = document.getElementById('page-loader');
+      if (loader) {
+        // Un léger délai pour profiter de l'animation de chargement
+        setTimeout(() => {
+          loader.classList.add('loaded');
+          // Suppression du DOM après la transition
+          setTimeout(() => {
+            if (loader.parentNode) {
+              loader.parentNode.removeChild(loader);
+            }
+          }, 800);
+        }, 500);
+      }
+    });
   </script>
 
   <!-- AOS Animation Initialization -->

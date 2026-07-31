@@ -30,6 +30,15 @@ export default function AuthenticatedLayout({ header, children }) {
                                 >
                                     Dashboard
                                 </NavLink>
+                                {user?.role === 'admin' && (
+                                    <NavLink
+                                        href={route('admin.dashboard')}
+                                        active={route().current('admin.*')}
+                                        className="text-purple-600 font-bold"
+                                    >
+                                        Administration
+                                    </NavLink>
+                                )}
                             </div>
                         </div>
 
@@ -134,6 +143,15 @@ export default function AuthenticatedLayout({ header, children }) {
                         >
                             Dashboard
                         </ResponsiveNavLink>
+                        {user?.role === 'admin' && (
+                            <ResponsiveNavLink
+                                href={route('admin.dashboard')}
+                                active={route().current('admin.*')}
+                                className="text-purple-600 font-bold"
+                            >
+                                Administration
+                            </ResponsiveNavLink>
+                        )}
                     </div>
 
                     <div className="border-t border-gray-200 pb-1 pt-4 dark:border-gray-600">
@@ -171,6 +189,36 @@ export default function AuthenticatedLayout({ header, children }) {
             )}
 
             <main>{children}</main>
+
+            {/* Mobile Bottom Navigation Bar */}
+            <nav className="mobile-bottom-bar">
+                <a href={route('home')} className={`bottom-nav-item ${route().current('home') ? 'active' : ''}`}>
+                    <i className="fa-solid fa-house"></i>
+                    <span>Accueil</span>
+                </a>
+                <a href={route('venues.index')} className={`bottom-nav-item ${route().current('venues.*') && !route().current('venues.create') ? 'active' : ''}`}>
+                    <i className="fa-solid fa-building"></i>
+                    <span>Salles</span>
+                </a>
+                
+                {(user && (user.role === 'host' || user.role === 'admin')) && (
+                    <div className="bottom-nav-center">
+                        <a href={route('venues.create')} className="bottom-nav-fab">
+                            <i className="fa-solid fa-plus"></i>
+                        </a>
+                    </div>
+                )}
+
+                <a href={route('messages.index')} className={`bottom-nav-item ${route().current('messages.*') ? 'active' : ''}`}>
+                    <i className="fa-solid fa-comment-dots"></i>
+                    <span>Messages</span>
+                </a>
+                
+                <Link href={route('dashboard')} className={`bottom-nav-item ${route().current('dashboard') ? 'active' : ''}`}>
+                    <i className="fa-solid fa-user"></i>
+                    <span>Profil</span>
+                </Link>
+            </nav>
         </div>
     );
 }

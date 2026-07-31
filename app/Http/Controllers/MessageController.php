@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Venue;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class MessageController extends Controller
 {
@@ -28,8 +29,8 @@ class MessageController extends Controller
 
         $contacts = User::whereIn('id', $contactIds)->get();
 
-        $activeContactId = $request->get('contact', $contacts->first()->id ?? 2);
-        $activeContact = User::find($activeContactId) ?? $contacts->first();
+        $activeContactId = $request->get('contact', $contacts->first()?->id);
+        $activeContact = User::find($activeContactId) ?? clone Auth::user();
 
         // Selected venue context if passed
         $selectedVenue = null;
@@ -68,18 +69,25 @@ class MessageController extends Controller
         $data = $request->validate([
             'receiver_id' => 'required|exists:users,id',
             'venue_id' => 'nullable|exists:venues,id',
-            'content' => 'required|string',
+            'content' => 'nullable|string|required_without:attachment',
+            'attachment' => 'nullable|image|max:5120', // max 5MB image
         ]);
+
+        $attachmentPath = null;
+        if ($request->hasFile('attachment')) {
+            $attachmentPath = $request->file('attachment')->store('messages/attachments', 'public');
+        }
 
         $message = Message::create([
             'sender_id' => Auth::id() ?? 1,
             'receiver_id' => $data['receiver_id'],
             'venue_id' => $data['venue_id'] ?? null,
-            'content' => $data['content'],
+            'content' => $data['content'] ?? '',
+            'attachment' => $attachmentPath,
             'is_read' => false,
         ]);
 
-        if ($request->wantsJson()) {
+        if ($request->wantsJson() || $request->ajax()) {
             return response()->json([
                 'success' => true,
                 'message' => $message->load(['sender', 'venue']),
@@ -87,6 +95,37 @@ class MessageController extends Controller
         }
 
         return back()->with('success', 'Message envoyé !');
+    }
+
+    public function fetch(Request $request, $contactId)
+    {
+        $userId = Auth::id() ?? 1;
+        $lastMessageId = $request->get('last_id', 0);
+
+        $messages = Message::with(['sender', 'venue'])
+            ->where(function($q) use ($userId, $contactId) {
+                $q->where('sender_id', $userId)->where('receiver_id', $contactId);
+            })
+            ->orWhere(function($q) use ($userId, $contactId) {
+                $q->where('sender_id', $contactId)->where('receiver_id', $userId);
+            })
+            ->where('id', '>', $lastMessageId)
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        return response()->json(['messages' => $messages]);
+    }
+
+    public function markAsRead(Request $request, $contactId)
+    {
+        $userId = Auth::id() ?? 1;
+
+        Message::where('sender_id', $contactId)
+            ->where('receiver_id', $userId)
+            ->where('is_read', false)
+            ->update(['is_read' => true]);
+
+        return response()->json(['success' => true]);
     }
 
     public function scheduleVisit(Request $request)

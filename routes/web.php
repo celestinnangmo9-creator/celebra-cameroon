@@ -39,7 +39,18 @@ Route::middleware('auth')->group(function () {
     // Messages & Visits Routes
     Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
     Route::post('/messages', [MessageController::class, 'store'])->name('messages.store');
+    Route::get('/messages/fetch/{contact}', [MessageController::class, 'fetch'])->name('messages.fetch');
+    Route::post('/messages/mark-as-read/{contact}', [MessageController::class, 'markAsRead'])->name('messages.markAsRead');
     Route::post('/appointments', [MessageController::class, 'scheduleVisit'])->name('appointments.store');
+    // Admin Routes
+    Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\AdminController::class, 'index'])->name('dashboard');
+        Route::get('/venues', [\App\Http\Controllers\AdminController::class, 'venues'])->name('venues');
+        Route::patch('/venues/{id}/status', [\App\Http\Controllers\AdminController::class, 'updateVenueStatus'])->name('venues.updateStatus');
+        Route::get('/users', [\App\Http\Controllers\AdminController::class, 'users'])->name('users');
+        Route::patch('/users/{id}/status', [\App\Http\Controllers\AdminController::class, 'updateUserStatus'])->name('users.updateStatus');
+        Route::get('/transactions', [\App\Http\Controllers\AdminController::class, 'transactions'])->name('transactions');
+    });
 });
 
 // About & Contact Static Views

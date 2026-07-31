@@ -38,7 +38,34 @@ class DashboardController extends Controller
             ->orderBy('scheduled_at', 'asc')
             ->get();
 
+        // Calcul des performances des salles
+        $venuePerformances = $userVenues->map(function ($venue) use ($allBookings) {
+            $venueBookings = $allBookings->where('venue_id', $venue->id);
+            return [
+                'id' => $venue->id,
+                'title' => $venue->title,
+                'city' => $venue->city,
+                'bookings_count' => $venueBookings->count(),
+                'revenue' => $venueBookings->where('status', 'confirmed')->sum('total_price')
+            ];
+        })->sortByDesc('revenue')->values()->take(5);
+
+        // ----------------------------------------------------
+        // DONNÉES DU CLIENT (LOCATAIRE)
+        // ----------------------------------------------------
+        $allClientBookings = Booking::with(['venue'])->where('user_id', $userId)->get();
+        $clientTotalSpent = $allClientBookings->where('status', 'confirmed')->sum('total_price');
+        $clientPendingCount = $allClientBookings->where('status', 'pending')->count();
+        $clientRecentBookings = $allClientBookings->sortByDesc('created_at')->take(10)->values();
+
+        $clientAppointments = Appointment::with(['venue'])
+            ->where('user_id', $userId)
+            ->where('scheduled_at', '>=', now())
+            ->orderBy('scheduled_at', 'asc')
+            ->get();
+
         return Inertia::render('Dashboard', [
+            // Données Hôte
             'userVenues' => $userVenues,
             'totalVenues' => $totalVenues,
             'totalBookings' => $totalBookings,
@@ -46,6 +73,13 @@ class DashboardController extends Controller
             'pendingBookingsCount' => $pendingBookingsCount,
             'recentBookings' => $recentBookings,
             'upcomingAppointments' => $upcomingAppointments,
+            'venuePerformances' => $venuePerformances,
+            // Données Client
+            'clientTotalSpent' => $clientTotalSpent,
+            'clientPendingCount' => $clientPendingCount,
+            'clientRecentBookings' => $clientRecentBookings,
+            'clientAppointments' => $clientAppointments,
+            
             'userRole' => Auth::user()->role,
         ]);
     }
