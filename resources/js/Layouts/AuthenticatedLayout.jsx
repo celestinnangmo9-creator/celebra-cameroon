@@ -7,13 +7,38 @@ import { Link, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
 export default function AuthenticatedLayout({ header, children }) {
-    const user = usePage().props.auth.user;
+    const { auth, flash } = usePage().props;
+    const user = auth.user;
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
 
     return (
         <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
+            {/* Flash Messages */}
+            {(flash?.success || flash?.error || flash?.message) && (
+                <div className="fixed top-24 right-4 z-[100] flex flex-col gap-2 pointer-events-none">
+                    {flash.success && (
+                        <div className="bg-emerald-100 border-l-4 border-emerald-500 text-emerald-800 px-5 py-4 rounded shadow-lg flex items-center gap-3 pointer-events-auto">
+                            <i className="fa-solid fa-circle-check text-emerald-600 text-xl"></i>
+                            <div className="font-medium">{flash.success}</div>
+                        </div>
+                    )}
+                    {flash.error && (
+                        <div className="bg-red-100 border-l-4 border-red-500 text-red-800 px-5 py-4 rounded shadow-lg flex items-center gap-3 pointer-events-auto">
+                            <i className="fa-solid fa-triangle-exclamation text-red-600 text-xl"></i>
+                            <div className="font-medium">{flash.error}</div>
+                        </div>
+                    )}
+                    {flash.message && (
+                        <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-800 px-5 py-4 rounded shadow-lg flex items-center gap-3 pointer-events-auto">
+                            <i className="fa-solid fa-circle-info text-blue-600 text-xl"></i>
+                            <div className="font-medium">{flash.message}</div>
+                        </div>
+                    )}
+                </div>
+            )}
+
             <nav className="border-b border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 justify-between">

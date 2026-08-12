@@ -7,6 +7,7 @@ use App\Models\Venue;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Inertia\Inertia;
 
 class BookingController extends Controller
 {
@@ -28,7 +29,10 @@ class BookingController extends Controller
             ->latest()
             ->get();
 
-        return view('bookings.index', compact('myBookings', 'receivedBookings'));
+        return Inertia::render('Bookings/Index', [
+            'myBookings' => $myBookings,
+            'receivedBookings' => $receivedBookings
+        ]);
     }
 
     public function store(Request $request)

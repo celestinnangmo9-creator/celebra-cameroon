@@ -9,6 +9,7 @@ use App\Models\Venue;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
 
 class MessageController extends Controller
 {
@@ -61,7 +62,14 @@ class MessageController extends Controller
 
         $allVenues = Venue::where('status', 'active')->get();
 
-        return view('messages.index', compact('contacts', 'activeContact', 'messages', 'selectedVenue', 'appointments', 'allVenues'));
+        return Inertia::render('Messages/Index', [
+            'contacts' => $contacts,
+            'activeContact' => $activeContact,
+            'messages' => $messages,
+            'selectedVenue' => $selectedVenue,
+            'appointments' => $appointments,
+            'allVenues' => $allVenues
+        ]);
     }
 
     public function store(Request $request)

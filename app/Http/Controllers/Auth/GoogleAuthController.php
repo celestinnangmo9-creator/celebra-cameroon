@@ -22,7 +22,7 @@ class GoogleAuthController extends Controller
                 ->stateless()
                 ->setHttpClient(new \GuzzleHttp\Client(['verify' => false]))
                 ->user();
-            
+
             // On cherche l'utilisateur par email ou on le crée
             $user = User::firstOrCreate(
                 ['email' => $googleUser->getEmail()],

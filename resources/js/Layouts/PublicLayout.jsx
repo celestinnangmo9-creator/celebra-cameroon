@@ -3,12 +3,24 @@ import MobileBottomNav from '@/Components/MobileBottomNav';
 import { useState, useEffect } from 'react';
 
 export default function PublicLayout({ children }) {
-    const { auth } = usePage().props;
+    const { auth, flash } = usePage().props;
     const user = auth?.user;
     
     const [scrolled, setScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [userMenuOpen, setUserMenuOpen] = useState(false);
+
+    useEffect(() => {
+        if (window.AOS) {
+            window.AOS.init({
+                duration: 800,
+                once: true,
+                offset: 50,
+                easing: 'ease-out-cubic'
+            });
+            window.AOS.refresh();
+        }
+    }, []);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -74,51 +86,83 @@ export default function PublicLayout({ children }) {
                             <i className="fa-solid fa-moon"></i>
                         </button>
 
-                        <div className="user-menu-dropdown relative">
+                        <div className="relative">
                             <button 
-                                className="user-menu-btn" 
                                 id="desktop-user-btn"
+                                className="flex items-center gap-3 bg-white border border-gray-200 rounded-full px-4 py-2 hover:shadow-md transition-shadow duration-200"
                                 onClick={(e) => { e.stopPropagation(); setUserMenuOpen(!userMenuOpen); }}
                             >
-                                <i className="fa-solid fa-bars ml-1 text-lg"></i>
-                                <div className="user-menu-avatar">
+                                <i className="fa-solid fa-bars text-gray-500"></i>
+                                <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center overflow-hidden">
                                     {user ? (
-                                        <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=059669&color=fff`} alt="" className="rounded-full w-full h-full" />
+                                        <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=059669&color=fff`} alt="" className="w-full h-full object-cover" />
                                     ) : (
-                                        <i className="fa-solid fa-user"></i>
+                                        <i className="fa-solid fa-user text-sm"></i>
                                     )}
                                 </div>
                             </button>
-                            <div className={`user-menu-content ${userMenuOpen ? 'show' : ''}`} id="desktop-user-menu">
-                                {user ? (
-                                    <>
-                                        <Link href={route('dashboard')} className="font-semibold">Tableau de bord</Link>
-                                        <Link href={route('messages.index')}>Messagerie</Link>
-                                        <Link href={route('bookings.index')}>Mes réservations</Link>
-                                        <div className="user-menu-divider"></div>
-                                        {user.role === 'host' && (
-                                            <>
-                                                <Link href={route('venues.create')}>Publier un lieu</Link>
-                                                <div className="user-menu-divider"></div>
-                                            </>
-                                        )}
-                                        <Link href={route('logout')} method="post" as="button" className="w-full text-left">
-                                            Déconnexion
-                                        </Link>
-                                    </>
-                                ) : (
-                                    <>
-                                        <Link href={route('login')} className="font-semibold">Connexion</Link>
-                                        <Link href={route('register')}>Inscription</Link>
-                                        <div className="user-menu-divider"></div>
-                                        <Link href={route('venues.create')}>Mettre mon espace en ligne</Link>
-                                    </>
-                                )}
-                            </div>
+                            
+                            {userMenuOpen && (
+                                <div 
+                                    className="absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 py-3 z-50 flex flex-col transform origin-top-right transition-all"
+                                    id="desktop-user-menu"
+                                >
+                                    {user ? (
+                                        <>
+                                            <div className="px-5 py-2 mb-2 border-b border-gray-100">
+                                                <div className="font-bold text-gray-900">{user.name}</div>
+                                                <div className="text-xs text-gray-500 truncate">{user.email}</div>
+                                            </div>
+                                            <Link href={route('dashboard')} className="px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-emerald-600 transition-colors font-medium flex items-center gap-3"><i className="fa-solid fa-chart-line w-4"></i> Tableau de bord</Link>
+                                            <Link href={route('messages.index')} className="px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-emerald-600 transition-colors font-medium flex items-center gap-3"><i className="fa-solid fa-envelope w-4"></i> Messagerie</Link>
+                                            <Link href={route('bookings.index')} className="px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-emerald-600 transition-colors font-medium flex items-center gap-3"><i className="fa-solid fa-calendar-check w-4"></i> Mes réservations</Link>
+                                            <div className="h-px bg-gray-100 my-2"></div>
+                                            {user.role === 'host' && (
+                                                <>
+                                                    <Link href={route('venues.create')} className="px-5 py-2.5 text-sm text-emerald-600 hover:bg-gray-50 transition-colors font-bold flex items-center gap-3"><i className="fa-solid fa-plus w-4"></i> Publier un lieu</Link>
+                                                    <div className="h-px bg-gray-100 my-2"></div>
+                                                </>
+                                            )}
+                                            <Link href={route('logout')} method="post" as="button" className="px-5 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors font-medium text-left flex items-center gap-3"><i className="fa-solid fa-arrow-right-from-bracket w-4"></i> Déconnexion</Link>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Link href={route('login')} className="px-5 py-2.5 text-sm text-gray-900 hover:bg-gray-50 transition-colors font-bold">Connexion</Link>
+                                            <Link href={route('register')} className="px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors font-medium">Inscription</Link>
+                                            <div className="h-px bg-gray-100 my-2"></div>
+                                            <Link href={route('venues.create')} className="px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors font-medium flex items-center gap-2"><i className="fa-solid fa-house-medical w-4 text-emerald-600"></i> Mettre mon espace en ligne</Link>
+                                        </>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
             </header>
+
+            {/* Flash Messages */}
+            {(flash?.success || flash?.error || flash?.message) && (
+                <div className="fixed top-24 right-4 z-[100] flex flex-col gap-2 pointer-events-none">
+                    {flash.success && (
+                        <div className="bg-emerald-100 border-l-4 border-emerald-500 text-emerald-800 px-5 py-4 rounded shadow-lg flex items-center gap-3 pointer-events-auto">
+                            <i className="fa-solid fa-circle-check text-emerald-600 text-xl"></i>
+                            <div className="font-medium">{flash.success}</div>
+                        </div>
+                    )}
+                    {flash.error && (
+                        <div className="bg-red-100 border-l-4 border-red-500 text-red-800 px-5 py-4 rounded shadow-lg flex items-center gap-3 pointer-events-auto">
+                            <i className="fa-solid fa-triangle-exclamation text-red-600 text-xl"></i>
+                            <div className="font-medium">{flash.error}</div>
+                        </div>
+                    )}
+                    {flash.message && (
+                        <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-800 px-5 py-4 rounded shadow-lg flex items-center gap-3 pointer-events-auto">
+                            <i className="fa-solid fa-circle-info text-blue-600 text-xl"></i>
+                            <div className="font-medium">{flash.message}</div>
+                        </div>
+                    )}
+                </div>
+            )}
 
             {/* Main Content */}
             <main className="flex-grow">

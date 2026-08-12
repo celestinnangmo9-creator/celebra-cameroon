@@ -1,9 +1,22 @@
 import '../css/app.css';
 import './bootstrap';
 
-import { createInertiaApp } from '@inertiajs/react';
+import { createInertiaApp, router } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
+
+// Globally initialize AOS animations on page navigation
+router.on('navigate', () => {
+    if (window.AOS) {
+        window.AOS.init({
+            duration: 800,
+            once: true,
+            offset: 50,
+            easing: 'ease-out-cubic'
+        });
+        window.AOS.refresh();
+    }
+});
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
