@@ -11,10 +11,10 @@ export default function Dashboard({ auth, userRole, userVenues, totalVenues, tot
                     <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Aperçu Global</h3>
                     <p className="text-sm text-gray-500 dark:text-gray-400">Gérez vos espaces et suivez vos revenus au Cameroun.</p>
                 </div>
-                <Link href={route('venues.create')} className="inline-flex items-center rounded-lg bg-amber-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-amber-500/30 transition-all hover:-translate-y-1 hover:bg-amber-700 hover:shadow-amber-600/40">
+                <a href={route('venues.create')} className="inline-flex items-center rounded-lg bg-amber-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-amber-500/30 transition-all hover:-translate-y-1 hover:bg-amber-700 hover:shadow-amber-600/40">
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path></svg>
                     Ajouter un espace
-                </Link>
+                </a>
             </div>
 
             {/* KPIs */}
@@ -139,10 +139,10 @@ export default function Dashboard({ auth, userRole, userVenues, totalVenues, tot
                     <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Bienvenue, {auth.user.name}</h3>
                     <p className="text-sm text-gray-500 dark:text-gray-400">Retrouvez l'historique de vos réservations et vos visites planifiées.</p>
                 </div>
-                <Link href="/" className="inline-flex items-center rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/30 transition-all hover:-translate-y-1 hover:bg-emerald-700 hover:shadow-emerald-600/40">
+                <a href="/" className="inline-flex items-center rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/30 transition-all hover:-translate-y-1 hover:bg-emerald-700 hover:shadow-emerald-600/40">
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     Rechercher une salle
-                </Link>
+                </a>
             </div>
 
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700/50 overflow-hidden p-8 text-center">

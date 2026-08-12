@@ -12,8 +12,8 @@ class VenueController extends Controller
 {
     public function home()
     {
-        $featuredVenues = Venue::where('is_featured', true)->where('status', 'active')->take(6)->get();
-        $latestVenues = Venue::where('status', 'active')->latest()->take(6)->get();
+        $featuredVenues = Venue::with(['user', 'reviews'])->where('is_featured', true)->where('status', 'active')->take(6)->get();
+        $latestVenues = Venue::with(['user', 'reviews'])->where('status', 'active')->latest()->take(6)->get();
         
         $regionsAndCities = [
             'Adamaoua' => ['Ngaoundéré', 'Banyo', 'Meiganga', 'Tignère', 'Tibati'],
@@ -29,7 +29,12 @@ class VenueController extends Controller
         ];
         $categories = ['Salle de fête', 'Salle de Conférence', 'Espace vert', 'Bureau & Coworking', 'Terrasse VIP', 'Pavillon / Villa'];
 
-        return view('home', compact('featuredVenues', 'latestVenues', 'regionsAndCities', 'categories'));
+        return Inertia::render('Home', [
+            'featuredVenues' => $featuredVenues,
+            'latestVenues' => $latestVenues,
+            'regionsAndCities' => $regionsAndCities,
+            'categories' => $categories
+        ]);
     }
 
     public function index(Request $request)
@@ -70,7 +75,7 @@ class VenueController extends Controller
             });
         }
 
-        $venues = $query->latest()->paginate(9)->withQueryString();
+        $venues = $query->with(['user', 'reviews'])->latest()->paginate(9)->withQueryString();
 
         $regionsAndCities = [
             'Adamaoua' => ['Ngaoundéré', 'Banyo', 'Meiganga', 'Tignère', 'Tibati'],
@@ -86,7 +91,11 @@ class VenueController extends Controller
         ];
         $categories = ['Salle de fête', 'Salle de Conférence', 'Espace vert', 'Bureau & Coworking', 'Terrasse VIP', 'Pavillon / Villa'];
 
-        return view('venues.index', compact('venues', 'regionsAndCities', 'categories'));
+        return Inertia::render('Venues/Index', [
+            'venues' => $venues,
+            'regionsAndCities' => $regionsAndCities,
+            'categories' => $categories
+        ]);
     }
 
     public function show($id)
@@ -111,7 +120,11 @@ class VenueController extends Controller
         }
         $bookedDates = array_unique($bookedDates);
 
-        return view('venues.show', compact('venue', 'similarVenues', 'bookedDates'));
+        return Inertia::render('Venues/Show', [
+            'venue' => $venue,
+            'similarVenues' => $similarVenues,
+            'bookedDates' => $bookedDates
+        ]);
     }
 
     public function create()
@@ -142,28 +155,13 @@ class VenueController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(\App\Http\Requests\StoreVenueRequest $request)
     {
         if (!Auth::user()->isHost()) {
             return redirect()->route('home')->with('error', 'Action non autorisée. Devenez hôte pour publier un espace.');
         }
 
-        $data = $request->validate([
-            'title' => 'required|string|max:255',
-            'category' => 'required|string',
-            'region' => 'required|string',
-            'city' => 'required|string',
-            'district' => 'required|string',
-            'address' => 'required|string',
-            'capacity' => 'required|integer|min:1',
-            'price_per_day' => 'required|numeric|min:0',
-            'price_per_hour' => 'nullable|numeric|min:0',
-            'description' => 'required|string',
-            'amenities' => 'nullable|array',
-            'main_image' => 'required|file|mimes:jpg,jpeg,png,webp|max:10240',
-            'gallery' => 'nullable|array',
-            'gallery.*' => 'file|mimes:jpg,jpeg,png,webp,mp4,mov,avi|max:51200',
-        ]);
+        $data = $request->validated();
 
         $mainImagePath = '';
         if ($request->hasFile('main_image')) {
@@ -236,31 +234,11 @@ class VenueController extends Controller
         ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(\App\Http\Requests\UpdateVenueRequest $request, $id)
     {
         $venue = Venue::findOrFail($id);
 
-        if (Auth::check() && Auth::id() !== $venue->user_id && !Auth::user()->isAdmin()) {
-            return redirect()->route('venues.index')->with('error', 'Action non autorisée.');
-        }
-
-        $data = $request->validate([
-            'title' => 'required|string|max:255',
-            'category' => 'required|string',
-            'region' => 'required|string',
-            'city' => 'required|string',
-            'district' => 'required|string',
-            'address' => 'required|string',
-            'capacity' => 'required|integer|min:1',
-            'price_per_day' => 'required|numeric|min:0',
-            'price_per_hour' => 'nullable|numeric|min:0',
-            'description' => 'required|string',
-            'amenities' => 'nullable|array',
-            'main_image' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:10240',
-            'gallery' => 'nullable|array',
-            'gallery.*' => 'file|mimes:jpg,jpeg,png,webp,mp4,mov,avi|max:51200',
-            'status' => 'required|in:active,maintenance,booked',
-        ]);
+        $data = $request->validated();
 
         $mainImagePath = $venue->main_image;
         if ($request->hasFile('main_image')) {

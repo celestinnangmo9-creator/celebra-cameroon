@@ -44,9 +44,9 @@ export default function AdminTransactions({ auth, bookings }) {
                                                 <div className="text-xs text-gray-500">{booking.user?.email}</div>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <Link href={route('venues.show', booking.venue?.id)} className="font-bold text-indigo-600 hover:underline text-sm truncate max-w-[200px] block">
+                                                <a href={route('venues.show', booking.venue?.id)} className="font-bold text-indigo-600 hover:underline text-sm truncate max-w-[200px] block">
                                                     {booking.venue?.title}
-                                                </Link>
+                                                </a>
                                                 <div className="text-xs text-gray-500 mt-1">
                                                     Du {new Date(booking.start_date).toLocaleDateString('fr-FR')} au {new Date(booking.end_date).toLocaleDateString('fr-FR')}
                                                 </div>

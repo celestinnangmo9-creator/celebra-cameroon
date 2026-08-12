@@ -12,13 +12,16 @@ class GoogleAuthController extends Controller
 {
     public function redirect()
     {
-        return Socialite::driver('google')->redirect();
+        return Socialite::driver('google')->stateless()->redirect();
     }
 
     public function callback()
     {
         try {
-            $googleUser = Socialite::driver('google')->user();
+            $googleUser = Socialite::driver('google')
+                ->stateless()
+                ->setHttpClient(new \GuzzleHttp\Client(['verify' => false]))
+                ->user();
             
             // On cherche l'utilisateur par email ou on le crée
             $user = User::firstOrCreate(
@@ -40,7 +43,9 @@ class GoogleAuthController extends Controller
 
             return redirect()->intended(route('dashboard', absolute: false));
         } catch (\Exception $e) {
-            return redirect('/login')->with('error', 'Erreur lors de la connexion avec Google. Veuillez réessayer.');
+            dd($e);
+            // \Illuminate\Support\Facades\Log::error('Google Auth Error: ' . $e->getMessage());
+            // return redirect('/login')->with('error', 'Erreur lors de la connexion avec Google. Veuillez réessayer.');
         }
     }
 }

@@ -48,9 +48,9 @@ export default function AdminVenues({ auth, venues }) {
                                     {venues.data.map((venue) => (
                                         <tr key={venue.id} className="hover:bg-gray-50">
                                             <td className="px-6 py-4">
-                                                <Link href={route('venues.show', venue.id)} className="font-bold text-indigo-600 hover:underline">
+                                                <a href={route('venues.show', venue.id)} className="font-bold text-indigo-600 hover:underline">
                                                     {venue.title}
-                                                </Link>
+                                                </a>
                                                 <div className="text-xs text-gray-500 mt-1">{venue.city}</div>
                                             </td>
                                             <td className="px-6 py-4">

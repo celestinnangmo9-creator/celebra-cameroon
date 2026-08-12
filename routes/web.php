@@ -23,7 +23,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    
+
     // Venues Management Routes
     Route::get('/venues/create', [VenueController::class, 'create'])->name('venues.create');
     Route::post('/venues', [VenueController::class, 'store'])->name('venues.store');
@@ -54,7 +54,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // About & Contact Static Views
-Route::view('/about', 'about')->name('about');
-Route::view('/contact', 'contact')->name('contact');
+Route::inertia('/about', 'About')->name('about');
+Route::inertia('/contact', 'Contact')->name('contact');
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

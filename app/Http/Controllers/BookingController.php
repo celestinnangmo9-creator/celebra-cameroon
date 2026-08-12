@@ -44,6 +44,23 @@ class BookingController extends Controller
 
         $venue = Venue::findOrFail($data['venue_id']);
 
+        // Check for overlapping bookings
+        $hasOverlap = Booking::where('venue_id', $venue->id)
+            ->whereIn('status', ['pending', 'confirmed'])
+            ->where(function ($query) use ($data) {
+                $query->whereBetween('start_date', [$data['start_date'], $data['end_date']])
+                      ->orWhereBetween('end_date', [$data['start_date'], $data['end_date']])
+                      ->orWhere(function ($q) use ($data) {
+                          $q->where('start_date', '<=', $data['start_date'])
+                            ->where('end_date', '>=', $data['end_date']);
+                      });
+            })
+            ->exists();
+
+        if ($hasOverlap) {
+            return back()->withErrors(['start_date' => 'Ce lieu est déjà réservé à ces dates.'])->withInput();
+        }
+
         $startDate = Carbon::parse($data['start_date']);
         $endDate = Carbon::parse($data['end_date']);
         $daysCount = max(1, $startDate->diffInDays($endDate) + 1);
@@ -61,6 +78,9 @@ class BookingController extends Controller
             'status' => 'pending',
             'special_requests' => $data['special_requests'] ?? null,
         ]);
+
+        // Dispatch background job to send email
+        \App\Jobs\SendBookingNotification::dispatch($booking);
 
         return redirect()->route('bookings.index')->with('success', 'Votre demande de réservation pour ' . $venue->title . ' a été transmise à l\'hôte !');
     }

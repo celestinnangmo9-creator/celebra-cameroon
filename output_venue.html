@@ -1,9 +1,4 @@
-@extends('layouts.app')
-@php $hideMobileNav = true; @endphp
 
-@section('title', $venue->title . ' - Celebra Cameroon')
-
-@section('content')
 
 <!-- Flatpickr CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -537,7 +532,7 @@
 <!-- Mobile Sticky Bottom Bar -->
 <div class="mobile-bottom-bar-action">
   <div>
-    <div style="font-weight: 800; font-size: 1.2rem; color: var(--text-main);">{{ number_format($venue->price_per_day, 0, ',', ' ') }} <span style="font-size:0.85rem; font-weight:500;">FCFA / jour</span></div>
+    <div style="font-weight: 800; font-size: 1.2rem; color: var(--text-main);">350 000 <span style="font-size:0.85rem; font-weight:500;">FCFA / jour</span></div>
     <div style="font-size: 0.85rem; color: var(--primary); font-weight:600;"><i class="fa-solid fa-bolt"></i> Dispo</div>
   </div>
   <a href="#booking-section" class="btn btn-primary" style="padding: 0.8rem 1.5rem; border-radius: 12px;">
@@ -550,75 +545,51 @@
   <!-- Title Section -->
   <div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-start;">
     <div>
-      <h1 class="venue-title">{{ $venue->title }}</h1>
+      <h1 class="venue-title">Palais des Lumières &amp; Espace Banquet</h1>
       <div class="venue-meta" style="border-bottom: none; padding-bottom: 0; margin-bottom: 0;">
-        <span><i class="fa-solid fa-star" style="color: #f59e0b;"></i> <strong style="color:var(--text-main);">{{ number_format($venue->rating, 2) }}</strong> ({{ $venue->reviews_count }} avis)</span>
-        <span style="text-decoration: underline; cursor: pointer;"><i class="fa-solid fa-location-dot" style="color: var(--primary);"></i> {{ $venue->district }}, {{ $venue->city }} - {{ $venue->region }}</span>
+        <span><i class="fa-solid fa-star" style="color: #f59e0b;"></i> <strong style="color:var(--text-main);">4.95</strong> (18 avis)</span>
+        <span style="text-decoration: underline; cursor: pointer;"><i class="fa-solid fa-location-dot" style="color: var(--primary);"></i> Bonapriso, Douala - </span>
       </div>
     </div>
     
-    @if(Auth::check() && (Auth::id() === $venue->user_id || Auth::user()->isAdmin()))
-      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: flex-end;">
-        <a href="{{ route('venues.edit', $venue->id) }}" class="btn btn-outline btn-sm" style="border-radius: 8px;"><i class="fa-solid fa-pen"></i> Éditer</a>
-        <form action="{{ route('venues.destroy', $venue->id) }}" method="POST" onsubmit="return confirm('Supprimer cet espace définitivement ?');">
-          @csrf
-          @method('DELETE')
-          <button type="submit" class="btn btn-ghost btn-sm" style="color:#ef4444; border-radius: 8px;"><i class="fa-solid fa-trash"></i></button>
-        </form>
       </div>
-    @endif
-  </div>
 
   <!-- Premium Gallery -->
-  @php
-    $gallery = is_array($venue->gallery_images) ? $venue->gallery_images : [];
-    $imgCount = count($gallery);
-  @endphp
-  <div class="premium-gallery" data-images="{{ $imgCount }}" data-aos="zoom-in" data-aos-duration="800">
+    <div class="premium-gallery" data-images="3" data-aos="zoom-in" data-aos-duration="800">
     <div class="main-img-wrapper">
-      <a href="{{ $venue->main_image }}" class="glightbox" data-gallery="venue-gallery" data-title="{{ $venue->title }}">
-        <img src="{{ $venue->main_image }}" alt="{{ $venue->title }}">
+      <a href="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&amp;fit=crop&amp;w=1200&amp;q=80" class="glightbox" data-gallery="venue-gallery" data-title="Palais des Lumières &amp; Espace Banquet">
+        <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&amp;fit=crop&amp;w=1200&amp;q=80" alt="Palais des Lumières &amp; Espace Banquet">
       </a>
     </div>
     
-    @php
-      $gallery = is_array($venue->gallery_images) ? $venue->gallery_images : [];
-      // Need 4 images to fill the Pinterest grid. If not enough, fallback gracefully.
-      $displayImgs = array_slice($gallery, 0, 4);
-    @endphp
-
-    @foreach($displayImgs as $idx => $img)
-      <div class="sub-img-wrapper" style="{{ $idx === 1 ? 'border-top-right-radius: 20px;' : ($idx === 3 ? 'border-bottom-right-radius: 20px;' : '') }}">
+    
+          <div class="sub-img-wrapper" style="">
         <!-- If it's a video, just show a thumbnail or video tag, for now assuming image -->
-        @if(Str::endsWith($img, ['.mp4', '.mov', '.avi']))
-          <a href="{{ $img }}" class="glightbox" data-gallery="venue-gallery" data-type="video" style="display: block; width: 100%; height: 100%;">
-            <video src="{{ $img }}" style="width: 100%; height: 100%; object-fit: cover;" muted autoplay loop></video>
+                  <a href="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&amp;fit=crop&amp;w=800&amp;q=80" class="glightbox" data-gallery="venue-gallery" style="display: block; width: 100%; height: 100%;">
+            <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&amp;fit=crop&amp;w=800&amp;q=80" alt="Gallery Image">
           </a>
-        @else
-          <a href="{{ $img }}" class="glightbox" data-gallery="venue-gallery" style="display: block; width: 100%; height: 100%;">
-            <img src="{{ $img }}" alt="Gallery Image">
+              </div>
+          <div class="sub-img-wrapper" style="border-top-right-radius: 20px;">
+        <!-- If it's a video, just show a thumbnail or video tag, for now assuming image -->
+                  <a href="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&amp;fit=crop&amp;w=800&amp;q=80" class="glightbox" data-gallery="venue-gallery" style="display: block; width: 100%; height: 100%;">
+            <img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&amp;fit=crop&amp;w=800&amp;q=80" alt="Gallery Image">
           </a>
-        @endif
-      </div>
-    @endforeach
-
+              </div>
+          <div class="sub-img-wrapper" style="">
+        <!-- If it's a video, just show a thumbnail or video tag, for now assuming image -->
+                  <a href="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&amp;fit=crop&amp;w=800&amp;q=80" class="glightbox" data-gallery="venue-gallery" style="display: block; width: 100%; height: 100%;">
+            <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&amp;fit=crop&amp;w=800&amp;q=80" alt="Gallery Image">
+          </a>
+              </div>
+    
     <!-- Hidden images for the lightbox if there are more than 4 -->
     <div style="display: none;">
-      @foreach(array_slice($gallery, 4) as $hiddenImg)
-        @if(Str::endsWith($hiddenImg, ['.mp4', '.mov', '.avi']))
-          <a href="{{ $hiddenImg }}" class="glightbox" data-gallery="venue-gallery" data-type="video"></a>
-        @else
-          <a href="{{ $hiddenImg }}" class="glightbox" data-gallery="venue-gallery"></a>
-        @endif
-      @endforeach
-    </div>
+          </div>
 
-    @if(count($gallery) > 0 || $venue->main_image)
-      <button class="show-all-photos-btn" onclick="document.querySelector('.glightbox').click()">
+          <button class="show-all-photos-btn" onclick="document.querySelector('.glightbox').click()">
         <i class="fa-solid fa-images"></i> Afficher toutes les photos
       </button>
-    @endif
-  </div>
+      </div>
 
   <div class="venue-content-layout">
     <!-- Left Column: Details -->
@@ -627,46 +598,64 @@
       <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 2rem; border-bottom: 1px solid var(--glass-border);">
         <div>
           <h2 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-main);">
-            Proposé par {{ explode(' ', trim($venue->user->name))[0] }}
+            Proposé par Jean-Paul
           </h2>
           <div style="display: flex; gap: 1rem; color: var(--text-muted);">
-            <span><i class="fa-solid fa-users"></i> {{ $venue->capacity }} invités max</span>
-            <span class="badge-category"><i class="fa-solid fa-champagne-glasses"></i> {{ $venue->category }}</span>
+            <span><i class="fa-solid fa-users"></i> 450 invités max</span>
+            <span class="badge-category"><i class="fa-solid fa-champagne-glasses"></i> Salle de fête</span>
           </div>
         </div>
-        <img src="{{ $venue->user->avatar ?? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80' }}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 1px solid var(--glass-border);" alt="Hôte">
+        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&amp;fit=crop&amp;w=300&amp;q=80" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 1px solid var(--glass-border);" alt="Hôte">
       </div>
 
       <!-- Description -->
       <div class="detail-section" data-aos="fade-up">
         <h3 class="detail-title">À propos de ce lieu</h3>
-        <p class="description-text">{{ $venue->description }}</p>
+        <p class="description-text">Le Palais des Lumières est une salle de fête luxueuse modulable pour vos mariages, galas d&#039;entreprises, soirées de prestige et anniversaires. Entièrement insonorisée et équipée d&#039;un groupe électrogène de secours de 150 kVA.</p>
       </div>
 
       <!-- Amenities -->
       <div class="detail-section" data-aos="fade-up" data-aos-delay="100">
         <h3 class="detail-title">Ce que propose ce lieu</h3>
         <div class="amenities-grid">
-          @if($venue->amenities && count($venue->amenities) > 0)
-            @foreach($venue->amenities as $amenity)
-              <div class="amenity-item">
+                                    <div class="amenity-item">
                 <i class="fa-solid fa-check text-emerald-500"></i>
-                {{ $amenity }}
+                Climatisation
               </div>
-            @endforeach
-          @else
-            <p style="color: var(--text-muted); grid-column: 1 / -1;">Équipements standards de l'hôte.</p>
-          @endif
-        </div>
+                          <div class="amenity-item">
+                <i class="fa-solid fa-check text-emerald-500"></i>
+                Groupe Électrogène
+              </div>
+                          <div class="amenity-item">
+                <i class="fa-solid fa-check text-emerald-500"></i>
+                Sonorisation Haute Fidélité
+              </div>
+                          <div class="amenity-item">
+                <i class="fa-solid fa-check text-emerald-500"></i>
+                Service Traiteur
+              </div>
+                          <div class="amenity-item">
+                <i class="fa-solid fa-check text-emerald-500"></i>
+                Parking Sécurisé 60 Places
+              </div>
+                          <div class="amenity-item">
+                <i class="fa-solid fa-check text-emerald-500"></i>
+                Écran LED Géant
+              </div>
+                          <div class="amenity-item">
+                <i class="fa-solid fa-check text-emerald-500"></i>
+                Espace Loge VIP
+              </div>
+                              </div>
       </div>
 
       <!-- Enhanced Host Profile -->
       <div class="detail-section" data-aos="fade-up" data-aos-delay="200">
         <div class="host-card">
-          <img src="{{ $venue->user->avatar ?? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80' }}" class="host-avatar" alt="Hôte">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&amp;fit=crop&amp;w=300&amp;q=80" class="host-avatar" alt="Hôte">
           <div>
-            <h3 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 0.2rem; color: var(--text-main);">Hôte : {{ $venue->user->name }}</h3>
-            <p style="color: var(--text-muted); margin-bottom: 1rem; font-weight: 500;">Membre depuis {{ $venue->user->created_at->format('M Y') }}</p>
+            <h3 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 0.2rem; color: var(--text-main);">Hôte : Jean-Paul Mbida</h3>
+            <p style="color: var(--text-muted); margin-bottom: 1rem; font-weight: 500;">Membre depuis Jul 2026</p>
             
             <div style="display: flex; gap: 1.5rem; align-items: center; margin-bottom: 1.5rem;">
               <span style="display:flex; align-items:center; gap:0.5rem; font-weight:700;"><i class="fa-solid fa-star" style="color:#f59e0b; font-size: 1.2rem;"></i> 12 Avis</span>
@@ -674,7 +663,7 @@
             </div>
 
             <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-              <a href="{{ route('messages.index', ['contact' => $venue->user_id, 'venue_id' => $venue->id]) }}" class="btn btn-primary" style="border-radius: 12px; padding: 0.8rem 1.5rem; box-shadow: 0 4px 15px rgba(5,150,105,0.2);">
+              <a href="http://192.168.1.145:8001/messages?contact=1&amp;venue_id=1" class="btn btn-primary" style="border-radius: 12px; padding: 0.8rem 1.5rem; box-shadow: 0 4px 15px rgba(5,150,105,0.2);">
                 <i class="fa-solid fa-paper-plane"></i> Contacter
               </a>
               <button onclick="document.getElementById('visit-modal').style.display='flex'" class="btn" style="background: rgba(255,255,255,0.8); color:var(--text-main); border:1px solid var(--glass-border); border-radius: 12px; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
@@ -691,12 +680,11 @@
       <div class="booking-widget-wrapper" data-aos="fade-left" data-aos-delay="200">
         <div class="booking-widget">
         <div class="booking-price">
-          {{ number_format($venue->price_per_day, 0, ',', ' ') }} <span>FCFA / nuit</span>
+          350 000 <span>FCFA / nuit</span>
         </div>
 
-        <form action="{{ route('bookings.store') }}" method="POST">
-          @csrf
-          <input type="hidden" name="venue_id" value="{{ $venue->id }}">
+        <form action="http://192.168.1.145:8001/bookings" method="POST">
+          <input type="hidden" name="_token" value="Ibca3W31Ul2vXz7iHVqajKDnj33PQSQEKd6A81DW" autocomplete="off">          <input type="hidden" name="venue_id" value="1">
           
           <div class="booking-form-wrapper" style="box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
             <div class="booking-input-group">
@@ -734,7 +722,7 @@
           <div style="display: flex; flex-direction: column; gap: 1rem; font-size: 1.05rem; color: var(--text-main);">
             <div style="display: flex; justify-content: space-between;">
               <span style="text-decoration: underline; color: var(--text-muted);">Prix x <span id="calc-days-count">1</span> jour(s)</span>
-              <span style="font-weight: 600;"><span id="calc-subtotal">{{ number_format($venue->price_per_day, 0, ',', ' ') }}</span> FCFA</span>
+              <span style="font-weight: 600;"><span id="calc-subtotal">350 000</span> FCFA</span>
             </div>
             <div style="display: flex; justify-content: space-between;">
               <span style="text-decoration: underline; color: var(--text-muted);">Frais de service (0%)</span>
@@ -743,7 +731,7 @@
             <hr style="border:none; border-top: 1px dashed var(--glass-border); margin: 1rem 0;">
             <div style="display: flex; justify-content: space-between; font-weight: 900; font-size: 1.4rem;">
               <span>Total estimé</span>
-              <span style="color: var(--primary);"><span id="calc-total-price">{{ number_format($venue->price_per_day, 0, ',', ' ') }}</span> FCFA</span>
+              <span style="color: var(--primary);"><span id="calc-total-price">350 000</span> FCFA</span>
             </div>
           </div>
 
@@ -760,8 +748,298 @@
 </div>
 
 <!-- Scripts for dynamic booking calculation and Flatpickr -->
-@section('scripts')
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Palais des Lumières &amp; Espace Banquet - Celebra Cameroon</title>
+  <meta name="description" content="Réservez ou publiez des salles de fête, espaces verts, bureaux et terrasses VIP à Douala, Yaoundé, Kribi et partout au Cameroun.">
+  
+  <!-- Google Fonts & FontAwesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- AOS Animation Library -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  
+  <!-- Custom Design System CSS -->
+  <link rel="stylesheet" href="http://192.168.1.145:8001/css/app.css?v=1786123969">
+    
+  <style>
+    /* Premium Page Loader */
+    #page-loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: var(--bg-main, #f8fafc);
+      z-index: 999999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s;
+      backdrop-filter: blur(10px);
+    }
+    
+    #page-loader.loaded {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .loader-content {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .loader-logo {
+      width: 90px;
+      height: auto;
+      z-index: 2;
+      animation: pulse-logo 2s infinite ease-in-out alternate;
+    }
+
+    .loader-spinner {
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-top-color: var(--primary, #059669);
+      border-right-color: var(--accent, #d97706);
+      animation: spin 1.5s linear infinite;
+      z-index: 1;
+      box-shadow: 0 0 20px rgba(5, 150, 105, 0.2);
+    }
+    
+    .loader-spinner::before {
+      content: '';
+      position: absolute;
+      top: 10px; left: 10px; right: 10px; bottom: 10px;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-top-color: var(--accent, #d97706);
+      border-left-color: var(--primary, #059669);
+      animation: spin-reverse 2s linear infinite;
+    }
+
+    @keyframes pulse-logo {
+      0% { transform: scale(0.9); opacity: 0.8; filter: drop-shadow(0 0 10px rgba(5, 150, 105, 0.3)); }
+      100% { transform: scale(1.1); opacity: 1; filter: drop-shadow(0 0 25px rgba(5, 150, 105, 0.6)); }
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes spin-reverse {
+      0% { transform: rotate(360deg); }
+      100% { transform: rotate(0deg); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Page Loader -->
+  <div id="page-loader">
+    <div class="loader-content">
+      <img src="http://192.168.1.145:8001/images/logo.png" alt="Celebra Cameroon Loader" class="loader-logo">
+      <div class="loader-spinner"></div>
+    </div>
+  </div>
+
+  <!-- Header & Navigation -->
+  <header class="header">
+    <div class="nav-container">
+      <a href="http://192.168.1.145:8001" class="logo" style="padding: 0.25rem 0;">
+        <img src="http://192.168.1.145:8001/images/logo.png" alt="Celebra Cameroon" class="logo-img">
+      </a>
+
+      <button id="mobile-menu-btn" class="btn btn-ghost" style="display: none; font-size: 1.5rem;">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+
+      <ul class="nav-links" id="nav-links">
+        <li><a href="http://192.168.1.145:8001" class="nav-link ">Accueil</a></li>
+        <li><a href="http://192.168.1.145:8001/venues" class="nav-link active">Lieux & Salles</a></li>
+        <li><a href="http://192.168.1.145:8001/about" class="nav-link ">À Propos</a></li>
+      </ul>
+
+      <div class="nav-actions">
+                  <a href="http://192.168.1.145:8001/venues/create" class="nav-link" style="font-weight: 600;">Mettre mon espace en ligne</a>
+                
+        <button id="theme-toggle-btn" class="btn btn-ghost" title="Basculer le mode sombre/clair" style="border-radius: 50%; width: 40px; height: 40px; padding: 0;">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+
+        <div class="user-menu-dropdown">
+          <button class="user-menu-btn" id="desktop-user-btn">
+            <i class="fa-solid fa-bars" style="margin-left: 0.2rem; font-size: 1.1rem;"></i>
+            <div class="user-menu-avatar">
+                              <i class="fa-solid fa-user"></i>
+                          </div>
+          </button>
+          <div class="user-menu-content" id="desktop-user-menu">
+                          <a href="http://192.168.1.145:8001/login" style="font-weight: 600;">Connexion</a>
+              <a href="http://192.168.1.145:8001/register">Inscription</a>
+              <div class="user-menu-divider"></div>
+              <a href="http://192.168.1.145:8001/venues/create">Mettre mon espace en ligne</a>
+                      </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Flash Alerts -->
+  
+  
+  <!-- Main Content -->
+  <main style="flex-grow: 1;">
+      </main>
+
+  <!-- Call Simulation Modal -->
+  <div id="call-modal-overlay" class="modal-overlay">
+    <div class="call-modal">
+      <div id="call-modal-title" style="font-size: 1.4rem; font-weight: 800;">Appel en cours...</div>
+      <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" alt="Hôte" class="call-avatar">
+      <div id="call-modal-status" style="color: #94a3b8; font-size: 1.1rem; margin-top: 0.5rem;">Connexion au réseau local Celebra...</div>
+
+      <div class="call-controls">
+        <button class="call-btn call-btn-ghost" style="background: #334155; color:#fff;" title="Couper le micro"><i class="fa-solid fa-microphone-slash"></i></button>
+        <button class="call-btn call-btn-ghost" style="background: #334155; color:#fff;" title="Changer de caméra"><i class="fa-solid fa-video"></i></button>
+        <button id="end-call-btn" class="call-btn call-btn-danger" title="Raccrocher"><i class="fa-solid fa-phone-slash"></i></button>
+      </div>
+    </div>
+  </div>
+
+    <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div>
+        <a href="http://192.168.1.145:8001" class="logo" style="margin-bottom: 1.5rem; display:inline-block;">
+          <img src="http://192.168.1.145:8001/images/logo.png" alt="Celebra Cameroon" class="footer-logo-img">
+        </a>
+        <p style="margin-top: 0.5rem; font-size: 0.9rem;">La plateforme événementielle référence au Cameroun. Réservez des salles de fête, espaces verts, terrasses VIP et salles de conférence en quelques clics.</p>
+      </div>
+
+      <div>
+        <h4 style="color: #fff; margin-bottom: 1.2rem;">Les 10 Villes Principales</h4>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.9rem;">
+          <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
+            <li><a href="http://192.168.1.145:8001/venues?city=Douala"><i class="fa-solid fa-location-dot" style="color:var(--primary); width:16px;"></i> Douala</a></li>
+            <li><a href="http://192.168.1.145:8001/venues?city=Yaound%C3%A9"><i class="fa-solid fa-location-dot" style="color:var(--primary); width:16px;"></i> Yaoundé</a></li>
+            <li><a href="http://192.168.1.145:8001/venues?city=Bafoussam"><i class="fa-solid fa-location-dot" style="color:var(--primary); width:16px;"></i> Bafoussam</a></li>
+            <li><a href="http://192.168.1.145:8001/venues?city=Bamenda"><i class="fa-solid fa-location-dot" style="color:var(--primary); width:16px;"></i> Bamenda</a></li>
+            <li><a href="http://192.168.1.145:8001/venues?city=Garoua"><i class="fa-solid fa-location-dot" style="color:var(--primary); width:16px;"></i> Garoua</a></li>
+          </ul>
+          <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
+            <li><a href="http://192.168.1.145:8001/venues?city=Maroua"><i class="fa-solid fa-location-dot" style="color:var(--primary); width:16px;"></i> Maroua</a></li>
+            <li><a href="http://192.168.1.145:8001/venues?city=Ngaound%C3%A9r%C3%A9"><i class="fa-solid fa-location-dot" style="color:var(--primary); width:16px;"></i> Ngaoundéré</a></li>
+            <li><a href="http://192.168.1.145:8001/venues?city=Kribi"><i class="fa-solid fa-location-dot" style="color:var(--primary); width:16px;"></i> Kribi</a></li>
+            <li><a href="http://192.168.1.145:8001/venues?city=Limbe"><i class="fa-solid fa-location-dot" style="color:var(--primary); width:16px;"></i> Limbe</a></li>
+            <li><a href="http://192.168.1.145:8001/venues?city=Buea"><i class="fa-solid fa-location-dot" style="color:var(--primary); width:16px;"></i> Buea</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div>
+        <h4 style="color: #fff; margin-bottom: 1.2rem;">Service Client Cameroun</h4>
+        <p style="font-size: 0.9rem; margin-bottom: 0.5rem;"><i class="fa-solid fa-phone" style="color:var(--accent);"></i> +237 696675924</p>
+        <p style="font-size: 0.9rem; margin-bottom: 0.5rem;"><i class="fa-solid fa-envelope" style="color:var(--accent);"></i> celestinnangmo9@gmail.com</p>
+        <p style="font-size: 0.9rem;"><i class="fa-solid fa-building" style="color:var(--accent);"></i> Akwa, Douala - Cameroun</p>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      &copy; 2026 Celebra Cameroon. Tous droits réservés. Inspiré et conçu pour le marché camerounais.
+    </div>
+  </footer>
+  
+  <script src="http://192.168.1.145:8001/js/app.js"></script>
+
+  
+  <script>
+    // Responsive Menu Toggle
+    const mobileBtn = document.getElementById('mobile-menu-btn');
+    const navContainer = document.querySelector('.nav-container');
+    
+    if (mobileBtn) {
+      mobileBtn.addEventListener('click', () => {
+        navContainer.classList.toggle('mobile-menu-active');
+      });
+    }
+
+    // Handle window resize to reset menu
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768) {
+        navContainer.classList.remove('mobile-menu-active');
+      }
+    });
+    // Desktop User Menu Dropdown Toggle
+    const desktopUserBtn = document.getElementById('desktop-user-btn');
+    const desktopUserMenu = document.getElementById('desktop-user-menu');
+    
+    if (desktopUserBtn) {
+      desktopUserBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        desktopUserMenu.classList.toggle('show');
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!desktopUserBtn.contains(e.target) && !desktopUserMenu.contains(e.target)) {
+          desktopUserMenu.classList.remove('show');
+        }
+      });
+    }
+
+    // Dynamic Sticky Header
+    const header = document.querySelector('.header');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        header.classList.add('header-scrolled');
+      } else {
+        header.classList.remove('header-scrolled');
+      }
+    });
+
+    // Page Loader Logic
+    window.addEventListener('load', () => {
+      const loader = document.getElementById('page-loader');
+      if (loader) {
+        // Un léger délai pour profiter de l'animation de chargement
+        setTimeout(() => {
+          loader.classList.add('loaded');
+          // Suppression du DOM après la transition
+          setTimeout(() => {
+            if (loader.parentNode) {
+              loader.parentNode.removeChild(loader);
+            }
+          }, 800);
+        }, 500);
+      }
+    });
+  </script>
+
+  <!-- AOS Animation Initialization -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({
+      duration: 800, // duration of animation
+      once: true, // whether animation should happen only once - while scrolling down
+      offset: 50, // offset (in px) from the original trigger point
+      easing: 'ease-out-cubic' // easing for the animation
+    });
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://npmcdn.com/flatpickr/dist/l10n/fr.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
@@ -770,10 +1048,10 @@
     const daysCount = document.getElementById('calc-days-count');
     const subtotal = document.getElementById('calc-subtotal');
     const totalPrice = document.getElementById('calc-total-price');
-    const basePrice = {{ (int) $venue->price_per_day }};
+    const basePrice = 350000;
     
     // Get booked dates from backend
-    const bookedDates = @json($bookedDates ?? []);
+    const bookedDates = ["2026-08-15","2026-08-16"];
     
     // Initialize Flatpickr
     const fpStart = flatpickr(startInput, {
@@ -840,9 +1118,8 @@
       <button onclick="document.getElementById('visit-modal').style.display='none'" style="background:none; border:none; font-size:1.8rem; cursor:pointer; color:var(--text-muted);">&times;</button>
     </div>
 
-    <form action="{{ route('appointments.store') }}" method="POST" style="display: flex; flex-direction: column; gap: 1rem;">
-      @csrf
-      <input type="hidden" name="venue_id" value="{{ $venue->id }}">
+    <form action="http://192.168.1.145:8001/appointments" method="POST" style="display: flex; flex-direction: column; gap: 1rem;">
+      <input type="hidden" name="_token" value="Ibca3W31Ul2vXz7iHVqajKDnj33PQSQEKd6A81DW" autocomplete="off">      <input type="hidden" name="venue_id" value="1">
 
       <div class="form-group" style="display:flex; flex-direction:column; gap:0.5rem;">
         <label class="form-label" style="font-weight:600; font-size:0.9rem;">Type de visite</label>
@@ -868,4 +1145,5 @@
     </form>
   </div>
 </div>
-@endsection
+</body>
+</html>

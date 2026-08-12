@@ -2,6 +2,7 @@ import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
+import MobileBottomNav from '@/Components/MobileBottomNav';
 import { Link, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
@@ -18,9 +19,9 @@ export default function AuthenticatedLayout({ header, children }) {
                     <div className="flex h-16 justify-between">
                         <div className="flex">
                             <div className="flex shrink-0 items-center">
-                                <Link href="/">
+                                <a href="/">
                                     <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
-                                </Link>
+                                </a>
                             </div>
 
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
@@ -190,35 +191,7 @@ export default function AuthenticatedLayout({ header, children }) {
 
             <main>{children}</main>
 
-            {/* Mobile Bottom Navigation Bar */}
-            <nav className="mobile-bottom-bar">
-                <a href={route('home')} className={`bottom-nav-item ${route().current('home') ? 'active' : ''}`}>
-                    <i className="fa-solid fa-house"></i>
-                    <span>Accueil</span>
-                </a>
-                <a href={route('venues.index')} className={`bottom-nav-item ${route().current('venues.*') && !route().current('venues.create') ? 'active' : ''}`}>
-                    <i className="fa-solid fa-building"></i>
-                    <span>Salles</span>
-                </a>
-                
-                {(user && (user.role === 'host' || user.role === 'admin')) && (
-                    <div className="bottom-nav-center">
-                        <a href={route('venues.create')} className="bottom-nav-fab">
-                            <i className="fa-solid fa-plus"></i>
-                        </a>
-                    </div>
-                )}
-
-                <a href={route('messages.index')} className={`bottom-nav-item ${route().current('messages.*') ? 'active' : ''}`}>
-                    <i className="fa-solid fa-comment-dots"></i>
-                    <span>Messages</span>
-                </a>
-                
-                <Link href={route('dashboard')} className={`bottom-nav-item ${route().current('dashboard') ? 'active' : ''}`}>
-                    <i className="fa-solid fa-user"></i>
-                    <span>Profil</span>
-                </Link>
-            </nav>
+            <MobileBottomNav />
         </div>
     );
 }

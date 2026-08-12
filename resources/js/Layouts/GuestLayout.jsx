@@ -16,7 +16,7 @@ export default function GuestLayout({ children }) {
 
             {/* Logo */}
             <div className="relative z-10 mb-8 mt-10">
-                <Link href="/">
+                <a href="/">
                     <div className="flex flex-col items-center">
                         <div className="bg-white/20 p-4 rounded-full backdrop-blur-md border border-white/30 shadow-[0_0_15px_rgba(5,150,105,0.5)]">
                             <ApplicationLogo className="h-16 w-16 fill-current text-white" />
@@ -26,7 +26,7 @@ export default function GuestLayout({ children }) {
                         </h1>
                         <p className="text-emerald-100 text-sm mt-1 uppercase tracking-[0.2em]">Espaces d'Exception</p>
                     </div>
-                </Link>
+                </a>
             </div>
 
             {/* Glassmorphism Card */}
