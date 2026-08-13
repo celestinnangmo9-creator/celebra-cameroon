@@ -61,6 +61,13 @@ class User extends Authenticatable
         return $this->hasMany(Message::class, 'receiver_id');
     }
 
+    public function unreadMessagesCount()
+    {
+        return \App\Models\Message::where('recipient_id', $this->id)
+            ->whereNull('read_at')
+            ->count();
+    }
+
     public function appointments()
     {
         return $this->hasMany(Appointment::class);

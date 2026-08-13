@@ -1,8 +1,11 @@
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import PublicLayout from '@/Layouts/PublicLayout';
 import { useState, useEffect } from 'react';
 
-export default function VenuesIndex({ venues, regionsAndCities, categories, filters }) {
+export default function VenuesIndex({ venues, regionsAndCities, categories, filters = {} }) {
+    const { auth } = usePage().props;
+    const favoriteVenueIds = auth?.favorite_venue_ids || [];
+    const { post: togglePost } = useForm();
     const { data, setData, get, processing } = useForm({
         search: filters.search || '',
         region: filters.region || '',
@@ -18,6 +21,15 @@ export default function VenuesIndex({ venues, regionsAndCities, categories, filt
             preserveState: true,
             preserveScroll: true,
         });
+    };
+
+    const toggleFavorite = (e, venueId) => {
+        e.preventDefault(); // Prevent navigating to show page
+        if (!auth.user) {
+            window.location.href = route('login');
+            return;
+        }
+        togglePost(route('favorites.toggle', venueId), { preserveScroll: true });
     };
 
     return (
@@ -171,6 +183,14 @@ export default function VenuesIndex({ venues, regionsAndCities, categories, filt
                                                     <span className="venue-rating absolute top-3 right-3 bg-white/90 backdrop-blur px-2 py-1 rounded-full text-xs font-bold text-gray-800 flex items-center gap-1">
                                                         <i className="fa-solid fa-star text-amber-500"></i> {Number(venue.rating).toFixed(2)}
                                                     </span>
+                                                    
+                                                    <button 
+                                                        onClick={(e) => toggleFavorite(e, venue.id)}
+                                                        className={`absolute bottom-3 right-3 w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-sm ${favoriteVenueIds.includes(venue.id) ? 'bg-white/90 text-red-500' : 'bg-white/50 text-gray-500 hover:bg-white/90 hover:text-red-500'}`}
+                                                        title="Ajouter aux favoris"
+                                                    >
+                                                        <i className={`${favoriteVenueIds.includes(venue.id) ? 'fa-solid' : 'fa-regular'} fa-heart text-lg`}></i>
+                                                    </button>
                                                 </div>
 
                                                 <div className="venue-body p-5">

@@ -14,6 +14,7 @@ class Review extends Model
         'venue_id',
         'rating',
         'comment',
+        'owner_reply',
     ];
 
     public function user()

@@ -7,11 +7,20 @@ use App\Models\Venue;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Inertia\Inertia;
+use App\Services\BookingService;
 
 class BookingController extends Controller
 {
-    public function index()
+    protected $bookingService;
+
+    public function __construct(BookingService $bookingService)
+    {
+        $this->bookingService = $bookingService;
+    }
+
+    public function index(Request $request)
     {
         $userId = Auth::id() ?? 1;
 
@@ -22,12 +31,7 @@ class BookingController extends Controller
             ->get();
 
         // Bookings received for venues owned by current user
-        $receivedBookings = Booking::with(['venue', 'user'])
-            ->whereHas('venue', function($q) use ($userId) {
-                $q->where('user_id', $userId);
-            })
-            ->latest()
-            ->get();
+        $receivedBookings = $this->bookingService->getReceivedBookings($userId, $request->query('status'));
 
         return Inertia::render('Bookings/Index', [
             'myBookings' => $myBookings,
@@ -48,21 +52,20 @@ class BookingController extends Controller
 
         $venue = Venue::findOrFail($data['venue_id']);
 
-        // Check for overlapping bookings
-        $hasOverlap = Booking::where('venue_id', $venue->id)
-            ->whereIn('status', ['pending', 'confirmed'])
-            ->where(function ($query) use ($data) {
-                $query->whereBetween('start_date', [$data['start_date'], $data['end_date']])
-                      ->orWhereBetween('end_date', [$data['start_date'], $data['end_date']])
-                      ->orWhere(function ($q) use ($data) {
-                          $q->where('start_date', '<=', $data['start_date'])
-                            ->where('end_date', '>=', $data['end_date']);
-                      });
-            })
-            ->exists();
+        // Check for overlapping using BookingService
+        $unavailableDates = $this->bookingService->getUnavailableDates($venue->id);
+        $period = CarbonPeriod::create($data['start_date'], $data['end_date']);
+        
+        $hasOverlap = false;
+        foreach ($period as $date) {
+            if (in_array($date->format('Y-m-d'), $unavailableDates)) {
+                $hasOverlap = true;
+                break;
+            }
+        }
 
         if ($hasOverlap) {
-            return back()->withErrors(['start_date' => 'Ce lieu est déjà réservé à ces dates.'])->withInput();
+            return back()->withErrors(['start_date' => 'Ce lieu est déjà réservé ou indisponible à ces dates.'])->withInput();
         }
 
         $startDate = Carbon::parse($data['start_date']);
@@ -83,24 +86,50 @@ class BookingController extends Controller
             'special_requests' => $data['special_requests'] ?? null,
         ]);
 
-        // Dispatch background job to send email
-        \App\Jobs\SendBookingNotification::dispatch($booking);
+        // Notify the host about the new booking
+        $venue->user->notify(new \App\Notifications\BookingStatusUpdated($booking, "Nouvelle demande de réservation pour {$venue->title}."));
 
         return redirect()->route('bookings.index')->with('success', 'Votre demande de réservation pour ' . $venue->title . ' a été transmise à l\'hôte !');
     }
 
     public function updateStatus(Request $request, $id)
     {
-        $booking = Booking::findOrFail($id);
+        $booking = Booking::with('venue')->findOrFail($id);
 
         $request->validate([
-            'status' => 'required|in:pending,confirmed,cancelled,completed',
+            'status' => 'required|in:pending,confirmed,cancelled,completed,declined',
+            'decline_reason' => 'nullable|string',
         ]);
 
-        $booking->update([
-            'status' => $request->status,
-        ]);
+        $isHost = Auth::id() === $booking->venue->user_id;
+        $isClient = Auth::id() === $booking->user_id;
+
+        if (!$isHost && !$isClient) {
+            return back()->with('error', 'Action non autorisée.');
+        }
+
+        if ($request->status === 'cancelled' && !$isClient) {
+            return back()->with('error', 'Seul le client peut annuler sa réservation.');
+        }
+
+        if (in_array($request->status, ['confirmed', 'declined']) && !$isHost) {
+            return back()->with('error', 'Seul l\'hôte peut confirmer ou refuser la réservation.');
+        }
+
+        $this->bookingService->updateBookingStatus($booking, $request->status, $request->decline_reason);
 
         return back()->with('success', 'Le statut de la réservation #' . $booking->id . ' a été mis à jour (' . ucfirst($request->status) . ').');
+    }
+
+    /**
+     * API endpoint to get unavailable dates for a venue.
+     */
+    public function checkAvailability($venueId)
+    {
+        $unavailableDates = $this->bookingService->getUnavailableDates($venueId);
+        
+        return response()->json([
+            'unavailable_dates' => $unavailableDates
+        ]);
     }
 }

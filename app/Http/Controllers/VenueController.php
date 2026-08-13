@@ -7,9 +7,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use App\Services\VenueService;
 
 class VenueController extends Controller
 {
+    protected $venueService;
+
+    public function __construct(VenueService $venueService)
+    {
+        $this->venueService = $venueService;
+    }
+
     public function home()
     {
         $featuredVenues = Venue::with(['user', 'reviews'])->where('is_featured', true)->where('status', 'active')->take(6)->get();
@@ -94,31 +102,24 @@ class VenueController extends Controller
         return Inertia::render('Venues/Index', [
             'venues' => $venues,
             'regionsAndCities' => $regionsAndCities,
-            'categories' => $categories
+            'categories' => $categories,
+            'filters' => $request->only(['search', 'region', 'city', 'category', 'capacity', 'min_price', 'max_price'])
         ]);
     }
 
     public function show($id)
     {
         $venue = Venue::with(['user', 'reviews.user'])->findOrFail($id);
+        
+        // Increment views count
+        $venue->increment('views_count');
+
         $similarVenues = Venue::where('category', $venue->category)
             ->where('id', '!=', $venue->id)
             ->take(3)
             ->get();
 
-        // Fetch bookings to disable dates in calendar
-        $bookings = \App\Models\Booking::where('venue_id', $venue->id)
-            ->whereIn('status', ['confirmed', 'pending'])
-            ->get();
-
-        $bookedDates = [];
-        foreach ($bookings as $booking) {
-            $period = \Carbon\CarbonPeriod::create($booking->start_date, $booking->end_date);
-            foreach ($period as $date) {
-                $bookedDates[] = $date->format('Y-m-d');
-            }
-        }
-        $bookedDates = array_unique($bookedDates);
+        $bookedDates = app(\App\Services\BookingService::class)->getUnavailableDates($venue->id);
 
         return Inertia::render('Venues/Show', [
             'venue' => $venue,
@@ -161,43 +162,12 @@ class VenueController extends Controller
             return redirect()->route('home')->with('error', 'Action non autorisée. Devenez hôte pour publier un espace.');
         }
 
-        $data = $request->validated();
-
-        $mainImagePath = '';
-        if ($request->hasFile('main_image')) {
-            $path = $request->file('main_image')->store('venues', 'public');
-            $mainImagePath = '/storage/' . $path;
-        }
-
-        $galleryPaths = [];
-        if ($request->hasFile('gallery')) {
-            foreach ($request->file('gallery') as $file) {
-                $path = $file->store('venues', 'public');
-                $galleryPaths[] = '/storage/' . $path;
-            }
-        }
-
-        $venue = Venue::create([
-            'user_id' => Auth::id() ?? 1,
-            'title' => $data['title'],
-            'slug' => Str::slug($data['title']) . '-' . rand(100, 999),
-            'category' => $data['category'],
-            'region' => $data['region'],
-            'city' => $data['city'],
-            'district' => $data['district'],
-            'address' => $data['address'],
-            'capacity' => $data['capacity'],
-            'price_per_day' => $data['price_per_day'],
-            'price_per_hour' => $data['price_per_hour'] ?? null,
-            'description' => $data['description'],
-            'amenities' => $data['amenities'] ?? [],
-            'main_image' => $mainImagePath,
-            'gallery_images' => $galleryPaths,
-            'status' => 'active',
-            'is_featured' => false,
-            'rating' => 5.0,
-            'reviews_count' => 0,
-        ]);
+        $venue = $this->venueService->createVenue(
+            $request->validated(),
+            Auth::id() ?? 1,
+            $request->file('main_image'),
+            $request->file('gallery') ?? []
+        );
 
         return redirect()->route('venues.show', $venue->id)->with('success', 'Votre espace a été publié avec succès sur Celebra Cameroon !');
     }
@@ -238,38 +208,12 @@ class VenueController extends Controller
     {
         $venue = Venue::findOrFail($id);
 
-        $data = $request->validated();
-
-        $mainImagePath = $venue->main_image;
-        if ($request->hasFile('main_image')) {
-            $path = $request->file('main_image')->store('venues', 'public');
-            $mainImagePath = '/storage/' . $path;
-        }
-
-        $galleryPaths = $venue->gallery_images ?? [];
-        if ($request->hasFile('gallery')) {
-            foreach ($request->file('gallery') as $file) {
-                $path = $file->store('venues', 'public');
-                $galleryPaths[] = '/storage/' . $path;
-            }
-        }
-
-        $venue->update([
-            'title' => $data['title'],
-            'category' => $data['category'],
-            'region' => $data['region'],
-            'city' => $data['city'],
-            'district' => $data['district'],
-            'address' => $data['address'],
-            'capacity' => $data['capacity'],
-            'price_per_day' => $data['price_per_day'],
-            'price_per_hour' => $data['price_per_hour'] ?? null,
-            'description' => $data['description'],
-            'amenities' => $data['amenities'] ?? [],
-            'main_image' => $mainImagePath,
-            'gallery_images' => $galleryPaths,
-            'status' => $data['status'],
-        ]);
+        $this->venueService->updateVenue(
+            $venue,
+            $request->validated(),
+            $request->file('main_image'),
+            $request->file('gallery') ?? []
+        );
 
         return redirect()->route('venues.show', $venue->id)->with('success', 'L\'annonce a été mise à jour avec succès.');
     }
@@ -282,8 +226,61 @@ class VenueController extends Controller
             return redirect()->route('venues.index')->with('error', 'Action non autorisée.');
         }
 
-        $venue->delete();
+        $this->venueService->deleteVenue($venue);
 
         return redirect()->route('venues.index')->with('success', 'L\'espace a été supprimé.');
     }
+
+    public function stats($id)
+    {
+        $venue = Venue::with('blockedDates')->findOrFail($id);
+
+        if (Auth::check() && Auth::id() !== $venue->user_id && !Auth::user()->isAdmin()) {
+            return redirect()->route('venues.index')->with('error', 'Action non autorisée.');
+        }
+
+        $stats = $this->venueService->getVenueStats($venue);
+        
+        $bookings = \App\Models\Booking::with('user')->where('venue_id', $venue->id)->latest()->get();
+
+        return Inertia::render('Venues/Stats', [
+            'venue' => $venue,
+            'stats' => $stats,
+            'bookings' => $bookings,
+            'blockedDates' => $venue->blockedDates
+        ]);
+    }
+
+    public function blockDates(Request $request, $id)
+    {
+        $venue = Venue::findOrFail($id);
+
+        if (Auth::id() !== $venue->user_id && !Auth::user()->isAdmin()) {
+            return back()->with('error', 'Action non autorisée.');
+        }
+
+        $request->validate([
+            'start_date' => 'required|date|after_or_equal:today',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'reason' => 'nullable|string'
+        ]);
+
+        $this->venueService->blockDates($venue, $request->all());
+
+        return back()->with('success', 'Les dates ont été bloquées avec succès.');
+    }
+
+    public function unblockDate($id, $blockedDateId)
+    {
+        $venue = Venue::findOrFail($id);
+
+        if (Auth::id() !== $venue->user_id && !Auth::user()->isAdmin()) {
+            return back()->with('error', 'Action non autorisée.');
+        }
+
+        $this->venueService->unblockDate($venue, $blockedDateId);
+
+        return back()->with('success', 'Le blocage a été retiré.');
+    }
 }
+

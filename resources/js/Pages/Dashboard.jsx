@@ -1,7 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
 
-export default function Dashboard({ auth, userRole, userVenues, totalVenues, totalBookings, totalRevenue, pendingBookingsCount, recentBookings, upcomingAppointments }) {
+export default function Dashboard({ auth, userRole, userVenues, totalVenues, totalBookings, totalRevenue, pendingBookingsCount, recentBookings, upcomingAppointments, venuePerformances }) {
     
     // Rendu pour l'Hôte (Propriétaire)
     const renderHostDashboard = () => (
@@ -59,6 +59,31 @@ export default function Dashboard({ auth, userRole, userVenues, totalVenues, tot
                     </div>
                 </div>
             </div>
+
+            {/* Performances des Salles */}
+            {venuePerformances && venuePerformances.length > 0 && (
+                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700/50 p-6 mb-6 mt-6">
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Mes Salles</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {venuePerformances.map(venue => (
+                            <div key={venue.id} className="border border-gray-100 dark:border-gray-700 p-4 rounded-xl flex justify-between items-center">
+                                <div>
+                                    <h4 className="font-bold text-gray-900 dark:text-white">{venue.title}</h4>
+                                    <p className="text-xs text-gray-500">{venue.city} • {venue.bookings_count} réservations</p>
+                                </div>
+                                <div className="flex gap-2">
+                                    <Link href={route('venues.edit', venue.id)} className="bg-gray-50 text-gray-600 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors font-bold text-xs flex items-center gap-1">
+                                        <i className="fa-solid fa-pen"></i> Modifier
+                                    </Link>
+                                    <Link href={route('venues.stats', venue.id)} className="bg-emerald-50 text-emerald-600 px-3 py-2 rounded-lg hover:bg-emerald-100 transition-colors font-bold text-xs flex items-center gap-1">
+                                        <i className="fa-solid fa-chart-pie"></i> Stats / Calendrier
+                                    </Link>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             {/* Table des Réservations Récentes */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700/50 overflow-hidden">

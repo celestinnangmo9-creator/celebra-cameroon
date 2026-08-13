@@ -12,16 +12,19 @@ export default function UpdateProfileInformation({
 }) {
     const user = usePage().props.auth.user;
 
-    const { data, setData, patch, errors, processing, recentlySuccessful } =
+    const { data, setData, post, errors, processing, recentlySuccessful } =
         useForm({
+            _method: 'patch',
             name: user.name,
             email: user.email,
+            phone: user.phone || '',
+            bio: user.bio || '',
+            avatar: null,
         });
 
     const submit = (e) => {
         e.preventDefault();
-
-        patch(route('profile.update'));
+        post(route('profile.update'), { preserveScroll: true, forceFormData: true });
     };
 
     return (
@@ -37,36 +40,85 @@ export default function UpdateProfileInformation({
             </header>
 
             <form onSubmit={submit} className="mt-6 space-y-6">
-                <div>
-                    <InputLabel htmlFor="name" value="Name" />
+                <div className="flex flex-col md:flex-row gap-6">
+                    {/* Avatar preview */}
+                    <div className="shrink-0 flex flex-col items-center gap-3">
+                        <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-gray-100 shadow-sm bg-gray-50 flex items-center justify-center">
+                            {data.avatar ? (
+                                <img src={URL.createObjectURL(data.avatar)} className="w-full h-full object-cover" />
+                            ) : user.avatar ? (
+                                <img src={`/storage/${user.avatar}`} className="w-full h-full object-cover" />
+                            ) : (
+                                <i className="fa-solid fa-user text-3xl text-gray-300"></i>
+                            )}
+                        </div>
+                        <label className="cursor-pointer bg-white border border-gray-300 hover:border-emerald-500 hover:text-emerald-600 text-gray-700 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors">
+                            <span>Changer la photo</span>
+                            <input 
+                                type="file" 
+                                className="hidden" 
+                                accept="image/*"
+                                onChange={e => setData('avatar', e.target.files[0])}
+                            />
+                        </label>
+                        <InputError className="mt-1 text-center" message={errors.avatar} />
+                    </div>
 
-                    <TextInput
-                        id="name"
-                        className="mt-1 block w-full"
-                        value={data.name}
-                        onChange={(e) => setData('name', e.target.value)}
-                        required
-                        isFocused
-                        autoComplete="name"
-                    />
+                    <div className="grow space-y-6">
+                        <div>
+                            <InputLabel htmlFor="name" value="Nom complet" />
+                            <TextInput
+                                id="name"
+                                className="mt-1 block w-full"
+                                value={data.name}
+                                onChange={(e) => setData('name', e.target.value)}
+                                required
+                                isFocused
+                                autoComplete="name"
+                            />
+                            <InputError className="mt-2" message={errors.name} />
+                        </div>
 
-                    <InputError className="mt-2" message={errors.name} />
-                </div>
+                        <div>
+                            <InputLabel htmlFor="email" value="Adresse Email" />
+                            <TextInput
+                                id="email"
+                                type="email"
+                                className="mt-1 block w-full"
+                                value={data.email}
+                                onChange={(e) => setData('email', e.target.value)}
+                                required
+                                autoComplete="username"
+                            />
+                            <InputError className="mt-2" message={errors.email} />
+                        </div>
 
-                <div>
-                    <InputLabel htmlFor="email" value="Email" />
+                        <div>
+                            <InputLabel htmlFor="phone" value="Numéro de téléphone" />
+                            <TextInput
+                                id="phone"
+                                type="tel"
+                                className="mt-1 block w-full"
+                                value={data.phone}
+                                onChange={(e) => setData('phone', e.target.value)}
+                                placeholder="Ex: 699 99 99 99"
+                            />
+                            <InputError className="mt-2" message={errors.phone} />
+                        </div>
 
-                    <TextInput
-                        id="email"
-                        type="email"
-                        className="mt-1 block w-full"
-                        value={data.email}
-                        onChange={(e) => setData('email', e.target.value)}
-                        required
-                        autoComplete="username"
-                    />
-
-                    <InputError className="mt-2" message={errors.email} />
+                        <div>
+                            <InputLabel htmlFor="bio" value="Bio / Description" />
+                            <textarea
+                                id="bio"
+                                className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                                value={data.bio}
+                                rows="3"
+                                onChange={(e) => setData('bio', e.target.value)}
+                                placeholder="Parlez-nous un peu de vous..."
+                            ></textarea>
+                            <InputError className="mt-2" message={errors.bio} />
+                        </div>
+                    </div>
                 </div>
 
                 {mustVerifyEmail && user.email_verified_at === null && (

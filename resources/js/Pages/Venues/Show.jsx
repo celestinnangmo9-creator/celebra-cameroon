@@ -1,12 +1,13 @@
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, usePage, router, useForm } from '@inertiajs/react';
 import PublicLayout from '@/Layouts/PublicLayout';
-import { useState, useEffect } from 'react';
-import flatpickr from 'flatpickr';
-import { French } from 'flatpickr/dist/l10n/fr.js';
+import { useState } from 'react';
+import BookingCalendar from '@/Components/BookingCalendar';
 
 export default function VenueShow({ venue, similarVenues, bookedDates }) {
     const { auth } = usePage().props;
     const user = auth?.user;
+    const favoriteVenueIds = auth?.favorite_venue_ids || [];
+    const { post: togglePost } = useForm();
     
     const [mainImage, setMainImage] = useState(venue.main_image);
     
@@ -23,57 +24,26 @@ export default function VenueShow({ venue, similarVenues, bookedDates }) {
         galleryImages = venue.images;
     }
 
-    const { data, setData, post, processing, errors, reset } = useForm({
-        venue_id: venue.id,
-        start_date: '',
-        end_date: '',
-        guest_count: 1,
-        message: ''
-    });
-
-    const [totalPrice, setTotalPrice] = useState(0);
-
-    // Initialize date picker
-    useEffect(() => {
-        flatpickr("#dateRangePicker", {
-            mode: "range",
-            minDate: "today",
-            dateFormat: "Y-m-d",
-            locale: French,
-            disable: bookedDates,
-            onChange: function(selectedDates) {
-                if (selectedDates.length === 2) {
-                    const start = selectedDates[0];
-                    const end = selectedDates[1];
-                    const diffTime = Math.abs(end - start);
-                    let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; 
-                    
-                    const tzOffset = start.getTimezoneOffset() * 60000;
-                    const localStart = new Date(start.getTime() - tzOffset).toISOString().split('T')[0];
-                    const localEnd = new Date(end.getTime() - tzOffset).toISOString().split('T')[0];
-
-                    setData(data => ({
-                        ...data,
-                        start_date: localStart,
-                        end_date: localEnd
-                    }));
-                    
-                    setTotalPrice(diffDays * venue.price_per_day);
-                } else {
-                    setData(data => ({ ...data, start_date: '', end_date: '' }));
-                    setTotalPrice(0);
-                }
+    const submitReply = (e, reviewId) => {
+        e.preventDefault();
+        const replyText = document.getElementById(`reply_${reviewId}`).value;
+        if (!replyText) return;
+        
+        router.post(route('reviews.reply', reviewId), { reply: replyText }, {
+            preserveScroll: true,
+            onSuccess: () => {
+                const input = document.getElementById(`reply_${reviewId}`);
+                if (input) input.value = '';
             }
         });
-    }, [bookedDates, venue.price_per_day]);
+    };
 
-    const submitBooking = (e) => {
-        e.preventDefault();
+    const toggleFavorite = () => {
         if (!user) {
             window.location.href = route('login');
             return;
         }
-        post(route('bookings.store'));
+        togglePost(route('favorites.toggle', venue.id), { preserveScroll: true });
     };
 
     return (
@@ -120,21 +90,30 @@ export default function VenueShow({ venue, similarVenues, bookedDates }) {
                     {/* Left Column: Details */}
                     <div className="lg:col-span-2">
                         {/* Title & Badges */}
-                        <div className="mb-8 border-b border-gray-100 pb-8">
-                            <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-4 tracking-tight leading-tight">
-                                {venue.title}
-                            </h1>
-                            <div className="flex flex-wrap items-center gap-4 text-gray-600 font-medium">
-                                <span className="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full border border-emerald-100">
-                                    <i className="fa-solid fa-tag"></i> {venue.category}
-                                </span>
-                                <span className="flex items-center gap-2">
-                                    <i className="fa-solid fa-location-dot text-emerald-600"></i> {venue.city}, {venue.district}
-                                </span>
-                                <span className="flex items-center gap-2">
-                                    <i className="fa-solid fa-star text-amber-500"></i> {Number(venue.rating).toFixed(2)}
-                                </span>
+                        <div className="mb-8 border-b border-gray-100 pb-8 flex justify-between items-start">
+                            <div>
+                                <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-4 tracking-tight leading-tight">
+                                    {venue.title}
+                                </h1>
+                                <div className="flex flex-wrap items-center gap-4 text-gray-600 font-medium">
+                                    <span className="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full border border-emerald-100">
+                                        <i className="fa-solid fa-tag"></i> {venue.category}
+                                    </span>
+                                    <span className="flex items-center gap-2">
+                                        <i className="fa-solid fa-location-dot text-emerald-600"></i> {venue.city}, {venue.district}
+                                    </span>
+                                    <span className="flex items-center gap-2">
+                                        <i className="fa-solid fa-star text-amber-500"></i> {Number(venue.rating).toFixed(2)}
+                                    </span>
+                                </div>
                             </div>
+                            <button 
+                                onClick={toggleFavorite}
+                                className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center transition-all shadow-sm border ${favoriteVenueIds.includes(venue.id) ? 'bg-red-50 border-red-100 text-red-500' : 'bg-white border-gray-200 text-gray-400 hover:text-red-500 hover:border-red-200 hover:bg-red-50'}`}
+                                title="Ajouter aux favoris"
+                            >
+                                <i className={`${favoriteVenueIds.includes(venue.id) ? 'fa-solid' : 'fa-regular'} fa-heart text-xl`}></i>
+                            </button>
                         </div>
 
                         {/* Description */}
@@ -185,74 +164,59 @@ export default function VenueShow({ venue, similarVenues, bookedDates }) {
 
                     {/* Right Column: Booking Widget */}
                     <div className="lg:col-span-1">
-                        <div className="sticky top-24 bg-white rounded-3xl p-6 md:p-8 shadow-xl border border-gray-100">
-                            
-                            <div className="mb-6 flex items-end gap-2 border-b border-gray-100 pb-6">
-                                <span className="text-3xl font-black text-gray-900">{new Intl.NumberFormat('fr-FR').format(venue.price_per_day)} FCFA</span>
-                                <span className="text-gray-500 font-medium mb-1">/ jour</span>
-                            </div>
-
-                            <form onSubmit={submitBooking}>
-                                {/* Date Picker */}
-                                <div className="mb-4">
-                                    <label className="block text-sm font-bold text-gray-900 mb-2 uppercase tracking-wide">Dates prévues</label>
-                                    <div className="relative">
-                                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                            <i className="fa-regular fa-calendar text-gray-400"></i>
-                                        </div>
-                                        <input 
-                                            type="text" 
-                                            id="dateRangePicker" 
-                                            className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all" 
-                                            placeholder="Sélectionner vos dates" 
-                                            readOnly 
-                                        />
-                                    </div>
-                                    {errors.start_date && <p className="text-red-500 text-xs mt-1">{errors.start_date}</p>}
-                                </div>
-
-                                {/* Guests */}
-                                <div className="mb-6">
-                                    <label className="block text-sm font-bold text-gray-900 mb-2 uppercase tracking-wide">Nombre d'invités</label>
-                                    <div className="relative">
-                                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                            <i className="fa-solid fa-users text-gray-400"></i>
-                                        </div>
-                                        <input 
-                                            type="number" 
-                                            min="1" 
-                                            max={venue.capacity} 
-                                            className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all" 
-                                            value={data.guest_count} 
-                                            onChange={e => setData('guest_count', e.target.value)} 
-                                        />
-                                    </div>
-                                    <p className="text-xs text-gray-500 mt-2 text-right">Max: {venue.capacity} personnes</p>
-                                    {errors.guest_count && <p className="text-red-500 text-xs mt-1">{errors.guest_count}</p>}
-                                </div>
-
-                                {totalPrice > 0 && (
-                                    <div className="bg-emerald-50 rounded-xl p-4 mb-6 flex justify-between items-center border border-emerald-100">
-                                        <span className="font-semibold text-emerald-800">Total estimé</span>
-                                        <span className="font-black text-xl text-emerald-700">{new Intl.NumberFormat('fr-FR').format(totalPrice)} FCFA</span>
-                                    </div>
-                                )}
-
-                                <button 
-                                    type="submit" 
-                                    disabled={processing}
-                                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 px-6 rounded-xl transition-all shadow-lg shadow-emerald-500/30 transform hover:-translate-y-1"
-                                >
-                                    {processing ? 'Traitement...' : 'Réserver cet espace'}
-                                </button>
-                                
-                                <p className="text-center text-xs text-gray-400 mt-4">
-                                    Aucun montant ne vous sera débité pour le moment.
-                                </p>
-                            </form>
-                        </div>
+                        <BookingCalendar venue={venue} initialBookedDates={bookedDates} />
                     </div>
 
+                </div>
+
+                {/* Reviews Section */}
+                <div className="mt-12 pt-12 border-t border-gray-100">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-8">Avis des clients ({venue.reviews?.length || 0})</h2>
+                    {venue.reviews && venue.reviews.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            {venue.reviews.map(review => (
+                                <div key={review.id} className="bg-gray-50 p-6 rounded-2xl">
+                                    <div className="flex items-center gap-4 mb-4">
+                                        <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center font-bold text-emerald-700">
+                                            {review.user?.name?.charAt(0)}
+                                        </div>
+                                        <div>
+                                            <h4 className="font-bold text-gray-900">{review.user?.name}</h4>
+                                            <div className="text-sm text-gray-500">{new Date(review.created_at).toLocaleDateString()}</div>
+                                        </div>
+                                        <div className="ml-auto text-amber-500 font-bold">
+                                            <i className="fa-solid fa-star"></i> {review.rating}/5
+                                        </div>
+                                    </div>
+                                    <p className="text-gray-700 italic mb-4">"{review.comment}"</p>
+                                    
+                                    {review.owner_reply ? (
+                                        <div className="bg-white p-4 rounded-xl border border-emerald-100 ml-4 relative mt-4">
+                                            <div className="absolute -left-3 top-4 w-3 h-3 bg-white border-l border-b border-emerald-100 rotate-45"></div>
+                                            <h5 className="text-sm font-bold text-emerald-700 mb-1"><i className="fa-solid fa-reply"></i> Réponse de l'hôte</h5>
+                                            <p className="text-sm text-gray-600">{review.owner_reply}</p>
+                                        </div>
+                                    ) : (
+                                        user && user.id === venue.user_id && (
+                                            <form onSubmit={(e) => submitReply(e, review.id)} className="mt-4">
+                                                <textarea 
+                                                    className="w-full border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 rounded-xl text-sm"
+                                                    rows="2"
+                                                    placeholder="Votre réponse à cet avis..."
+                                                    id={`reply_${review.id}`}
+                                                ></textarea>
+                                                <button type="submit" className="mt-2 text-xs bg-emerald-600 text-white px-3 py-1.5 rounded-lg hover:bg-emerald-700">
+                                                    Publier la réponse
+                                                </button>
+                                            </form>
+                                        )
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-gray-500">Aucun avis pour le moment.</p>
+                    )}
                 </div>
 
                 {/* Similar Venues */}

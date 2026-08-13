@@ -72,6 +72,49 @@ export default function AuthenticatedLayout({ header, children }) {
                             <div className="relative ms-3">
                                 <Dropdown>
                                     <Dropdown.Trigger>
+                                        <span className="inline-flex rounded-md relative mr-4">
+                                            <button
+                                                type="button"
+                                                className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
+                                            >
+                                                <i className="fa-solid fa-bell text-lg"></i>
+                                                {auth.unread_notifications?.length > 0 && (
+                                                    <span className="absolute top-1 right-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                                                        {auth.unread_notifications.length}
+                                                    </span>
+                                                )}
+                                            </button>
+                                        </span>
+                                    </Dropdown.Trigger>
+
+                                    <Dropdown.Content width="w-80">
+                                        <div className="p-3 text-sm font-bold border-b border-gray-100 flex justify-between items-center text-gray-800">
+                                            <span>Notifications</span>
+                                            {auth.unread_notifications?.length > 0 && (
+                                                <Link href={route('notifications.markRead')} method="post" as="button" className="text-xs text-emerald-600 font-medium hover:underline">
+                                                    Marquer lu
+                                                </Link>
+                                            )}
+                                        </div>
+                                        <div className="max-h-64 overflow-y-auto">
+                                            {auth.unread_notifications?.length > 0 ? (
+                                                auth.unread_notifications.map(notif => (
+                                                    <div key={notif.id} className="p-3 border-b border-gray-50 hover:bg-gray-50 flex flex-col gap-1">
+                                                        <span className="text-xs font-bold text-gray-500">{new Date(notif.created_at).toLocaleString()}</span>
+                                                        <span className="text-sm text-gray-700">{notif.data.message}</span>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <div className="p-4 text-center text-gray-500 text-sm">
+                                                    Aucune nouvelle notification
+                                                </div>
+                                            )}
+                                        </div>
+                                    </Dropdown.Content>
+                                </Dropdown>
+
+                                <Dropdown>
+                                    <Dropdown.Trigger>
                                         <span className="inline-flex rounded-md">
                                             <button
                                                 type="button"

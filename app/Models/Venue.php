@@ -27,9 +27,11 @@ class Venue extends Model
         'main_image',
         'gallery_images',
         'status',
+        'rejection_reason',
         'is_featured',
         'rating',
         'reviews_count',
+        'views_count',
     ];
 
     protected $casts = [
@@ -56,8 +58,18 @@ class Venue extends Model
         return $this->hasMany(Review::class);
     }
 
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
+    }
+
     public function appointments()
     {
         return $this->hasMany(Appointment::class);
+    }
+
+    public function blockedDates()
+    {
+        return $this->hasMany(VenueBlockedDate::class);
     }
 }
