@@ -6,6 +6,9 @@ RUN apt-get update && apt-get install -y \
     git \
     curl \
     libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libwebp-dev \
     libonig-dev \
     libxml2-dev \
     zip \
@@ -16,8 +19,9 @@ RUN apt-get update && apt-get install -y \
 # Nettoyage du cache apt
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Installation des extensions PHP requises pour Laravel
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+# Configuration et Installation des extensions PHP requises pour Laravel
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
 # Installation de Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
