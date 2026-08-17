@@ -1,6 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 
-export default function Welcome({ auth, laravelVersion, phpVersion }) {
+export default function Welcome({ auth, laravelVersion, phpVersion, venues, topHosts }) {
     const handleImageError = () => {
         document
             .getElementById('screenshot-container')

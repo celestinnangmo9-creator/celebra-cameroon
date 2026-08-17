@@ -113,7 +113,6 @@ export default function BookingsIndex({ auth, myBookings, receivedBookings }) {
                                                     {booking.status !== 'confirmed' && booking.status !== 'pending' && booking.status !== 'cancelled' && (
                                                         <span className="bg-indigo-100 text-indigo-800 px-3 py-1.5 rounded-full font-bold text-xs"><i className="fa-solid fa-flag-checkered mr-1"></i> {booking.status}</span>
                                                     )}
-                                                </div>
                                                 <div className="mt-2">
                                                     {booking.payment_status === 'paid' && <span className="text-emerald-600 font-bold text-xs"><i className="fa-solid fa-check-double"></i> Payée</span>}
                                                     {booking.payment_status === 'unpaid' && <span className="text-gray-500 font-bold text-xs"><i className="fa-solid fa-hourglass-start"></i> Non payée</span>}

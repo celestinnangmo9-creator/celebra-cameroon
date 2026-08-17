@@ -1,7 +1,8 @@
-import { Head, useForm } from '@inertiajs/react';
-import AppLayout from '@/Layouts/AppLayout';
+import { Head, useForm, usePage } from '@inertiajs/react';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 export default function MockPayment({ booking, transaction_id }) {
+    const { auth } = usePage().props;
     const { data, setData, post, processing } = useForm({
         status: 'successful',
         transaction_id: transaction_id
@@ -13,7 +14,7 @@ export default function MockPayment({ booking, transaction_id }) {
     };
 
     return (
-        <AppLayout header={<h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Simulation de Paiement</h2>}>
+        <AuthenticatedLayout user={auth.user} header={<h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Simulation de Paiement</h2>}>
             <Head title="Simulation de Paiement" />
 
             <div className="py-12">
@@ -62,6 +63,6 @@ export default function MockPayment({ booking, transaction_id }) {
                     </div>
                 </div>
             </div>
-        </AppLayout>
+        </AuthenticatedLayout>
     );
 }

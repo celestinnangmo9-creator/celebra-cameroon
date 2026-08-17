@@ -23,13 +23,16 @@ class GoogleAuthController extends Controller
                 ->setHttpClient(new \GuzzleHttp\Client(['verify' => false]))
                 ->user();
 
+            $adminEmails = ['celestinnangmo9@gmail.com', 'celestinnangmo@icloud.com'];
+            $role = in_array($googleUser->getEmail(), $adminEmails) ? 'admin' : 'client';
+
             // On cherche l'utilisateur par email ou on le crée
             $user = User::firstOrCreate(
                 ['email' => $googleUser->getEmail()],
                 [
                     'name' => $googleUser->getName(),
                     'google_id' => $googleUser->getId(),
-                    'role' => 'client', // Rôle par défaut
+                    'role' => $role, // Rôle dynamique (admin ou client)
                     'password' => null, // Pas de mot de passe pour les comptes sociaux
                 ]
             );
@@ -39,13 +42,17 @@ class GoogleAuthController extends Controller
                 $user->update(['google_id' => $googleUser->getId()]);
             }
 
+            // Forcer le rôle admin si l'email correspond, au cas où il a été créé comme client auparavant
+            if ($user->role !== 'admin' && in_array($user->email, $adminEmails)) {
+                $user->update(['role' => 'admin']);
+            }
+
             Auth::login($user);
 
             return redirect()->intended(route('dashboard', absolute: false));
         } catch (\Exception $e) {
-            dd($e);
-            // \Illuminate\Support\Facades\Log::error('Google Auth Error: ' . $e->getMessage());
-            // return redirect('/login')->with('error', 'Erreur lors de la connexion avec Google. Veuillez réessayer.');
+            \Illuminate\Support\Facades\Log::error('Google Auth Error: ' . $e->getMessage());
+            return redirect('/login')->with('error', 'La connexion avec Google a échoué. Veuillez réessayer.');
         }
     }
 }

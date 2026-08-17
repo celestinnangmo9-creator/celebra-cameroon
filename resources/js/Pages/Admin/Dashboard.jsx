@@ -1,8 +1,28 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, RadialBarChart, RadialBar } from 'recharts';
 
-export default function AdminDashboard({ auth, kpis, chartData, topVenues }) {
+export default function AdminDashboard({ auth, kpis, chartData, topVenues, marketAnalysis }) {
+    const categoryColors = ['#064e3b', '#047857', '#10b981', '#34d399', '#a7f3d0'];
+    const totalV = marketAnalysis?.totalVenues || 1;
+
+    const categoryData = marketAnalysis?.categories?.map((item, i) => ({
+        name: item.category || 'Autres',
+        value: Math.round((item.count / totalV) * 100),
+        color: categoryColors[i % categoryColors.length]
+    })) || [];
+
+    const cityGauges = marketAnalysis?.cities?.map((item, i) => ({
+        name: item.city || 'Inconnu',
+        value: Math.round((item.count / totalV) * 100),
+        fill: categoryColors[i % categoryColors.length]
+    })) || [];
+
+    const regionalGrowth = marketAnalysis?.regions?.map((item, i) => ({
+        region: item.region || 'Inconnu',
+        percentage: Math.round((item.count / totalV) * 100),
+        color: '#064e3b'
+    })) || [];
     // Format dates for charts
     const formattedBookings = chartData.bookings.map(item => ({
         ...item,
@@ -62,45 +82,153 @@ export default function AdminDashboard({ auth, kpis, chartData, topVenues }) {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                        {/* Charts */}
-                        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-                            <h4 className="text-lg font-bold text-gray-900 mb-4">Évolution des réservations (30 jours)</h4>
-                            <div className="h-64">
-                                {formattedBookings.length > 0 ? (
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        <AreaChart data={formattedBookings}>
-                                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
-                                            <XAxis dataKey="date" tick={{fontSize: 12}} tickLine={false} axisLine={false} />
-                                            <YAxis allowDecimals={false} tick={{fontSize: 12}} tickLine={false} axisLine={false} />
-                                            <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                                            <Area type="monotone" dataKey="count" name="Réservations" stroke="#10b981" fill="#d1fae5" strokeWidth={3} />
-                                        </AreaChart>
-                                    </ResponsiveContainer>
-                                ) : (
-                                    <div className="h-full flex items-center justify-center text-gray-500">Pas de données récentes</div>
-                                )}
+                    {/* MAQUETTE DASHBOARD WRAPPER */}
+                    <div className="bg-[#ecfdf5] p-4 rounded-3xl mb-8 space-y-6 border border-emerald-100 shadow-sm">
+                        
+                        <div className="flex justify-between items-center px-2 pt-1">
+                            <h2 className="text-base md:text-lg font-black text-gray-900 uppercase tracking-wide">Market Analysis Report</h2>
+                            <h2 className="text-base md:text-lg font-black text-gray-900">{new Date().getFullYear()}</h2>
+                        </div>
+
+                        {/* Top Row: 3 Columns */}
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mt-4">
+                            
+                            {/* Market Size Growth / Evolution */}
+                            <div className="bg-white rounded-[1.5rem] pt-6 p-4 shadow-sm relative">
+                                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#064e3b] text-white px-5 py-1.5 rounded-full font-bold shadow-md text-xs whitespace-nowrap">
+                                    Évolution des Réservations
+                                </div>
+                                <div className="h-32 mt-2">
+                                    {formattedBookings.length > 0 ? (
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <AreaChart data={formattedBookings}>
+                                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
+                                                <XAxis dataKey="date" tick={{fontSize: 10}} tickLine={false} axisLine={false} />
+                                                <YAxis allowDecimals={false} tick={{fontSize: 10}} tickLine={false} axisLine={false} width={25} />
+                                                <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', fontSize: '12px' }} />
+                                                <Area type="linear" dataKey="count" name="Réservations" stroke="#064e3b" fill="#ecfdf5" strokeWidth={2} dot={{ stroke: '#064e3b', strokeWidth: 2, r: 3, fill: '#fff' }} />
+                                            </AreaChart>
+                                        </ResponsiveContainer>
+                                    ) : (
+                                        <div className="h-full flex items-center justify-center text-gray-500 text-sm">Pas de données</div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Demographics / Pie Chart */}
+                            <div className="bg-white rounded-[1.5rem] pt-6 p-4 shadow-sm relative flex flex-col">
+                                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#064e3b] text-white px-5 py-1 rounded-full font-bold shadow-md text-xs whitespace-nowrap text-center leading-tight">
+                                    Répartition par Catégorie
+                                </div>
+                                <div className="flex-1 flex items-center justify-center mt-2">
+                                    <div className="w-1/2 h-24">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <PieChart>
+                                                <Pie
+                                                    data={categoryData}
+                                                    cx="50%"
+                                                    cy="50%"
+                                                    innerRadius={0}
+                                                    outerRadius={40}
+                                                    paddingAngle={0}
+                                                    dataKey="value"
+                                                    stroke="none"
+                                                >
+                                                    {categoryData.map((entry, index) => (
+                                                        <Cell key={`cell-${index}`} fill={entry.color} />
+                                                    ))}
+                                                </Pie>
+                                                <Tooltip contentStyle={{fontSize: '12px'}} />
+                                            </PieChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                    <div className="w-1/2 flex flex-col justify-center space-y-1.5 text-[10px]">
+                                        {categoryData.map((cat, i) => (
+                                            <div key={i} className="flex items-center space-x-1.5">
+                                                <div className="w-6 py-0.5 text-center rounded font-bold" style={{ backgroundColor: cat.color, color: i < 3 ? 'white' : '#1f2937' }}>
+                                                    {cat.value}%
+                                                </div>
+                                                <span className="text-gray-600 font-medium truncate">{cat.name}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Product Demand / Bar Chart */}
+                            <div className="bg-white rounded-[1.5rem] pt-6 p-4 shadow-sm relative">
+                                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#064e3b] text-white px-5 py-1.5 rounded-full font-bold shadow-md text-xs whitespace-nowrap">
+                                    Revenus Générés
+                                </div>
+                                <div className="h-32 mt-2">
+                                    {formattedRevenue.length > 0 ? (
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <BarChart data={formattedRevenue}>
+                                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
+                                                <XAxis dataKey="date" tick={{fontSize: 10}} tickLine={false} axisLine={false} />
+                                                <YAxis tick={{fontSize: 10}} tickLine={false} axisLine={false} width={25} tickFormatter={(value) => `${value / 1000}k`} />
+                                                <Tooltip formatter={(value) => `${new Intl.NumberFormat('fr-FR').format(value)} FCFA`} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', fontSize: '12px' }} />
+                                                <Bar dataKey="revenue" name="Revenus" fill="#047857" radius={[2, 2, 0, 0]} />
+                                            </BarChart>
+                                        </ResponsiveContainer>
+                                    ) : (
+                                        <div className="h-full flex items-center justify-center text-gray-500 text-sm">Pas de données</div>
+                                    )}
+                                </div>
                             </div>
                         </div>
 
-                        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-                            <h4 className="text-lg font-bold text-gray-900 mb-4">Revenus générés (30 jours)</h4>
-                            <div className="h-64">
-                                {formattedRevenue.length > 0 ? (
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        <BarChart data={formattedRevenue}>
-                                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
-                                            <XAxis dataKey="date" tick={{fontSize: 12}} tickLine={false} axisLine={false} />
-                                            <YAxis tick={{fontSize: 12}} tickLine={false} axisLine={false} tickFormatter={(value) => `${value / 1000}k`} />
-                                            <Tooltip formatter={(value) => `${new Intl.NumberFormat('fr-FR').format(value)} FCFA`} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                                            <Bar dataKey="revenue" name="Revenus" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
-                                        </BarChart>
-                                    </ResponsiveContainer>
-                                ) : (
-                                    <div className="h-full flex items-center justify-center text-gray-500">Pas de données récentes</div>
-                                )}
+                        {/* Middle Row: Gauges */}
+                        <div className="bg-white rounded-[1.5rem] pt-6 p-4 shadow-sm relative">
+                            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#064e3b] text-white px-5 py-1.5 rounded-full font-bold shadow-md text-xs whitespace-nowrap">
+                                Taux d'Occupation par Ville
+                            </div>
+                            <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mt-1">
+                                {cityGauges.map((city, idx) => (
+                                    <div key={idx} className="flex flex-col items-center justify-end h-20 relative">
+                                        <div className="w-full h-16 absolute top-0">
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <RadialBarChart 
+                                                    cx="50%" cy="100%" 
+                                                    innerRadius="70%" outerRadius="100%" 
+                                                    barSize={8} 
+                                                    data={[{ name: city.name, value: city.value, fill: city.fill }]}
+                                                    startAngle={180} endAngle={0}
+                                                >
+                                                    <RadialBar
+                                                        minAngle={15}
+                                                        background={{ fill: '#f3f4f6' }}
+                                                        clockWise
+                                                        dataKey="value"
+                                                        cornerRadius={10}
+                                                    />
+                                                </RadialBarChart>
+                                            </ResponsiveContainer>
+                                        </div>
+                                        <div className="text-center z-10 -mb-1">
+                                            <div className="text-lg md:text-xl font-black text-gray-900 leading-none">{city.value}%</div>
+                                            <div className="text-gray-500 text-[10px] font-medium mt-0.5">{city.name}</div>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         </div>
+
+                        {/* Bottom Row: Regions */}
+                        <div className="bg-white rounded-[1.5rem] pt-6 p-4 shadow-sm relative">
+                            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-[#064e3b] text-white px-5 py-1.5 rounded-full font-bold shadow-md text-xs whitespace-nowrap">
+                                Croissance par Région
+                            </div>
+                            <div className="grid grid-cols-2 md:grid-cols-5 divide-x divide-gray-100 mt-1 text-center">
+                                {regionalGrowth.map((region, idx) => (
+                                    <div key={idx} className="px-1 py-1">
+                                        <div className="text-gray-500 text-[10px] font-medium mb-0.5">{region.region}</div>
+                                        <div className="text-xl md:text-2xl font-black" style={{ color: region.color }}>{region.percentage}%</div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">

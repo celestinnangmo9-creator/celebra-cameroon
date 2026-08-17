@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Venue;
 use App\Models\Booking;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class AdminController extends Controller
@@ -25,21 +26,36 @@ class AdminController extends Controller
         // Suppose the platform takes a 10% commission
         $totalCommissions = $totalRevenue * 0.10;
 
-        // 30 days evolution for bookings
-        $thirtyDaysAgo = now()->subDays(30);
+        // 30 days evolution for bookings (fill missing days with 0)
+        $thirtyDaysAgo = now()->subDays(29)->startOfDay();
         
-        $bookingsEvolution = Booking::selectRaw('DATE(created_at) as date, COUNT(*) as count')
+        $bookingsData = Booking::selectRaw('DATE(created_at) as date, COUNT(*) as count')
             ->where('created_at', '>=', $thirtyDaysAgo)
             ->groupBy('date')
-            ->orderBy('date')
-            ->get();
+            ->get()
+            ->keyBy('date');
             
-        $revenueEvolution = Booking::selectRaw('DATE(created_at) as date, SUM(total_price) as revenue')
+        $revenueData = Booking::selectRaw('DATE(created_at) as date, SUM(total_price) as revenue')
             ->where('created_at', '>=', $thirtyDaysAgo)
             ->where('status', 'confirmed')
             ->groupBy('date')
-            ->orderBy('date')
-            ->get();
+            ->get()
+            ->keyBy('date');
+
+        $bookingsEvolution = [];
+        $revenueEvolution = [];
+
+        for ($i = 29; $i >= 0; $i--) {
+            $dateString = now()->subDays($i)->format('Y-m-d');
+            $bookingsEvolution[] = [
+                'date' => $dateString,
+                'count' => isset($bookingsData[$dateString]) ? $bookingsData[$dateString]->count : 0
+            ];
+            $revenueEvolution[] = [
+                'date' => $dateString,
+                'revenue' => isset($revenueData[$dateString]) ? $revenueData[$dateString]->revenue : 0
+            ];
+        }
 
         // Top 5 venues
         $topVenues = Venue::withCount(['bookings' => function($q) {
@@ -48,6 +64,34 @@ class AdminController extends Controller
             ->orderByDesc('bookings_count')
             ->limit(5)
             ->get(['id', 'title', 'price_per_day']);
+
+        // Market Analysis dynamic data
+        $categoriesStats = DB::table('venues')
+            ->select('category', DB::raw('count(*) as count'))
+            ->whereNull('deleted_at')
+            ->whereNotNull('category')
+            ->groupBy('category')
+            ->orderByDesc('count')
+            ->limit(4)
+            ->get();
+
+        $citiesStats = DB::table('venues')
+            ->select('city', DB::raw('count(*) as count'))
+            ->whereNull('deleted_at')
+            ->whereNotNull('city')
+            ->groupBy('city')
+            ->orderByDesc('count')
+            ->limit(5)
+            ->get();
+
+        $regionsStats = DB::table('venues')
+            ->select('region', DB::raw('count(*) as count'))
+            ->whereNull('deleted_at')
+            ->whereNotNull('region')
+            ->groupBy('region')
+            ->orderByDesc('count')
+            ->limit(5)
+            ->get();
 
         return Inertia::render('Admin/Dashboard', [
             'kpis' => [
@@ -62,6 +106,12 @@ class AdminController extends Controller
             'chartData' => [
                 'bookings' => $bookingsEvolution,
                 'revenue' => $revenueEvolution,
+            ],
+            'marketAnalysis' => [
+                'categories' => $categoriesStats,
+                'cities' => $citiesStats,
+                'regions' => $regionsStats,
+                'totalVenues' => $totalVenues,
             ],
             'topVenues' => $topVenues
         ]);
@@ -164,7 +214,7 @@ class AdminController extends Controller
     {
         $request->validate([
             'status' => 'nullable|in:active,blocked',
-            'role' => 'nullable|in:client,owner,admin'
+            'role' => 'nullable|in:client,host,admin'
         ]);
 
         $user = User::findOrFail($id);

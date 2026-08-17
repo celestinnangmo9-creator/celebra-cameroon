@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Appointment extends Model
 {
-    use HasFactory;
+    use HasFactory, \App\Traits\AutoBackupsDatabase;
 
     protected $fillable = [
         'user_id',

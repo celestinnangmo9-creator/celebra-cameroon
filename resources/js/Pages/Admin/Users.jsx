@@ -91,7 +91,7 @@ export default function AdminUsers({ auth, users, filters = {} }) {
                                     >
                                         <option value="">Tous les rôles</option>
                                         <option value="client">Client</option>
-                                        <option value="owner">Propriétaire</option>
+                                        <option value="host">Propriétaire</option>
                                         <option value="admin">Administrateur</option>
                                     </select>
                                 </div>
@@ -147,7 +147,7 @@ export default function AdminUsers({ auth, users, filters = {} }) {
                                                 <div className="flex items-center gap-2">
                                                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium uppercase
                                                         ${user.role === 'admin' ? 'bg-purple-100 text-purple-800' : ''}
-                                                        ${user.role === 'owner' ? 'bg-amber-100 text-amber-800' : ''}
+                                                        ${user.role === 'host' ? 'bg-amber-100 text-amber-800' : ''}
                                                         ${user.role === 'client' ? 'bg-emerald-100 text-emerald-800' : ''}
                                                     `}>
                                                         {user.role}
@@ -258,7 +258,7 @@ export default function AdminUsers({ auth, users, filters = {} }) {
                                 </div>
                             </label>
                             <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
-                                <input type="radio" name="role" value="owner" checked={roleModal.currentRole === 'owner'} onChange={e => setRoleModal({...roleModal, currentRole: e.target.value})} className="text-indigo-600" />
+                                <input type="radio" name="role" value="host" checked={roleModal.currentRole === 'host'} onChange={e => setRoleModal({...roleModal, currentRole: e.target.value})} className="text-indigo-600" />
                                 <div>
                                     <div className="font-bold text-sm">Propriétaire</div>
                                     <div className="text-xs text-gray-500">Peut ajouter et gérer des salles</div>

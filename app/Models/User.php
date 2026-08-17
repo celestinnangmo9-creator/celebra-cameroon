@@ -26,6 +26,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'google_id',
     ];
 
     protected function casts(): array
@@ -63,8 +64,8 @@ class User extends Authenticatable
 
     public function unreadMessagesCount()
     {
-        return \App\Models\Message::where('recipient_id', $this->id)
-            ->whereNull('read_at')
+        return \App\Models\Message::where('receiver_id', $this->id)
+            ->where('is_read', false)
             ->count();
     }
 

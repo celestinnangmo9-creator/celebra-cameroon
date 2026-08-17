@@ -51,11 +51,30 @@ export default function AuthenticatedLayout({ header, children }) {
 
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink
+                                    href={route('home')}
+                                    active={route().current('home')}
+                                >
+                                    <i className="fa-solid fa-house mr-2"></i> Accueil
+                                </NavLink>
+                                <NavLink
                                     href={route('dashboard')}
                                     active={route().current('dashboard')}
                                 >
                                     Dashboard
                                 </NavLink>
+                                {user?.role === 'host' && (
+                                    <NavLink
+                                        href={route('host.appointments.index')}
+                                        active={route().current('host.appointments.*')}
+                                    >
+                                        Rendez-vous
+                                        {auth.pending_appointments_count > 0 && (
+                                            <span className="ml-2 inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-orange-500 rounded-full">
+                                                {auth.pending_appointments_count}
+                                            </span>
+                                        )}
+                                    </NavLink>
+                                )}
                                 {user?.role === 'admin' && (
                                     <NavLink
                                         href={route('admin.dashboard')}
@@ -207,11 +226,30 @@ export default function AuthenticatedLayout({ header, children }) {
                 >
                     <div className="space-y-1 pb-3 pt-2">
                         <ResponsiveNavLink
+                            href={route('home')}
+                            active={route().current('home')}
+                        >
+                            <i className="fa-solid fa-house mr-2"></i> Accueil
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
                             href={route('dashboard')}
                             active={route().current('dashboard')}
                         >
                             Dashboard
                         </ResponsiveNavLink>
+                        {user?.role === 'host' && (
+                            <ResponsiveNavLink
+                                href={route('host.appointments.index')}
+                                active={route().current('host.appointments.*')}
+                            >
+                                Rendez-vous
+                                {auth.pending_appointments_count > 0 && (
+                                    <span className="ml-2 inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-orange-500 rounded-full">
+                                        {auth.pending_appointments_count}
+                                    </span>
+                                )}
+                            </ResponsiveNavLink>
+                        )}
                         {user?.role === 'admin' && (
                             <ResponsiveNavLink
                                 href={route('admin.dashboard')}

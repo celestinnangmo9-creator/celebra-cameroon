@@ -35,6 +35,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
                 'favorite_venue_ids' => $request->user() ? $request->user()->favorites()->pluck('venue_id')->toArray() : [],
                 'unread_notifications' => $request->user() ? $request->user()->unreadNotifications : [],
+                'pending_appointments_count' => $request->user() && $request->user()->role === 'host' ? \App\Models\Appointment::where('host_id', $request->user()->id)->where('status', 'pending')->count() : 0,
             ],
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),

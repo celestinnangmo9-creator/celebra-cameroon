@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Venue extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, \App\Traits\AutoBackupsDatabase, SoftDeletes;
 
     protected $fillable = [
         'user_id',

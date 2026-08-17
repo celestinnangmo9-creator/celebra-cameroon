@@ -1,11 +1,36 @@
 import ApplicationLogo from '@/Components/ApplicationLogo';
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 
 export default function GuestLayout({ children }) {
+    const { flash } = usePage().props;
+
     return (
         <div 
             className="flex min-h-screen flex-col items-center pt-6 sm:justify-center sm:pt-0 relative"
         >
+            {/* Flash Messages */}
+            {(flash?.success || flash?.error || flash?.message) && (
+                <div className="fixed top-6 right-4 z-[100] flex flex-col gap-2 pointer-events-none">
+                    {flash.success && (
+                        <div className="bg-emerald-100 border-l-4 border-emerald-500 text-emerald-800 px-5 py-4 rounded shadow-lg flex items-center gap-3 pointer-events-auto">
+                            <i className="fa-solid fa-circle-check text-emerald-600 text-xl"></i>
+                            <div className="font-medium">{flash.success}</div>
+                        </div>
+                    )}
+                    {flash.error && (
+                        <div className="bg-red-100 border-l-4 border-red-500 text-red-800 px-5 py-4 rounded shadow-lg flex items-center gap-3 pointer-events-auto">
+                            <i className="fa-solid fa-triangle-exclamation text-red-600 text-xl"></i>
+                            <div className="font-medium">{flash.error}</div>
+                        </div>
+                    )}
+                    {flash.message && (
+                        <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-800 px-5 py-4 rounded shadow-lg flex items-center gap-3 pointer-events-auto">
+                            <i className="fa-solid fa-circle-info text-blue-600 text-xl"></i>
+                            <div className="font-medium">{flash.message}</div>
+                        </div>
+                    )}
+                </div>
+            )}
             {/* Background Image with Overlay */}
             <div 
                 className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"

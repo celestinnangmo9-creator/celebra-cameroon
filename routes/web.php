@@ -9,12 +9,14 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\AppointmentController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 // Public Pages
 Route::get('/', [VenueController::class, 'home'])->name('home');
+
 Route::get('/venues', [VenueController::class, 'index'])->name('venues.index');
 Route::get('/venues/{id}', [VenueController::class, 'show'])->name('venues.show')->where('id', '[0-9]+');
 Route::get('/venues/{id}/availability', [BookingController::class, 'checkAvailability'])->name('venues.availability')->where('id', '[0-9]+');
@@ -70,6 +72,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/messages/fetch/{contact}', [MessageController::class, 'fetch'])->name('messages.fetch');
     Route::post('/messages/mark-as-read/{contact}', [MessageController::class, 'markAsRead'])->name('messages.markAsRead');
     Route::post('/appointments', [MessageController::class, 'scheduleVisit'])->name('appointments.store');
+
+    // Host Appointments Management
+    Route::get('/host/appointments', [AppointmentController::class, 'index'])->name('host.appointments.index');
+    Route::patch('/appointments/{id}/status', [AppointmentController::class, 'updateStatus'])->name('appointments.updateStatus');
     // Admin Routes
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [\App\Http\Controllers\AdminController::class, 'index'])->name('dashboard');

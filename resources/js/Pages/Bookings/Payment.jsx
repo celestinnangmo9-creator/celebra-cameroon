@@ -1,7 +1,8 @@
 import { Head, useForm, usePage } from '@inertiajs/react';
-import AppLayout from '@/Layouts/AppLayout';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 export default function Payment({ booking }) {
+    const { auth } = usePage().props;
     const { data, setData, post, processing, errors } = useForm({
         payment_method: 'orange_money',
         phone_number: ''
@@ -13,7 +14,7 @@ export default function Payment({ booking }) {
     };
 
     return (
-        <AppLayout header={<h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Paiement - {booking.venue.title}</h2>}>
+        <AuthenticatedLayout user={auth.user} header={<h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Paiement - {booking.venue.title}</h2>}>
             <Head title={`Paiement - ${booking.venue.title}`} />
 
             <div className="py-12">
@@ -100,6 +101,6 @@ export default function Payment({ booking }) {
                     </div>
                 </div>
             </div>
-        </AppLayout>
+        </AuthenticatedLayout>
     );
 }

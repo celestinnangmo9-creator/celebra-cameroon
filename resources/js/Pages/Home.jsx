@@ -105,53 +105,53 @@ export default function Home({ auth, featuredVenues = [], latestVenues = [], reg
   <div className="section-subtitle" data-aos="fade-up" data-aos-delay="100">Trouvez l'espace adapté à la taille et au prestige de votre événement.</div>
 
   <div className="categories-grid">
-    <a href={route('venues.index')} className="category-card" data-aos="fade-up" data-aos-delay="200">
+    <Link href={route('venues.index', { category: 'Salle de fête' })} className="category-card" data-aos="fade-up" data-aos-delay="200">
       <div className="category-icon"><i className="fa-solid fa-champagne-glasses"></i></div>
       <div>
         <div>Salles de Fête</div>
         <div style={{fontSize: '0.75rem', color: 'var(--text-muted)'}}>Mariages & Banquets</div>
       </div>
-    </a>
+    </Link>
 
-    <a href={route('venues.index')} className="category-card" data-aos="fade-up" data-aos-delay="300">
+    <Link href={route('venues.index', { category: 'Espace vert' })} className="category-card" data-aos="fade-up" data-aos-delay="300">
       <div className="category-icon" style={{background: '#fef3c7', color: '#d97706'}}><i className="fa-solid fa-tree"></i></div>
       <div>
         <div>Espaces Verts</div>
         <div style={{fontSize: '0.75rem', color: 'var(--text-muted)'}}>Jardins & Plages Kribi</div>
       </div>
-    </a>
+    </Link>
 
-    <a href={route('venues.index')} className="category-card" data-aos="fade-up" data-aos-delay="400">
+    <Link href={route('venues.index', { category: 'Terrasse VIP' })} className="category-card" data-aos="fade-up" data-aos-delay="400">
       <div className="category-icon" style={{background: '#e0e7ff', color: '#4338ca'}}><i className="fa-solid fa-martini-glass-citrus"></i></div>
       <div>
         <div>Terrasses VIP</div>
         <div style={{fontSize: '0.75rem', color: 'var(--text-muted)'}}>Rooftops & Cocktails</div>
       </div>
-    </a>
+    </Link>
 
-    <a href={route('venues.index')} className="category-card" data-aos="fade-up" data-aos-delay="500">
+    <Link href={route('venues.index', { category: 'Bureau & Coworking' })} className="category-card" data-aos="fade-up" data-aos-delay="500">
       <div className="category-icon" style={{background: '#f3e8ff', color: '#7e22ce'}}><i className="fa-solid fa-briefcase"></i></div>
       <div>
         <div>Bureaux & Coworking</div>
         <div style={{fontSize: '0.75rem', color: 'var(--text-muted)'}}>Réunions & Ateliers</div>
       </div>
-    </a>
+    </Link>
 
-    <a href={route('venues.index')} className="category-card">
+    <Link href={route('venues.index', { category: 'Salle de Conférence' })} className="category-card">
       <div className="category-icon" style={{background: '#e0f2fe', color: '#0284c7'}}><i className="fa-solid fa-microphone-lines"></i></div>
       <div>
         <div>Salles de Conférence</div>
         <div style={{fontSize: '0.75rem', color: 'var(--text-muted)'}}>Séminaires & Formations</div>
       </div>
-    </a>
+    </Link>
 
-    <a href={route('venues.index')} className="category-card">
+    <Link href={route('venues.index', { category: 'Pavillon / Villa' })} className="category-card">
       <div className="category-icon" style={{background: '#ffe4e6', color: '#e11d48'}}><i className="fa-solid fa-house-chimney-window"></i></div>
       <div>
         <div>Villas de Prestige</div>
         <div style={{fontSize: '0.75rem', color: 'var(--text-muted)'}}>Piscine & Séjours VIP</div>
       </div>
-    </a>
+    </Link>
   </div>
 </section>
 

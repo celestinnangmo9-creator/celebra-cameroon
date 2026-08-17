@@ -15,19 +15,43 @@ export default function MessagesIndex({ auth, contacts, activeContact, messages:
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
+    // Garde les messages synchronisés quand on change de contact (nouvelle page Inertia)
+    useEffect(() => {
+        setMessages(initialMessages || []);
+    }, [initialMessages]);
+
     useEffect(() => {
         scrollToBottom();
     }, [messages]);
 
+    // Écoute en temps réel via Pusher/Laravel Echo
+    useEffect(() => {
+        if (!activeContact || !auth?.user?.id) return;
+
+        const ids = [auth.user.id, activeContact.id].sort((a, b) => a - b);
+        const channelName = `conversation.${ids[0]}.${ids[1]}`;
+
+        const channel = window.Echo.private(channelName)
+            .listen('.message.sent', (e) => {
+                setMessages(prev => {
+                    // Évite les doublons si le message existe déjà
+                    if (prev.some(m => m.id === e.message.id)) return prev;
+                    return [...prev, e.message];
+                });
+            });
+
+        return () => {
+            window.Echo.leave(channelName);
+        };
+    }, [activeContact?.id, auth?.user?.id]);
+
     const submit = (e) => {
         e.preventDefault();
-        
+
         post(route('messages.store'), {
             preserveScroll: true,
             onSuccess: () => {
                 reset('content');
-                // Optionnel: Faire un poll pour re-fetch les messages 
-                // mais la réponse de succès rechargera la page Inertia ou on peut implémenter le fetch
             }
         });
     };
@@ -42,7 +66,7 @@ export default function MessagesIndex({ auth, contacts, activeContact, messages:
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 h-[75vh]">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg h-full flex border border-gray-200">
-                        
+
                         {/* Sidebar Contacts */}
                         <div className="w-1/3 border-r border-gray-200 flex flex-col bg-gray-50">
                             <div className="p-4 border-b border-gray-200 bg-white">
@@ -55,7 +79,7 @@ export default function MessagesIndex({ auth, contacts, activeContact, messages:
                                     </div>
                                 ) : (
                                     contacts.map(contact => (
-                                        <Link 
+                                        <Link
                                             key={contact.id}
                                             href={route('messages.index', { contact: contact.id })}
                                             className={`block p-4 border-b border-gray-100 hover:bg-emerald-50 transition-colors ${activeContact?.id === contact.id ? 'bg-emerald-100/50 border-l-4 border-l-emerald-600' : 'border-l-4 border-l-transparent'}`}
@@ -110,7 +134,7 @@ export default function MessagesIndex({ auth, contacts, activeContact, messages:
                                                             {msg.content}
                                                         </div>
                                                         <div className={`text-[10px] text-gray-400 mt-1 ${isMine ? 'text-right' : 'text-left'}`}>
-                                                            {new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                                                            {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                                         </div>
                                                     </div>
                                                 );
@@ -122,16 +146,16 @@ export default function MessagesIndex({ auth, contacts, activeContact, messages:
                                     {/* Message Input */}
                                     <div className="p-4 border-t border-gray-200 bg-white">
                                         <form onSubmit={submit} className="flex gap-2 relative">
-                                            <input 
-                                                type="text" 
+                                            <input
+                                                type="text"
                                                 value={data.content}
                                                 onChange={e => setData('content', e.target.value)}
-                                                placeholder="Écrivez votre message..." 
+                                                placeholder="Écrivez votre message..."
                                                 className="w-full border-gray-300 rounded-full pl-4 pr-12 py-3 focus:border-emerald-500 focus:ring-emerald-500 bg-gray-50"
                                                 required
                                             />
-                                            <button 
-                                                type="submit" 
+                                            <button
+                                                type="submit"
                                                 disabled={processing}
                                                 className="absolute right-2 top-1.5 bottom-1.5 bg-emerald-600 hover:bg-emerald-700 text-white w-10 h-10 rounded-full flex items-center justify-center transition-colors disabled:opacity-50"
                                             >

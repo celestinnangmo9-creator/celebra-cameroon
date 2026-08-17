@@ -14,14 +14,11 @@ export default function About() {
             <div className="max-w-4xl mx-auto px-4 py-16">
                 <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 text-gray-700 leading-relaxed space-y-6">
                     <p className="text-lg">
-                        Celebra Cameroon est née d'une vision simple : rendre la recherche et la réservation de salles d'événement aussi faciles et transparentes que possible.
-                    </p>
-                    <p>
-                        Que ce soit pour un mariage grandiose à Douala, une conférence professionnelle à Yaoundé, ou une petite fête privée à Kribi, notre plateforme centralise les meilleurs lieux du pays.
+                        Celebra Cameroon est la plateforme de référence pour la réservation d'espaces événementiels au Cameroun. Nous mettons en relation les organisateurs d'événements avec un réseau soigneusement sélectionné de salles de fêtes et de prestataires à travers le pays, en offrant une expérience de réservation fluide, transparente et digne de confiance.
                     </p>
                     <h2 className="text-2xl font-bold text-gray-900 mt-8 mb-4">Notre Mission</h2>
                     <p>
-                        Connecter les organisateurs d'événements avec les propriétaires d'espaces, tout en offrant une expérience utilisateur fluide, sécurisée et digne des standards internationaux.
+                        Notre ambition est de transformer l'organisation d'événements au Cameroun en simplifiant l'accès aux meilleurs espaces disponibles, tout en valorisant le savoir-faire des propriétaires et prestataires locaux.
                     </p>
                 </div>
             </div>

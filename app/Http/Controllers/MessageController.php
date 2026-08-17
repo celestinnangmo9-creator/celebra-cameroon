@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Message;
+use App\Events\MessageSent;
 use App\Models\Appointment;
 use App\Models\User;
 use App\Models\Venue;
@@ -17,13 +18,11 @@ class MessageController extends Controller
     {
         $userId = Auth::id() ?? 1;
 
-        // Get all unique users with whom current user has exchanged messages
         $sentUserIds = Message::where('sender_id', $userId)->pluck('receiver_id');
         $receivedUserIds = Message::where('receiver_id', $userId)->pluck('sender_id');
 
         $contactIds = $sentUserIds->merge($receivedUserIds)->unique()->filter(fn($id) => $id != $userId);
 
-        // If no contacts exist, add default hosts/clients
         if ($contactIds->isEmpty()) {
             $contactIds = User::where('id', '!=', $userId)->pluck('id');
         }
@@ -33,27 +32,24 @@ class MessageController extends Controller
         $activeContactId = $request->get('contact', $contacts->first()?->id);
         $activeContact = User::find($activeContactId) ?? clone Auth::user();
 
-        // Selected venue context if passed
         $selectedVenue = null;
         if ($request->filled('venue_id')) {
             $selectedVenue = Venue::find($request->venue_id);
         }
 
-        // Fetch thread messages
         $messages = [];
         if ($activeContact) {
             $messages = Message::with(['sender', 'venue'])
-                ->where(function($q) use ($userId, $activeContact) {
+                ->where(function ($q) use ($userId, $activeContact) {
                     $q->where('sender_id', $userId)->where('receiver_id', $activeContact->id);
                 })
-                ->orWhere(function($q) use ($userId, $activeContact) {
+                ->orWhere(function ($q) use ($userId, $activeContact) {
                     $q->where('sender_id', $activeContact->id)->where('receiver_id', $userId);
                 })
                 ->orderBy('created_at', 'asc')
                 ->get();
         }
 
-        // Fetch appointments for this user
         $appointments = Appointment::with(['venue', 'host', 'user'])
             ->where('user_id', $userId)
             ->orWhere('host_id', $userId)
@@ -78,7 +74,7 @@ class MessageController extends Controller
             'receiver_id' => 'required|exists:users,id',
             'venue_id' => 'nullable|exists:venues,id',
             'content' => 'nullable|string|required_without:attachment',
-            'attachment' => 'nullable|image|max:5120', // max 5MB image
+            'attachment' => 'nullable|image|max:5120',
         ]);
 
         $attachmentPath = null;
@@ -95,14 +91,9 @@ class MessageController extends Controller
             'is_read' => false,
         ]);
 
-        if ($request->wantsJson() || $request->ajax()) {
-            return response()->json([
-                'success' => true,
-                'message' => $message->load(['sender', 'venue']),
-            ]);
-        }
+        broadcast(new MessageSent($message))->toOthers();
 
-        return back()->with('success', 'Message envoyé !');
+        return back()->with('success', 'Message envoye !');
     }
 
     public function fetch(Request $request, $contactId)
@@ -111,10 +102,10 @@ class MessageController extends Controller
         $lastMessageId = $request->get('last_id', 0);
 
         $messages = Message::with(['sender', 'venue'])
-            ->where(function($q) use ($userId, $contactId) {
+            ->where(function ($q) use ($userId, $contactId) {
                 $q->where('sender_id', $userId)->where('receiver_id', $contactId);
             })
-            ->orWhere(function($q) use ($userId, $contactId) {
+            ->orWhere(function ($q) use ($userId, $contactId) {
                 $q->where('sender_id', $contactId)->where('receiver_id', $userId);
             })
             ->where('id', '>', $lastMessageId)
@@ -153,19 +144,18 @@ class MessageController extends Controller
             'venue_id' => $venue->id,
             'scheduled_at' => $data['scheduled_at'],
             'type' => $data['type'],
-            'status' => 'scheduled',
+            'status' => 'pending',
             'notes' => $data['notes'] ?? null,
         ]);
 
-        // Send confirmation message in chat automatically
         Message::create([
             'sender_id' => Auth::id() ?? 1,
             'receiver_id' => $venue->user_id,
             'venue_id' => $venue->id,
-            'content' => '📅 Demande de rendez-vous (' . ($data['type'] === 'physical_visit' ? 'Visite physique' : 'Appel Vidéo') . ') planifiée pour le ' . date('d/m/Y à H:i', strtotime($data['scheduled_at'])) . ' pour le lieu "' . $venue->title . '".',
+            'content' => 'Demande de rendez-vous (' . ($data['type'] === 'physical_visit' ? 'Visite physique' : 'Appel Video') . ') planifiee pour le ' . date('d/m/Y a H:i', strtotime($data['scheduled_at'])) . ' pour le lieu "' . $venue->title . '".',
             'is_read' => false,
         ]);
 
-        return back()->with('success', 'Rendez-vous planifié avec succès ! L\'hôte en a été notifié.');
+        return back()->with('success', 'Rendez-vous planifie avec succes ! L\'hote en a ete notifie.');
     }
 }
