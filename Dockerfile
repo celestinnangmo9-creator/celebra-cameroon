@@ -1,5 +1,5 @@
 # Utilisez l'image officielle PHP 8.3 avec Apache
-FROM php:8.3-apache
+FROM php:8.4-apache
 
 # Installation des dépendances système
 RUN apt-get update && apt-get install -y \
