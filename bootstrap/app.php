@@ -21,6 +21,13 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\CheckRole::class,
         ]);
+
+        $middleware->redirectGuestsTo(function (Request $request) {
+            if (! $request->expectsJson()) {
+                session()->flash('message', 'Veuillez vous connecter ou créer un compte pour continuer.');
+                return route('login');
+            }
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

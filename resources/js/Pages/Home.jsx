@@ -48,6 +48,17 @@ export default function Home({ auth, featuredVenues = [], latestVenues = [], reg
     <h1 className="hero-title">Trouvez le lieu parfait pour vos célébrations au Cameroun</h1>
     <p className="hero-subtitle">Salles de fête, jardins d'exception, terrasses VIP et bureaux privatifs à Douala, Yaoundé, Kribi et dans tout le Cameroun.</p>
 
+    {!auth?.user && (
+        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginBottom: '2.5rem', flexWrap: 'wrap' }} data-aos="fade-up" data-aos-delay="200">
+            <Link href={route('register')} className="btn btn-primary" style={{ padding: '0.75rem 2rem', borderRadius: '50px', fontSize: '1.1rem', fontWeight: 'bold' }}>
+                Créer un compte
+            </Link>
+            <Link href={route('login')} className="btn btn-outline" style={{ padding: '0.75rem 2rem', borderRadius: '50px', fontSize: '1.1rem', fontWeight: 'bold', border: '2px solid white', color: 'white' }}>
+                Connexion
+            </Link>
+        </div>
+    )}
+
     {/*  Search Box Form  */}
     <form action={route('venues.index')} method="GET" className="search-card" data-aos="fade-up" data-aos-delay="300">
       <div className="form-group" style={{display: 'flex', gap: '0.5rem', width: '100%', flexWrap: 'wrap'}}>

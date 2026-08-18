@@ -5,16 +5,18 @@ import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import MobileBottomNav from '@/Components/MobileBottomNav';
 import { Link, usePage } from '@inertiajs/react';
 import { useState } from 'react';
+import { UnreadMessagesProvider, useUnreadMessages } from '@/Contexts/UnreadMessagesContext';
 
-export default function AuthenticatedLayout({ header, children }) {
+function LayoutContent({ header, children }) {
     const { auth, flash } = usePage().props;
     const user = auth.user;
+    const { totalUnread, latestMessageToast } = useUnreadMessages();
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
 
     return (
-        <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
+        <div className={`bg-gray-100 dark:bg-gray-900 ${route().current('messages.*') ? 'fixed inset-0 w-full flex flex-col overflow-hidden' : 'min-h-screen'}`}>
             {/* Flash Messages */}
             {(flash?.success || flash?.error || flash?.message) && (
                 <div className="fixed top-24 right-4 z-[100] flex flex-col gap-2 pointer-events-none">
@@ -38,8 +40,18 @@ export default function AuthenticatedLayout({ header, children }) {
                     )}
                 </div>
             )}
+            
+            {/* Nouveau Message Toast */}
+            {latestMessageToast && (
+                <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] flex flex-col gap-2 pointer-events-none animate-bounce">
+                    <Link href={route('messages.index')} className="bg-[#0B3D2E] text-[#FAF6F0] px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 pointer-events-auto border border-[#C9A227] hover:bg-[#124d3a] transition-all">
+                        <i className="fa-solid fa-comment-dots text-[#C9A227] text-xl"></i>
+                        <div className="font-medium">Nouveau message reçu !</div>
+                    </Link>
+                </div>
+            )}
 
-            <nav className="border-b border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800">
+            <nav className="border-b border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800 shrink-0">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 justify-between">
                         <div className="flex">
@@ -84,6 +96,17 @@ export default function AuthenticatedLayout({ header, children }) {
                                         Administration
                                     </NavLink>
                                 )}
+                                <NavLink
+                                    href={route('messages.index')}
+                                    active={route().current('messages.*')}
+                                >
+                                    <i className="fa-solid fa-comments mr-2"></i> Messages
+                                    {totalUnread > 0 && (
+                                        <span className="ml-2 inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
+                                            {totalUnread}
+                                        </span>
+                                    )}
+                                </NavLink>
                             </div>
                         </div>
 
@@ -288,16 +311,26 @@ export default function AuthenticatedLayout({ header, children }) {
             </nav>
 
             {header && (
-                <header className="bg-white shadow dark:bg-gray-800">
+                <header className="bg-white shadow dark:bg-gray-800 shrink-0">
                     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
                         {header}
                     </div>
                 </header>
             )}
 
-            <main>{children}</main>
+            <main className={route().current('messages.*') ? "flex-1 overflow-hidden flex flex-col relative" : "pb-24 md:pb-0"}>
+                {children}
+            </main>
 
-            <MobileBottomNav />
+            {!route().current('messages.*') && <MobileBottomNav />}
         </div>
+    );
+}
+
+export default function AuthenticatedLayout(props) {
+    return (
+        <UnreadMessagesProvider>
+            <LayoutContent {...props} />
+        </UnreadMessagesProvider>
     );
 }

@@ -2,7 +2,6 @@
 
 namespace App\Events;
 
-use App\Models\Message;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -11,18 +10,17 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class MessageSent implements ShouldBroadcastNow
+class UnreadMessageNotification implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $message;
+    public $senderId;
+    public $receiverId;
 
-    /**
-     * Create a new event instance.
-     */
-    public function __construct(Message $message)
+    public function __construct($senderId, $receiverId)
     {
-        $this->message = $message;
+        $this->senderId = $senderId;
+        $this->receiverId = $receiverId;
     }
 
     /**
@@ -32,19 +30,8 @@ class MessageSent implements ShouldBroadcastNow
      */
     public function broadcastOn(): array
     {
-        $ids = [$this->message->sender_id, $this->message->receiver_id];
-        sort($ids);
-
         return [
-            new PrivateChannel('conversation.' . $ids[0] . '.' . $ids[1]),
+            new PrivateChannel('App.Models.User.' . $this->receiverId),
         ];
-    }
-
-    /**
-     * Get the broadcast event name.
-     */
-    public function broadcastAs(): string
-    {
-        return 'message.sent';
     }
 }

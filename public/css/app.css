@@ -1234,11 +1234,6 @@ a {
     display: flex;
   }
   
-  /* Add padding to body to prevent content from hiding behind the nav bar */
-  body {
-    padding-bottom: 80px; 
-  }
-  
   /* Hide standard header actions on mobile */
   .nav-actions {
     display: none !important;
@@ -1251,9 +1246,6 @@ a {
 }
 
 @media (max-width: 768px) {
-  body {
-    padding-bottom: 80px !important;
-  }
   .mobile-bottom-bar {
     display: flex !important;
     position: fixed !important;

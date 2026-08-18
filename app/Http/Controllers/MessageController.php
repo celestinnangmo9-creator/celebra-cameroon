@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Message;
 use App\Events\MessageSent;
+use App\Events\UnreadMessageNotification;
 use App\Models\Appointment;
 use App\Models\User;
 use App\Models\Venue;
@@ -29,8 +30,8 @@ class MessageController extends Controller
 
         $contacts = User::whereIn('id', $contactIds)->get();
 
-        $activeContactId = $request->get('contact', $contacts->first()?->id);
-        $activeContact = User::find($activeContactId) ?? clone Auth::user();
+        $activeContactId = $request->get('contact');
+        $activeContact = $activeContactId ? User::find($activeContactId) : null;
 
         $selectedVenue = null;
         if ($request->filled('venue_id')) {
@@ -92,8 +93,9 @@ class MessageController extends Controller
         ]);
 
         broadcast(new MessageSent($message))->toOthers();
+        broadcast(new UnreadMessageNotification($message->sender_id, $message->receiver_id))->toOthers();
 
-        return back()->with('success', 'Message envoye !');
+        return back();
     }
 
     public function fetch(Request $request, $contactId)
@@ -127,6 +129,24 @@ class MessageController extends Controller
         return response()->json(['success' => true]);
     }
 
+    public function unreadCounts(Request $request)
+    {
+        $userId = Auth::id() ?? 1;
+
+        $unreadMessages = Message::where('receiver_id', $userId)
+            ->where('is_read', false)
+            ->get();
+
+        $totalUnread = $unreadMessages->count();
+
+        $unreadPerContact = $unreadMessages->groupBy('sender_id')->map->count();
+
+        return response()->json([
+            'totalUnread' => $totalUnread,
+            'unreadPerContact' => $unreadPerContact
+        ]);
+    }
+
     public function scheduleVisit(Request $request)
     {
         $data = $request->validate([
@@ -155,6 +175,8 @@ class MessageController extends Controller
             'content' => 'Demande de rendez-vous (' . ($data['type'] === 'physical_visit' ? 'Visite physique' : 'Appel Video') . ') planifiee pour le ' . date('d/m/Y a H:i', strtotime($data['scheduled_at'])) . ' pour le lieu "' . $venue->title . '".',
             'is_read' => false,
         ]);
+
+        broadcast(new UnreadMessageNotification(Auth::id() ?? 1, $venue->user_id))->toOthers();
 
         return back()->with('success', 'Rendez-vous planifie avec succes ! L\'hote en a ete notifie.');
     }

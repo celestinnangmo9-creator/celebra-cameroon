@@ -156,8 +156,16 @@ export default function VenueShow({ venue, similarVenues, bookedDates }) {
                                 <h3 className="text-xl font-bold text-gray-900">Hôte : {venue.user?.name}</h3>
                                 <p className="text-gray-500">Membre depuis {new Date(venue.user?.created_at).getFullYear()}</p>
                             </div>
-                            {user && user.id !== venue.user_id && (
-                                <Link href="#" className="ml-auto btn btn-outline">Contacter l'hôte</Link>
+                            {(!user || user.id !== venue.user_id) && (
+                                user ? (
+                                    <Link href={route('messages.index', { contact: venue.user_id, venue_id: venue.id })} className="ml-auto btn btn-outline">
+                                        <i className="fa-solid fa-comment-dots mr-2"></i> Contacter l'hôte
+                                    </Link>
+                                ) : (
+                                    <button onClick={() => window.location.href = route('login')} className="ml-auto btn btn-outline">
+                                        <i className="fa-solid fa-comment-dots mr-2"></i> Contacter l'hôte
+                                    </button>
+                                )
                             )}
                         </div>
                     </div>

@@ -63,11 +63,11 @@ Route::middleware('auth')->group(function () {
     Route::patch('/bookings/{id}/status', [BookingController::class, 'updateStatus'])->name('bookings.updateStatus');
 
     // Messages & Visits Routes
+    Route::get('/messages/unread-counts', [MessageController::class, 'unreadCounts'])->name('messages.unreadCounts');
     Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
     
     // Reviews
     Route::post('/venues/{venue}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
-    Route::post('/reviews/{id}/reply', [ReviewController::class, 'reply'])->name('reviews.reply');
     Route::post('/messages', [MessageController::class, 'store'])->name('messages.store');
     Route::get('/messages/fetch/{contact}', [MessageController::class, 'fetch'])->name('messages.fetch');
     Route::post('/messages/mark-as-read/{contact}', [MessageController::class, 'markAsRead'])->name('messages.markAsRead');
