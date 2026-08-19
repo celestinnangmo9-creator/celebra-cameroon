@@ -16,7 +16,7 @@ function LayoutContent({ header, children }) {
         useState(false);
 
     return (
-        <div className={`bg-gray-100 dark:bg-gray-900 ${route().current('messages.*') ? 'fixed inset-0 w-full flex flex-col overflow-hidden' : 'min-h-screen'}`}>
+        <div className={`bg-gray-100 dark:bg-gray-900 overflow-x-hidden w-full ${route().current('messages.*') ? 'fixed inset-0 w-full flex flex-col overflow-hidden' : 'min-h-screen flex flex-col'}`}>
             {/* Flash Messages */}
             {(flash?.success || flash?.error || flash?.message) && (
                 <div className="fixed top-24 right-4 z-[100] flex flex-col gap-2 pointer-events-none">
@@ -318,7 +318,7 @@ function LayoutContent({ header, children }) {
                 </header>
             )}
 
-            <main className={route().current('messages.*') ? "flex-1 overflow-hidden flex flex-col relative" : "pb-24 md:pb-0"}>
+            <main className={route().current('messages.*') ? "flex-1 overflow-hidden flex flex-col relative" : "flex-1 flex flex-col pb-24 md:pb-0"}>
                 {children}
             </main>
 

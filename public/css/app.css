@@ -45,6 +45,11 @@ img, video {
   height: auto;
 }
 
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
 body {
   background-color: var(--bg-main);
   color: var(--text-main);
@@ -106,14 +111,14 @@ a {
 }
 
 .logo-img {
-  height: 60px;
+  height: 3.75rem; /* 60px */
   width: auto;
   object-fit: contain;
   transition: height 0.3s ease;
 }
 
 .footer-logo-img {
-  height: 50px;
+  height: 3.1rem; /* 50px */
   width: auto;
   object-fit: contain;
   filter: brightness(0) invert(1);
@@ -122,16 +127,16 @@ a {
 
 @media (min-width: 768px) {
   .logo-img {
-    height: 75px;
+    height: 4.7rem; /* 75px */
   }
   .footer-logo-img {
-    height: 60px;
+    height: 3.75rem; /* 60px */
   }
 }
 
 @media (min-width: 1024px) {
   .logo-img {
-    height: 85px;
+    height: 5.3rem; /* 85px */
   }
 }
 
@@ -210,8 +215,8 @@ a {
 }
 
 .user-menu-avatar {
-  width: 36px;
-  height: 36px;
+  width: 2.25rem; /* 36px */
+  height: 2.25rem;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--primary), var(--accent));
   color: white;
@@ -230,7 +235,7 @@ a {
   position: absolute;
   top: calc(100% + 0.8rem);
   right: 0;
-  width: 260px;
+  width: 16.25rem; /* 260px */
   background: var(--bg-card);
   border: 1px solid var(--glass-border);
   border-radius: 16px;
@@ -433,7 +438,7 @@ a {
 
 .search-divider {
   width: 1px;
-  height: 40px;
+  height: 2.5rem; /* 40px */
   background: var(--glass-border);
   margin: 0 4px;
 }
@@ -522,8 +527,8 @@ a {
 }
 
 .category-icon {
-  width: 42px;
-  height: 42px;
+  width: 2.6rem; /* 42px */
+  height: 2.6rem;
   border-radius: 10px;
   background: var(--primary-light);
   color: var(--primary);
@@ -572,7 +577,8 @@ a {
 
 .venue-image-wrapper {
   position: relative;
-  height: 220px;
+  aspect-ratio: 16 / 9; /* Replaces height: 220px to prevent layout shift */
+  height: auto;
   overflow: hidden;
 }
 
@@ -671,10 +677,10 @@ a {
 /* ------------------ Chat & Call Modals ------------------ */
 .chat-container {
   display: grid;
-  grid-template-columns: 320px 1fr;
+  grid-template-columns: 20rem 1fr; /* 320px */
   height: 70vh;
-  min-height: 500px;
-  max-height: 750px;
+  min-height: 31.25rem; /* 500px */
+  max-height: 46.8rem; /* 750px */
   background: var(--bg-card);
   border-radius: var(--radius-lg);
   border: 1px solid var(--glass-border);
@@ -709,8 +715,8 @@ a {
 }
 
 .user-avatar {
-  width: 44px;
-  height: 44px;
+  width: 2.75rem; /* 44px */
+  height: 2.75rem;
   border-radius: 50%;
   object-fit: cover;
 }

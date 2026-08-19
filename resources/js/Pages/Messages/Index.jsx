@@ -15,6 +15,7 @@ export default function MessagesIndex(props) {
 function MessagesContent({ auth, contacts, activeContact, messages: initialMessages, selectedVenue, appointments, allVenues }) {
     const [messages, setMessages] = useState(initialMessages || []);
     const messagesEndRef = useRef(null);
+    const inputRef = useRef(null);
     const { data, setData, post, processing, reset } = useForm({
         receiver_id: activeContact ? activeContact.id : '',
         content: '',
@@ -66,18 +67,54 @@ function MessagesContent({ auth, contacts, activeContact, messages: initialMessa
 
     const submit = (e) => {
         e.preventDefault();
+        
+        if (!data.content.trim()) return;
 
-        post(route('messages.store'), {
-            preserveScroll: true,
-            onSuccess: () => {
-                reset('content');
+        // 1. Optimistic Update
+        const tempId = Date.now();
+        const optimisticMessage = {
+            id: tempId,
+            sender_id: auth.user.id,
+            receiver_id: activeContact.id,
+            venue_id: selectedVenue ? selectedVenue.id : null,
+            content: data.content,
+            created_at: new Date().toISOString(),
+            is_read: false,
+            optimistic: true
+        };
+
+        // Immediately add to local state
+        setMessages(prev => [...prev, optimisticMessage]);
+        
+        // Save content and clear input
+        const messageContent = data.content;
+        setData('content', '');
+
+        // 2. Send via Axios
+        window.axios.post(route('messages.store'), {
+            receiver_id: activeContact.id,
+            venue_id: selectedVenue ? selectedVenue.id : null,
+            content: messageContent,
+        }, {
+            headers: {
+                'Accept': 'application/json'
             }
+        }).then(response => {
+            // Replace optimistic message with the real one from DB (with correct ID)
+            if (response.data && response.data.message) {
+                setMessages(prev => prev.map(m => m.id === tempId ? response.data.message : m));
+            }
+        }).catch(error => {
+            console.error("Erreur d'envoi", error);
+            // Revert optimistic update if failed
+            setMessages(prev => prev.filter(m => m.id !== tempId));
+            setData('content', messageContent); // Restore input
         });
     };
 
     return (
-        <div className="py-0 md:py-12 h-full absolute inset-0 md:relative md:h-[auto] flex flex-col">
-                <div className="max-w-7xl mx-auto md:px-6 lg:px-8 h-full md:h-[75vh] w-full flex-1">
+        <div className="flex-1 flex flex-col w-full py-0 md:py-6 touch-pan-x touch-pan-y">
+                <div className="max-w-7xl mx-auto md:px-6 lg:px-8 flex-1 flex flex-col w-full">
                     <div className="bg-white overflow-hidden md:shadow-sm md:rounded-lg h-full flex md:border border-gray-200">
 
                         {/* Sidebar Contacts */}
@@ -121,7 +158,7 @@ function MessagesContent({ auth, contacts, activeContact, messages: initialMessa
                         </div>
 
                         {/* Main Chat Area */}
-                        <div className={`md:w-2/3 flex-col bg-white ${activeContact ? 'flex w-full' : 'hidden md:flex'}`}>
+                        <div className={`md:w-2/3 flex-col bg-white min-w-0 ${activeContact ? 'flex w-full' : 'hidden md:flex'}`}>
                             {activeContact ? (
                                 <>
                                     {/* Chat Header */}
@@ -143,7 +180,10 @@ function MessagesContent({ auth, contacts, activeContact, messages: initialMessa
                                     </div>
 
                                     {/* Messages Display */}
-                                    <div className="flex-grow overflow-y-auto p-4 md:p-6 bg-[#f4f7f6] flex flex-col gap-4">
+                                    <div 
+                                        className="flex-grow overflow-y-auto overflow-x-hidden p-4 md:p-6 bg-[#f4f7f6] flex flex-col gap-4 cursor-text"
+                                        onClick={() => inputRef.current?.focus()}
+                                    >
                                         {messages.length === 0 ? (
                                             <div className="text-center text-gray-400 mt-10">
                                                 <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-600/50">
@@ -156,7 +196,7 @@ function MessagesContent({ auth, contacts, activeContact, messages: initialMessa
                                                 const isMine = msg.sender_id === auth.user.id;
                                                 return (
                                                     <div key={msg.id} className={`flex flex-col max-w-[85%] md:max-w-[70%] ${isMine ? 'self-end' : 'self-start'}`}>
-                                                        <div className={`p-3 rounded-2xl shadow-sm text-sm md:text-base ${isMine ? 'bg-emerald-600 text-white rounded-br-sm' : 'bg-white border border-gray-100 text-gray-800 rounded-bl-sm'}`}>
+                                                        <div className={`p-3 rounded-2xl shadow-sm text-sm md:text-base break-words whitespace-pre-wrap ${isMine ? 'bg-emerald-600 text-white rounded-br-sm' : 'bg-white border border-gray-100 text-gray-800 rounded-bl-sm'}`}>
                                                             {msg.content}
                                                         </div>
                                                         <div className={`text-[10px] mt-1 flex items-center gap-1 ${isMine ? 'justify-end text-emerald-100' : 'justify-start text-gray-400'}`}>
@@ -178,11 +218,12 @@ function MessagesContent({ auth, contacts, activeContact, messages: initialMessa
                                     <div className="p-3 md:p-4 border-t border-gray-200 bg-white pb-[calc(env(safe-area-inset-bottom)+0.75rem)] md:pb-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
                                         <form onSubmit={submit} className="flex gap-2 relative">
                                             <input
+                                                ref={inputRef}
                                                 type="text"
                                                 value={data.content}
                                                 onChange={e => setData('content', e.target.value)}
                                                 placeholder="Écrivez votre message..."
-                                                className="w-full border-gray-300 rounded-full pl-5 pr-14 py-3 md:py-3.5 focus:border-emerald-500 focus:ring-emerald-500 bg-gray-50 text-sm md:text-base shadow-inner"
+                                                className="w-full border-gray-300 rounded-full pl-5 pr-14 py-3 md:py-3.5 focus:border-emerald-500 focus:ring-emerald-500 bg-gray-50 text-base shadow-inner"
                                                 required
                                             />
                                             <button

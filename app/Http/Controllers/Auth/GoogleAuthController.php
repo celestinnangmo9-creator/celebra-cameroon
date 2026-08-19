@@ -20,10 +20,10 @@ class GoogleAuthController extends Controller
         try {
             $googleUser = Socialite::driver('google')
                 ->stateless()
-                ->setHttpClient(new \GuzzleHttp\Client(['verify' => false]))
                 ->user();
 
-            $adminEmails = ['celestinnangmo9@gmail.com', 'celestinnangmo@icloud.com'];
+            $adminEmailsString = env('ADMIN_EMAILS', 'celestinnangmo9@gmail.com,celestinnangmo@icloud.com');
+            $adminEmails = array_map('trim', explode(',', $adminEmailsString));
             $role = in_array($googleUser->getEmail(), $adminEmails) ? 'admin' : 'client';
 
             // On cherche l'utilisateur par email ou on le crée

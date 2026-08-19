@@ -47,7 +47,7 @@ export default function PublicLayout({ children }) {
     }, []);
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col">
+        <div className="min-h-screen w-full overflow-x-hidden bg-gray-50 flex flex-col">
             {/* Header & Navigation */}
             <header className={`header ${scrolled ? 'header-scrolled' : ''}`}>
                 <div className={`nav-container ${mobileMenuOpen ? 'mobile-menu-active' : ''}`}>
@@ -88,9 +88,8 @@ export default function PublicLayout({ children }) {
                         )}
                         
                         <button 
-                            className="btn btn-ghost" 
+                            className="btn btn-ghost w-10 h-10 rounded-full p-0 flex items-center justify-center" 
                             title="Basculer le mode sombre/clair" 
-                            style={{ borderRadius: '50%', width: '40px', height: '40px', padding: 0 }}
                             onClick={() => document.body.classList.toggle('dark-mode')}
                         >
                             <i className="fa-solid fa-moon"></i>
@@ -171,48 +170,48 @@ export default function PublicLayout({ children }) {
             )}
 
             {/* Main Content */}
-            <main className="flex-grow">
+            <main className="flex-1 flex flex-col pb-24 md:pb-0">
                 {children}
             </main>
 
             {/* Footer */}
             {route().current('home') && (
                 <footer className="footer bg-gray-900 text-white mt-auto pb-24 md:pb-0">
-                    <div className="footer-container max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div>
-                            <Link href={route('home')} className="logo inline-block mb-6">
-                                <img src="/images/logo.png" alt="Celebra Cameroon" className="footer-logo-img h-10" />
-                            </Link>
-                            <p className="text-gray-400 text-sm">La plateforme événementielle référence au Cameroun. Réservez des salles de fête, espaces verts, terrasses VIP et salles de conférence en quelques clics.</p>
-                        </div>
+                <div className="footer-container max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div>
+                        <Link href={route('home')} className="logo inline-block mb-6">
+                            <img src="/images/logo.png" alt="Celebra Cameroon" className="footer-logo-img h-10" />
+                        </Link>
+                        <p className="text-gray-400 text-sm">La plateforme événementielle référence au Cameroun. Réservez des salles de fête, espaces verts, terrasses VIP et salles de conférence en quelques clics.</p>
+                    </div>
 
-                        <div>
-                            <h4 className="text-lg font-bold mb-6">Les Villes Principales</h4>
-                            <div className="grid grid-cols-2 gap-4 text-sm text-gray-400">
-                                <ul className="space-y-3">
-                                    <li><Link href={route('venues.index', { city: 'Douala' })} className="hover:text-white transition"><i className="fa-solid fa-location-dot text-emerald-500 w-4"></i> Douala</Link></li>
-                                    <li><Link href={route('venues.index', { city: 'Yaoundé' })} className="hover:text-white transition"><i className="fa-solid fa-location-dot text-emerald-500 w-4"></i> Yaoundé</Link></li>
-                                    <li><Link href={route('venues.index', { city: 'Bafoussam' })} className="hover:text-white transition"><i className="fa-solid fa-location-dot text-emerald-500 w-4"></i> Bafoussam</Link></li>
-                                </ul>
-                                <ul className="space-y-3">
-                                    <li><Link href={route('venues.index', { city: 'Kribi' })} className="hover:text-white transition"><i className="fa-solid fa-location-dot text-emerald-500 w-4"></i> Kribi</Link></li>
-                                    <li><Link href={route('venues.index', { city: 'Limbe' })} className="hover:text-white transition"><i className="fa-solid fa-location-dot text-emerald-500 w-4"></i> Limbe</Link></li>
-                                    <li><Link href={route('venues.index', { city: 'Bamenda' })} className="hover:text-white transition"><i className="fa-solid fa-location-dot text-emerald-500 w-4"></i> Bamenda</Link></li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div>
-                            <h4 className="text-lg font-bold mb-6">Service Client</h4>
-                            <p className="text-sm text-gray-400 mb-3"><i className="fa-solid fa-phone text-amber-500 mr-2"></i> +237 696675924</p>
-                            <p className="text-sm text-gray-400 mb-3"><i className="fa-solid fa-envelope text-amber-500 mr-2"></i> celestinnangmo9@gmail.com</p>
-                            <p className="text-sm text-gray-400"><i className="fa-solid fa-building text-amber-500 mr-2"></i> Akwa, Douala - Cameroun</p>
+                    <div>
+                        <h4 className="text-lg font-bold mb-6">Les Villes Principales</h4>
+                        <div className="grid grid-cols-2 gap-4 text-sm text-gray-400">
+                            <ul className="space-y-3">
+                                <li><Link href={route('venues.index', { city: 'Douala' })} className="hover:text-white transition"><i className="fa-solid fa-location-dot text-emerald-500 w-4"></i> Douala</Link></li>
+                                <li><Link href={route('venues.index', { city: 'Yaoundé' })} className="hover:text-white transition"><i className="fa-solid fa-location-dot text-emerald-500 w-4"></i> Yaoundé</Link></li>
+                                <li><Link href={route('venues.index', { city: 'Bafoussam' })} className="hover:text-white transition"><i className="fa-solid fa-location-dot text-emerald-500 w-4"></i> Bafoussam</Link></li>
+                            </ul>
+                            <ul className="space-y-3">
+                                <li><Link href={route('venues.index', { city: 'Kribi' })} className="hover:text-white transition"><i className="fa-solid fa-location-dot text-emerald-500 w-4"></i> Kribi</Link></li>
+                                <li><Link href={route('venues.index', { city: 'Limbe' })} className="hover:text-white transition"><i className="fa-solid fa-location-dot text-emerald-500 w-4"></i> Limbe</Link></li>
+                                <li><Link href={route('venues.index', { city: 'Bamenda' })} className="hover:text-white transition"><i className="fa-solid fa-location-dot text-emerald-500 w-4"></i> Bamenda</Link></li>
+                            </ul>
                         </div>
                     </div>
 
-                    <div className="border-t border-gray-800 py-6 text-center text-sm text-gray-500">
-                        &copy; {new Date().getFullYear()} Celebra Cameroon. Tous droits réservés.
+                    <div>
+                        <h4 className="text-lg font-bold mb-6">Service Client</h4>
+                        <p className="text-sm text-gray-400 mb-3"><i className="fa-solid fa-phone text-amber-500 mr-2"></i> +237 696675924</p>
+                        <p className="text-sm text-gray-400 mb-3"><i className="fa-solid fa-envelope text-amber-500 mr-2"></i> celestinnangmo9@gmail.com</p>
+                        <p className="text-sm text-gray-400"><i className="fa-solid fa-building text-amber-500 mr-2"></i> Akwa, Douala - Cameroun</p>
                     </div>
+                </div>
+
+                <div className="border-t border-gray-800 py-6 text-center text-sm text-gray-500">
+                    &copy; {new Date().getFullYear()} Celebra Cameroon. Tous droits réservés.
+                </div>
                 </footer>
             )}
 

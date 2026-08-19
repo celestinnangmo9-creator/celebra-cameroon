@@ -132,7 +132,7 @@ export default function AdminVenues({ auth, venues, filters = {} }) {
                                                     {venue.status}
                                                 </span>
                                                 {venue.rejection_reason && (
-                                                    <p className="text-xs text-red-600 mt-1 max-w-[200px] truncate" title={venue.rejection_reason}>
+                                                    <p className="text-xs text-red-600 mt-1 max-w-[15rem] break-words" title={venue.rejection_reason}>
                                                         Motif: {venue.rejection_reason}
                                                     </p>
                                                 )}

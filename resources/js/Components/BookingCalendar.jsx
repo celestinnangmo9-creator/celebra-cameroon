@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useForm, usePage } from '@inertiajs/react';
 import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 import { French } from 'flatpickr/dist/l10n/fr.js';
 
 export default function BookingCalendar({ venue, initialBookedDates }) {

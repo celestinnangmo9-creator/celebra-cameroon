@@ -49,8 +49,11 @@ RUN a2enmod rewrite
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
+# Rend le script d'entrée exécutable
+RUN chmod +x /var/www/html/entrypoint.sh
+
 # Exposition du port 80 pour Render
 EXPOSE 80
 
-# Commande de démarrage par défaut pour Apache
-CMD ["apache2-foreground"]
+# Utilisation du script comme point d'entrée
+ENTRYPOINT ["/var/www/html/entrypoint.sh"]

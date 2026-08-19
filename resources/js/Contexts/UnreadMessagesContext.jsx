@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { usePage } from '@inertiajs/react';
 import axios from 'axios';
 
@@ -8,17 +8,30 @@ export function UnreadMessagesProvider({ children }) {
     const { auth } = usePage().props;
     const user = auth?.user;
 
-    const [totalUnread, setTotalUnread] = useState(0);
-    const [unreadPerContact, setUnreadPerContact] = useState({});
+    const [totalUnread, setTotalUnread] = useState(auth?.unread_messages_count || 0);
+    const [unreadPerContact, setUnreadPerContact] = useState(auth?.unread_per_contact || {});
     const [latestMessageToast, setLatestMessageToast] = useState(null);
 
-    // Initialize state from Inertia shared props (this handles page reloads seamlessly)
+    const prevUnreadCountRef = useRef(auth?.unread_messages_count);
+    const prevUnreadPerContactRef = useRef(JSON.stringify(auth?.unread_per_contact || {}));
+
+    // Update state from Inertia shared props only if server data has actually changed (prevents overwriting local updates on mount)
     useEffect(() => {
-        if (auth?.unread_messages_count !== undefined) {
-            setTotalUnread(auth.unread_messages_count);
-        }
-        if (auth?.unread_per_contact) {
-            setUnreadPerContact(auth.unread_per_contact);
+        const currentPerContactString = JSON.stringify(auth?.unread_per_contact || {});
+        
+        if (
+            auth?.unread_messages_count !== prevUnreadCountRef.current || 
+            currentPerContactString !== prevUnreadPerContactRef.current
+        ) {
+            if (auth?.unread_messages_count !== undefined) {
+                setTotalUnread(auth.unread_messages_count);
+            }
+            if (auth?.unread_per_contact !== undefined) {
+                setUnreadPerContact(auth.unread_per_contact);
+            }
+            
+            prevUnreadCountRef.current = auth?.unread_messages_count;
+            prevUnreadPerContactRef.current = currentPerContactString;
         }
     }, [auth?.unread_messages_count, auth?.unread_per_contact]);
 
@@ -66,15 +79,20 @@ export function UnreadMessagesProvider({ children }) {
     }, [user]);
 
     const markContactAsRead = (contactId) => {
-        if (unreadPerContact[contactId] > 0) {
-            const count = unreadPerContact[contactId];
-            setTotalUnread(prev => Math.max(0, prev - count));
-            setUnreadPerContact(prev => ({ ...prev, [contactId]: 0 }));
+        // ALWAYS update DB to ensure consistency, even if local state is out of sync
+        axios.post(route('messages.markAsRead', { contact: contactId }))
+            .catch(err => console.error("Erreur lors du marquage des messages comme lus", err));
+
+        // Use functional state updates to avoid stale closure issues
+        setUnreadPerContact(prevPerContact => {
+            const count = prevPerContact[contactId] || 0;
             
-            // Mark as read in DB via API
-            axios.post(route('messages.markAsRead', { contact: contactId }))
-                .catch(err => console.error("Erreur lors du marquage des messages comme lus", err));
-        }
+            if (count > 0) {
+                setTotalUnread(prevTotal => Math.max(0, prevTotal - count));
+            }
+            
+            return { ...prevPerContact, [contactId]: 0 };
+        });
     };
 
     return (

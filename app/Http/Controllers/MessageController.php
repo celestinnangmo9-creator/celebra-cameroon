@@ -95,6 +95,10 @@ class MessageController extends Controller
         broadcast(new MessageSent($message))->toOthers();
         broadcast(new UnreadMessageNotification($message->sender_id, $message->receiver_id))->toOthers();
 
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json(['message' => $message]);
+        }
+        
         return back();
     }
 

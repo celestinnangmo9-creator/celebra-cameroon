@@ -44,7 +44,7 @@ export default function AdminTransactions({ auth, bookings }) {
                                                 <div className="text-xs text-gray-500">{booking.user?.email}</div>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <a href={route('venues.show', booking.venue?.id)} className="font-bold text-indigo-600 hover:underline text-sm truncate max-w-[200px] block">
+                                                <a href={route('venues.show', booking.venue?.id)} className="font-bold text-indigo-600 hover:underline text-sm block break-words max-w-[15rem]">
                                                     {booking.venue?.title}
                                                 </a>
                                                 <div className="text-xs text-gray-500 mt-1">

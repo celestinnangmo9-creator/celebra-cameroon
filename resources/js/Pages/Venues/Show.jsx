@@ -53,7 +53,7 @@ export default function VenueShow({ venue, similarVenues, bookedDates }) {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 
                 {/* Premium Gallery Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 h-auto md:h-[500px] rounded-3xl overflow-hidden shadow-sm">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 h-auto md:h-[31.25rem] rounded-3xl overflow-hidden shadow-sm">
                     {/* Main Image */}
                     <div className="h-64 md:h-full cursor-pointer overflow-hidden relative group">
                         <img 
@@ -119,7 +119,7 @@ export default function VenueShow({ venue, similarVenues, bookedDates }) {
                         {/* Description */}
                         <div className="mb-10 border-b border-gray-100 pb-10">
                             <h2 className="text-2xl font-bold text-gray-900 mb-4">À propos de ce lieu</h2>
-                            <p className="text-gray-600 leading-relaxed text-lg whitespace-pre-line">
+                            <p className="text-gray-600 leading-relaxed text-lg whitespace-pre-line break-words">
                                 {venue.description}
                             </p>
                         </div>
@@ -196,13 +196,13 @@ export default function VenueShow({ venue, similarVenues, bookedDates }) {
                                             <i className="fa-solid fa-star"></i> {review.rating}/5
                                         </div>
                                     </div>
-                                    <p className="text-gray-700 italic mb-4">"{review.comment}"</p>
+                                    <p className="text-gray-700 italic mb-4 break-words">"{review.comment}"</p>
                                     
                                     {review.owner_reply ? (
                                         <div className="bg-white p-4 rounded-xl border border-emerald-100 ml-4 relative mt-4">
                                             <div className="absolute -left-3 top-4 w-3 h-3 bg-white border-l border-b border-emerald-100 rotate-45"></div>
                                             <h5 className="text-sm font-bold text-emerald-700 mb-1"><i className="fa-solid fa-reply"></i> Réponse de l'hôte</h5>
-                                            <p className="text-sm text-gray-600">{review.owner_reply}</p>
+                                            <p className="text-sm text-gray-600 break-words">{review.owner_reply}</p>
                                         </div>
                                     ) : (
                                         user && user.id === venue.user_id && (

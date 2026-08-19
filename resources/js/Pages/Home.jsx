@@ -62,7 +62,7 @@ export default function Home({ auth, featuredVenues = [], latestVenues = [], reg
     {/*  Search Box Form  */}
     <form action={route('venues.index')} method="GET" className="search-card" data-aos="fade-up" data-aos-delay="300">
       <div className="form-group" style={{display: 'flex', gap: '0.5rem', width: '100%', flexWrap: 'wrap'}}>
-        <div style={{flex: '1', minWidth: '150px'}}>
+        <div style={{flex: '1', minWidth: '9.375rem'}}>
           <label className="form-label"><i className="fa-solid fa-map" style={{color: 'var(--primary)'}}></i> Région</label>
           <select name="region" id="region-select" className="form-control">
             <option value="">Toutes les régions</option>
@@ -71,7 +71,7 @@ export default function Home({ auth, featuredVenues = [], latestVenues = [], reg
             ))}
           </select>
         </div>
-        <div style={{flex: '1', minWidth: '150px'}}>
+        <div style={{flex: '1', minWidth: '9.375rem'}}>
           <label className="form-label"><i className="fa-solid fa-location-dot" style={{color: 'var(--primary)'}}></i> Ville</label>
           <select name="city" id="city-select" className="form-control">
             <option value="">Toutes les villes</option>
@@ -187,7 +187,7 @@ export default function Home({ auth, featuredVenues = [], latestVenues = [], reg
       <div className="section-title">Espaces en Vedette au Cameroun</div>
       <div className="section-subtitle">Sélectionnés pour leur standing, leurs équipements et la satisfaction client.</div>
     </div>
-    <a href={route('venues.index')} className="btn btn-outline" style={{width: '100%', maxWidth: '300px', textAlign: 'center'}}>Voir tout le catalogue <i className="fa-solid fa-arrow-right"></i></a>
+    <a href={route('venues.index')} className="btn btn-outline" style={{width: '100%', maxWidth: '18.75rem', textAlign: 'center'}}>Voir tout le catalogue <i className="fa-solid fa-arrow-right"></i></a>
   </div>
 
   <div className="venues-grid">
@@ -203,21 +203,21 @@ export default function Home({ auth, featuredVenues = [], latestVenues = [], reg
       <p className="section-subtitle">Réservez un lieu d'événement en toute tranquillité grâce à nos garanties et fonctionnalités interactives.</p>
     </div>
 
-    <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem'}}>
+    <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 17.5rem), 1fr))', gap: '2rem'}}>
       <div style={{textAlign: 'center', padding: '2rem', background: 'var(--bg-main)', borderRadius: 'var(--radius-lg)'}} data-aos="fade-up" data-aos-delay="100">
-        <div style={{width: '70px', height: '70px', background: 'var(--primary-light)', color: 'var(--primary)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem', fontSize: '1.8rem', fontWeight: '800'}}>1</div>
+        <div style={{width: '4.375rem', height: '4.375rem', background: 'var(--primary-light)', color: 'var(--primary)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem', fontSize: '1.8rem', fontWeight: '800'}}>1</div>
         <h3 style={{marginBottom: '0.75rem'}}>Trouvez & Filtrez</h3>
         <p style={{color: 'var(--text-muted)', fontSize: '0.95rem'}}>Recherchez par ville (Douala, Yaoundé, Kribi...), capacité, budget et équipements.</p>
       </div>
 
       <div style={{textAlign: 'center', padding: '2rem', background: 'var(--bg-main)', borderRadius: 'var(--radius-lg)'}} data-aos="fade-up" data-aos-delay="200">
-        <div style={{width: '70px', height: '70px', background: 'var(--accent-light)', color: 'var(--accent)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem', fontSize: '1.8rem', fontWeight: '800'}}>2</div>
+        <div style={{width: '4.375rem', height: '4.375rem', background: 'var(--accent-light)', color: 'var(--accent)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem', fontSize: '1.8rem', fontWeight: '800'}}>2</div>
         <h3 style={{marginBottom: '0.75rem'}}>Discutez & Visitez</h3>
         <p style={{color: 'var(--text-muted)', fontSize: '0.95rem'}}>Échangez directement avec le propriétaire en messagerie interne, passez un appel audio/vidéo ou planifiez une visite physique du lieu.</p>
       </div>
 
       <div style={{textAlign: 'center', padding: '2rem', background: 'var(--bg-main)', borderRadius: 'var(--radius-lg)'}} data-aos="fade-up" data-aos-delay="300">
-        <div style={{width: '70px', height: '70px', background: '#e0e7ff', color: '#4338ca', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem', fontSize: '1.8rem', fontWeight: '800'}}>3</div>
+        <div style={{width: '4.375rem', height: '4.375rem', background: '#e0e7ff', color: '#4338ca', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem', fontSize: '1.8rem', fontWeight: '800'}}>3</div>
         <h3 style={{marginBottom: '0.75rem'}}>Réservez en Sécurité</h3>
         <p style={{color: 'var(--text-muted)', fontSize: '0.95rem'}}>Calculez votre devis instantané et confirmez votre réservation avec paiement sécurisé ou acompte sur place.</p>
       </div>
