@@ -52,8 +52,5 @@ RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 # Rend le script d'entrée exécutable
 RUN chmod +x /var/www/html/entrypoint.sh
 
-# Exposition du port 80 pour Render
-EXPOSE 80
-
 # Utilisation du script comme point d'entrée
 ENTRYPOINT ["/var/www/html/entrypoint.sh"]
