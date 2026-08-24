@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Venue extends Model
 {
@@ -42,6 +45,35 @@ class Venue extends Model
         'price_per_hour' => 'decimal:2',
         'rating' => 'float',
     ];
+
+    protected function mainImage(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value) {
+                if (!$value) return null;
+                if (Str::startsWith($value, ['http://', 'https://', '/images/', '/storage/'])) {
+                    return $value;
+                }
+                return Storage::url($value);
+            }
+        );
+    }
+
+    protected function galleryImages(): Attribute
+    {
+        return Attribute::make(
+            get: function ($images) {
+                if (!$images) return [];
+                $images = is_array($images) ? $images : json_decode($images, true);
+                return array_map(function ($img) {
+                    if (Str::startsWith($img, ['http://', 'https://', '/images/', '/storage/'])) {
+                        return $img;
+                    }
+                    return Storage::url($img);
+                }, $images);
+            }
+        );
+    }
 
     public function user()
     {

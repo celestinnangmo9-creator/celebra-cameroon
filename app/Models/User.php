@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -21,6 +22,10 @@ class User extends Authenticatable
         'bio',
         'google_id',
         'status',
+        'trial_ends_at',
+        'subscription_plan',
+        'subscription_status',
+        'subscription_ends_at',
     ];
 
     protected $hidden = [
@@ -29,11 +34,26 @@ class User extends Authenticatable
         'google_id',
     ];
 
+    protected function avatar(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value) {
+                if (!$value) return null;
+                if (Str::startsWith($value, ['http://', 'https://', '/images/', '/storage/'])) {
+                    return $value;
+                }
+                return Storage::url($value);
+            }
+        );
+    }
+
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'trial_ends_at' => 'datetime',
+            'subscription_ends_at' => 'datetime',
         ];
     }
 

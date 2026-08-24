@@ -15,6 +15,9 @@ function LayoutContent({ header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
 
+    const isSubscriptionExpired = user?.role === 'host' && user?.subscription_status === 'expired';
+    const isSubscriptionPage = route().current('subscriptions.*');
+
     return (
         <div className={`bg-gray-100 dark:bg-gray-900 overflow-x-hidden w-full ${route().current('messages.*') ? 'fixed inset-0 w-full flex flex-col overflow-hidden' : 'min-h-screen flex flex-col'}`}>
             {/* Flash Messages */}
@@ -75,17 +78,26 @@ function LayoutContent({ header, children }) {
                                     Dashboard
                                 </NavLink>
                                 {user?.role === 'host' && (
-                                    <NavLink
-                                        href={route('host.appointments.index')}
-                                        active={route().current('host.appointments.*')}
-                                    >
-                                        Rendez-vous
-                                        {auth.pending_appointments_count > 0 && (
-                                            <span className="ml-2 inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-orange-500 rounded-full">
-                                                {auth.pending_appointments_count}
-                                            </span>
-                                        )}
-                                    </NavLink>
+                                    <>
+                                        <NavLink
+                                            href={route('host.appointments.index')}
+                                            active={route().current('host.appointments.*')}
+                                        >
+                                            Rendez-vous
+                                            {auth.pending_appointments_count > 0 && (
+                                                <span className="ml-2 inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-orange-500 rounded-full">
+                                                    {auth.pending_appointments_count}
+                                                </span>
+                                            )}
+                                        </NavLink>
+                                        <NavLink
+                                            href={route('subscriptions.index')}
+                                            active={route().current('subscriptions.*')}
+                                            className="text-[#C9A227] font-bold"
+                                        >
+                                            <i className="fa-solid fa-crown mr-2"></i> Abonnement
+                                        </NavLink>
+                                    </>
                                 )}
                                 {user?.role === 'admin' && (
                                     <NavLink
@@ -261,17 +273,26 @@ function LayoutContent({ header, children }) {
                             Dashboard
                         </ResponsiveNavLink>
                         {user?.role === 'host' && (
-                            <ResponsiveNavLink
-                                href={route('host.appointments.index')}
-                                active={route().current('host.appointments.*')}
-                            >
-                                Rendez-vous
-                                {auth.pending_appointments_count > 0 && (
-                                    <span className="ml-2 inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-orange-500 rounded-full">
-                                        {auth.pending_appointments_count}
-                                    </span>
-                                )}
-                            </ResponsiveNavLink>
+                            <>
+                                <ResponsiveNavLink
+                                    href={route('host.appointments.index')}
+                                    active={route().current('host.appointments.*')}
+                                >
+                                    Rendez-vous
+                                    {auth.pending_appointments_count > 0 && (
+                                        <span className="ml-2 inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-orange-500 rounded-full">
+                                            {auth.pending_appointments_count}
+                                        </span>
+                                    )}
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink
+                                    href={route('subscriptions.index')}
+                                    active={route().current('subscriptions.*')}
+                                    className="text-[#C9A227] font-bold"
+                                >
+                                    <i className="fa-solid fa-crown mr-2"></i> Abonnement
+                                </ResponsiveNavLink>
+                            </>
                         )}
                         {user?.role === 'admin' && (
                             <ResponsiveNavLink
@@ -321,6 +342,31 @@ function LayoutContent({ header, children }) {
             <main className={route().current('messages.*') ? "flex-1 overflow-hidden flex flex-col relative" : "flex-1 flex flex-col pb-24 md:pb-0"}>
                 {children}
             </main>
+
+            {/* Expired Subscription Blocking Modal */}
+            {isSubscriptionExpired && !isSubscriptionPage && (
+                <div className="fixed inset-0 z-[200] flex items-center justify-center bg-gray-900/80 backdrop-blur-sm p-4">
+                    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 max-w-lg w-full text-center border-t-4 border-red-500">
+                        <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-6">
+                            <i className="fa-solid fa-lock text-red-600 text-2xl"></i>
+                        </div>
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4 font-['Fraunces']">
+                            Abonnement expiré
+                        </h2>
+                        <p className="text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
+                            Votre période d'essai ou votre abonnement a expiré. Vos salles sont actuellement masquées. 
+                            Veuillez choisir une formule d'abonnement pour continuer à gérer vos salles et les rendre visibles à nouveau.
+                        </p>
+                        <Link
+                            href={route('subscriptions.index')}
+                            className="inline-flex justify-center items-center px-6 py-3 bg-[#0B3D2E] hover:bg-[#124d3a] text-white font-bold rounded-lg shadow-lg transition-all border border-[#C9A227] hover:scale-105 w-full"
+                        >
+                            <i className="fa-solid fa-crown mr-2 text-[#C9A227]"></i>
+                            Voir les formules d'abonnement
+                        </Link>
+                    </div>
+                </div>
+            )}
 
             {!route().current('messages.*') && <MobileBottomNav />}
         </div>

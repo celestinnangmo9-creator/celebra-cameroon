@@ -134,6 +134,10 @@ class VenueController extends Controller
             return redirect()->route('home')->with('error', 'Seuls les hôtes ou propriétaires peuvent publier un espace.');
         }
 
+        if (Auth::user()->subscription_status === 'expired') {
+            return redirect()->route('dashboard')->with('error', 'Votre abonnement a expiré. Veuillez le renouveler pour publier de nouvelles salles.');
+        }
+
         $regionsAndCities = [
             'Adamaoua' => ['Ngaoundéré', 'Banyo', 'Meiganga', 'Tignère', 'Tibati'],
             'Centre' => ['Yaoundé', 'Bafia', 'Mbalmayo', 'Obala', 'Monatélé', 'Eseka', 'Akonolinga'],
@@ -160,6 +164,10 @@ class VenueController extends Controller
     {
         if (!Auth::user()->isHost()) {
             return redirect()->route('home')->with('error', 'Action non autorisée. Devenez hôte pour publier un espace.');
+        }
+
+        if (Auth::user()->subscription_status === 'expired') {
+            return redirect()->route('dashboard')->with('error', 'Votre abonnement a expiré. Veuillez le renouveler pour publier de nouvelles salles.');
         }
 
         $venue = $this->venueService->createVenue(

@@ -8,9 +8,11 @@ use App\Models\Booking;
 use App\Models\Message;
 use App\Models\Appointment;
 use App\Models\Review;
+use App\Models\SubscriptionPlan;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class DatabaseSeeder extends Seeder
 {
@@ -25,6 +27,8 @@ class DatabaseSeeder extends Seeder
             'phone' => '+237 696675924',
             'avatar' => 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
             'bio' => 'Gestionnaire de lieux d\'exception au Cameroun depuis 8 ans. Passionné par l\'organisation d\'événements inoubliables.',
+            'trial_ends_at' => Carbon::now()->addDays(30),
+            'subscription_status' => 'trial',
         ]);
 
         $host2 = User::create([
@@ -35,6 +39,8 @@ class DatabaseSeeder extends Seeder
             'phone' => '+237 6 77 11 22 33',
             'avatar' => 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=300&q=80',
             'bio' => 'Propriétaire de domaines événementiels balnéaires à Kribi et espaces VIP à Douala.',
+            'trial_ends_at' => Carbon::now()->addDays(30),
+            'subscription_status' => 'trial',
         ]);
 
         // 2. Create Client User
@@ -57,7 +63,24 @@ class DatabaseSeeder extends Seeder
             'phone' => '+237 6 90 00 11 22',
         ]);
 
-        // 4. Create Venues
+        // 4. Create Subscription Plans
+        SubscriptionPlan::create([
+            'slug' => 'basique',
+            'name' => 'Basique',
+            'price' => 5000.00,
+            'max_venues' => 3,
+            'is_featured' => false,
+        ]);
+
+        SubscriptionPlan::create([
+            'slug' => 'premium',
+            'name' => 'Premium',
+            'price' => 15000.00,
+            'max_venues' => null, // unlimited
+            'is_featured' => true,
+        ]);
+
+        // 5. Create Venues
         $v1 = Venue::create([
             'user_id' => $host->id,
             'title' => 'Palais des Lumières & Espace Banquet',

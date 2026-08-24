@@ -25,7 +25,9 @@
     },
     "dependencies": {
         "@heroicons/react": "^2.2.0",
+        "date-fns": "^4.4.0",
         "flatpickr": "^4.6.13",
+        "react-day-picker": "^10.0.1",
         "react-is": "^19.2.8",
         "recharts": "^3.10.1"
     }

@@ -10,14 +10,17 @@ use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Inertia\Inertia;
 use App\Services\BookingService;
-
+use App\Services\VenueAvailabilityService;
+use Illuminate\Support\Facades\DB;
 class BookingController extends Controller
 {
     protected $bookingService;
+    protected $availabilityService;
 
-    public function __construct(BookingService $bookingService)
+    public function __construct(BookingService $bookingService, VenueAvailabilityService $availabilityService)
     {
         $this->bookingService = $bookingService;
+        $this->availabilityService = $availabilityService;
     }
 
     public function index(Request $request)
@@ -52,20 +55,16 @@ class BookingController extends Controller
 
         $venue = Venue::findOrFail($data['venue_id']);
 
-        // Check for overlapping using BookingService
-        $unavailableDates = $this->bookingService->getUnavailableDates($venue->id);
+        // Check for overlapping using VenueAvailabilityService
         $period = CarbonPeriod::create($data['start_date'], $data['end_date']);
         
-        $hasOverlap = false;
         foreach ($period as $date) {
-            if (in_array($date->format('Y-m-d'), $unavailableDates)) {
-                $hasOverlap = true;
-                break;
+            $dateString = $date->format('Y-m-d');
+            if (!$this->availabilityService->isDateAvailable($venue, $dateString)) {
+                return back()->withErrors([
+                    'start_date' => "Cette date vient d'être réservée par un autre client, merci de choisir une autre date ou une autre salle."
+                ])->withInput();
             }
-        }
-
-        if ($hasOverlap) {
-            return back()->withErrors(['start_date' => 'Ce lieu est déjà réservé ou indisponible à ces dates.'])->withInput();
         }
 
         $startDate = Carbon::parse($data['start_date']);
@@ -117,6 +116,15 @@ class BookingController extends Controller
         }
 
         $this->bookingService->updateBookingStatus($booking, $request->status, $request->decline_reason);
+
+        if ($request->status === 'confirmed') {
+            $this->availabilityService->markDatesAsUnavailable(
+                $booking->venue,
+                $booking->id,
+                $booking->start_date,
+                $booking->end_date
+            );
+        }
 
         return back()->with('success', 'Le statut de la réservation #' . $booking->id . ' a été mis à jour (' . ucfirst($request->status) . ').');
     }

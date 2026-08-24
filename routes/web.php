@@ -10,6 +10,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\SubscriptionController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -76,6 +77,11 @@ Route::middleware('auth')->group(function () {
     // Host Appointments Management
     Route::get('/host/appointments', [AppointmentController::class, 'index'])->name('host.appointments.index');
     Route::patch('/appointments/{id}/status', [AppointmentController::class, 'updateStatus'])->name('appointments.updateStatus');
+
+    // Host Subscriptions
+    Route::get('/dashboard/subscription', [SubscriptionController::class, 'index'])->name('subscriptions.index');
+    Route::post('/dashboard/subscription/subscribe', [SubscriptionController::class, 'subscribe'])->name('subscriptions.subscribe');
+
     // Admin Routes
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [\App\Http\Controllers\AdminController::class, 'index'])->name('dashboard');
@@ -89,6 +95,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/transactions', [\App\Http\Controllers\AdminController::class, 'transactions'])->name('transactions');
         Route::get('/settings', [\App\Http\Controllers\AdminController::class, 'settings'])->name('settings');
         Route::post('/settings', [\App\Http\Controllers\AdminController::class, 'updateSettings'])->name('settings.update');
+        Route::get('/subscriptions', [\App\Http\Controllers\AdminSubscriptionPlanController::class, 'index'])->name('subscriptions');
+        Route::put('/subscriptions/{id}', [\App\Http\Controllers\AdminSubscriptionPlanController::class, 'update'])->name('subscriptions.update');
     });
 });
 

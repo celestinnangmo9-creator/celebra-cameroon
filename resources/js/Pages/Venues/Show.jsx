@@ -2,6 +2,7 @@ import { Head, Link, usePage, router, useForm } from '@inertiajs/react';
 import PublicLayout from '@/Layouts/PublicLayout';
 import { useState } from 'react';
 import BookingCalendar from '@/Components/BookingCalendar';
+import VenueAvailabilityCalendar from '@/Components/VenueAvailabilityCalendar';
 
 export default function VenueShow({ venue, similarVenues, bookedDates }) {
     const { auth } = usePage().props;
@@ -148,7 +149,7 @@ export default function VenueShow({ venue, similarVenues, bookedDates }) {
                         </div>
 
                         {/* Host Info */}
-                        <div className="flex items-center gap-6 mb-10">
+                        <div className="flex items-center gap-6 mb-10 border-b border-gray-100 pb-10">
                             <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 text-2xl font-bold">
                                 {venue.user?.name?.charAt(0)}
                             </div>
@@ -167,6 +168,13 @@ export default function VenueShow({ venue, similarVenues, bookedDates }) {
                                     </button>
                                 )
                             )}
+                        </div>
+
+                        {/* Availability Calendar (New Section) */}
+                        <div className="mb-10">
+                            <h2 className="text-2xl font-bold text-gray-900 mb-4">Disponibilités</h2>
+                            <p className="text-gray-600 text-lg mb-8">Consultez les dates libres et celles déjà réservées avant de formuler votre demande de réservation dans le formulaire.</p>
+                            <VenueAvailabilityCalendar unavailableDates={bookedDates} />
                         </div>
                     </div>
 

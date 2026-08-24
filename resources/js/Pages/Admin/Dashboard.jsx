@@ -315,6 +315,16 @@ export default function AdminDashboard({ auth, kpis, chartData, topVenues, marke
                                     <p className="text-sm text-gray-500">Paramètres globaux de la plateforme</p>
                                 </div>
                             </Link>
+
+                            <Link href={route('admin.subscriptions')} className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition border border-gray-100 flex items-center space-x-4">
+                                <div className="p-3 rounded-full bg-yellow-100 text-yellow-600">
+                                    <i className="fa-solid fa-crown text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h4 className="text-lg font-bold text-gray-900">Abonnements</h4>
+                                    <p className="text-sm text-gray-500">Gérer les prix des formules (Basique, Premium)</p>
+                                </div>
+                            </Link>
                         </div>
                     </div>
 
