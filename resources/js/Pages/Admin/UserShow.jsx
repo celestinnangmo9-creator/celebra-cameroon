@@ -1,7 +1,9 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
+import { useLanguage } from '@/Contexts/LanguageContext';
 
 export default function UserShow({ auth, user }) {
+    const { t } = useLanguage();
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -28,12 +30,12 @@ export default function UserShow({ auth, user }) {
                                 <p className="text-gray-500">{user.email}</p>
                                 <div className="mt-2 flex gap-3">
                                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium uppercase bg-gray-100 text-gray-800">
-                                        Rôle : {user.role}
+                                        {t('admin.users.role_label').replace('{role}', user.role)}
                                     </span>
                                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                                         ${user.status === 'active' || !user.status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}
                                     `}>
-                                        Statut : {user.status === 'active' || !user.status ? 'Actif' : 'Bloqué'}
+                                        {t('admin.users.status_label').replace('{status}', user.status === 'active' || !user.status ? t('admin.users.status_active') : t('admin.users.status_blocked'))}
                                     </span>
                                 </div>
                             </div>
@@ -41,7 +43,7 @@ export default function UserShow({ auth, user }) {
                         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <p className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-1">Téléphone</p>
-                                <p>{user.phone || 'Non renseigné'}</p>
+                                <p>{user.phone || t('admin.users.not_provided')}</p>
                             </div>
                             <div>
                                 <p className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-1">Date d'inscription</p>

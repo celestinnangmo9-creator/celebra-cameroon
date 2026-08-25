@@ -4,8 +4,10 @@ import { Head, router, Link } from '@inertiajs/react';
 import PrimaryButton from '@/Components/PrimaryButton';
 import SecondaryButton from '@/Components/SecondaryButton';
 import { CalendarIcon, MapPinIcon, ClockIcon, UserIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import { useLanguage } from '@/Contexts/LanguageContext';
 
 export default function AppointmentsIndex({ auth, appointments, filters }) {
+    const { t } = useLanguage();
     const [currentTab, setCurrentTab] = useState(filters.status || 'pending');
 
     const handleTabChange = (status) => {
@@ -14,7 +16,7 @@ export default function AppointmentsIndex({ auth, appointments, filters }) {
     };
 
     const updateStatus = (id, newStatus) => {
-        if (confirm(`Êtes-vous sûr de vouloir ${newStatus === 'confirmed' ? 'confirmer' : 'refuser'} ce rendez-vous ?`)) {
+        if (confirm(t('host.appointments.confirm_status').replace('{action}', newStatus === 'confirmed' ? t('host.appointments.action_confirm') : t('host.appointments.action_refuse')))) {
             router.patch(route('appointments.updateStatus', id), { status: newStatus }, {
                 preserveScroll: true,
             });
@@ -37,7 +39,7 @@ export default function AppointmentsIndex({ auth, appointments, filters }) {
             user={auth.user}
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Gestion des Rendez-vous</h2>}
         >
-            <Head title="Mes Rendez-vous" />
+            <Head title={t('host.appointments.title')} />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -54,8 +56,8 @@ export default function AppointmentsIndex({ auth, appointments, filters }) {
                                 }`}
                             >
                                 {status === 'pending' ? 'En attente' : 
-                                 status === 'confirmed' ? 'Confirmés' : 
-                                 status === 'completed' ? 'Passés' : 'Refusés'}
+                                 status === 'confirmed' ? t('host.appointments.tab_confirmed') : 
+                                 status === 'completed' ? t('host.appointments.tab_completed') : t('host.appointments.tab_refused')}
                             </button>
                         ))}
                     </div>
@@ -71,7 +73,7 @@ export default function AppointmentsIndex({ auth, appointments, filters }) {
                                     <div className="flex justify-between items-start mb-4">
                                         {getStatusBadge(appointment.status)}
                                         <div className="text-sm text-gray-500 font-medium">
-                                            {appointment.type === 'physical_visit' ? 'Visite' : 'Appel Vidéo'}
+                                            {appointment.type === 'physical_visit' ? t('host.appointments.type_physical') : t('host.appointments.type_video')}
                                         </div>
                                     </div>
                                     

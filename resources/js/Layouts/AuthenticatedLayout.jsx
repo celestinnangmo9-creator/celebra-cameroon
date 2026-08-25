@@ -4,16 +4,37 @@ import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import MobileBottomNav from '@/Components/MobileBottomNav';
 import { Link, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { UnreadMessagesProvider, useUnreadMessages } from '@/Contexts/UnreadMessagesContext';
+import LanguageSwitcher from '@/Components/LanguageSwitcher';
+import { useLanguage } from '../Contexts/LanguageContext';
 
 function LayoutContent({ header, children }) {
     const { auth, flash } = usePage().props;
     const user = auth.user;
     const { totalUnread, latestMessageToast } = useUnreadMessages();
+    const { t } = useLanguage();
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
+
+    const [isDarkMode, setIsDarkMode] = useState(
+        typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
+    );
+
+    const toggleDarkMode = () => {
+        if (isDarkMode) {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+            setIsDarkMode(false);
+        } else {
+            document.documentElement.classList.add('dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+            setIsDarkMode(true);
+        }
+    };
 
     const isSubscriptionExpired = user?.role === 'host' && user?.subscription_status === 'expired';
     const isSubscriptionPage = route().current('subscriptions.*');
@@ -123,6 +144,18 @@ function LayoutContent({ header, children }) {
                         </div>
 
                         <div className="hidden sm:ms-6 sm:flex sm:items-center">
+                            <div className="flex items-center gap-2">
+                                <LanguageSwitcher />
+
+                                <button 
+                                    className="btn btn-ghost w-10 h-10 rounded-full p-0 flex items-center justify-center transition-colors hover:bg-gray-100 dark:hover:bg-gray-800" 
+                                    title={t('nav.toggle_theme', 'Basculer le mode sombre/clair')} 
+                                    onClick={toggleDarkMode}
+                                >
+                                    <i className={`fa-solid ${isDarkMode ? 'fa-sun text-amber-400' : 'fa-moon text-gray-700 dark:text-gray-300'}`}></i>
+                                </button>
+                            </div>
+
                             <div className="relative ms-3">
                                 <Dropdown>
                                     <Dropdown.Trigger>

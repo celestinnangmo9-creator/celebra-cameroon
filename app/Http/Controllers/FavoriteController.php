@@ -39,13 +39,13 @@ class FavoriteController extends Controller
 
         if ($favorite) {
             $favorite->delete();
-            return back()->with('success', 'Espace retiré de vos favoris.');
+            return back()->with('success', __('Espace retiré de vos favoris.'));
         } else {
             Favorite::create([
                 'user_id' => $user->id,
                 'venue_id' => $venue->id
             ]);
-            return back()->with('success', 'Espace ajouté à vos favoris.');
+            return back()->with('success', __('Espace ajouté à vos favoris.'));
         }
     }
 }

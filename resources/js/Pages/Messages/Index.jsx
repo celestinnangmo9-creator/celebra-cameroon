@@ -2,17 +2,19 @@ import React, { useState, useEffect, useRef } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm, Link } from '@inertiajs/react';
 import { useUnreadMessages } from '@/Contexts/UnreadMessagesContext';
+import { useLanguage } from '../../Contexts/LanguageContext';
 
 export default function MessagesIndex(props) {
+    const { t } = useLanguage();
     return (
         <AuthenticatedLayout user={props.auth.user}>
-            <Head title="Messagerie" />
-            <MessagesContent {...props} />
+            <Head title={t('messages.page_title')} />
+            <MessagesContent {...props} t={t} />
         </AuthenticatedLayout>
     );
 }
 
-function MessagesContent({ auth, contacts, activeContact, messages: initialMessages, selectedVenue, appointments, allVenues }) {
+function MessagesContent({ auth, contacts, activeContact, messages: initialMessages, selectedVenue, appointments, allVenues, t }) {
     const [messages, setMessages] = useState(initialMessages || []);
     const messagesEndRef = useRef(null);
     const inputRef = useRef(null);
@@ -105,7 +107,7 @@ function MessagesContent({ auth, contacts, activeContact, messages: initialMessa
                 setMessages(prev => prev.map(m => m.id === tempId ? response.data.message : m));
             }
         }).catch(error => {
-            console.error("Erreur d'envoi", error);
+            console.error(t('messages.send_error'), error);
             // Revert optimistic update if failed
             setMessages(prev => prev.filter(m => m.id !== tempId));
             setData('content', messageContent); // Restore input
@@ -123,12 +125,12 @@ function MessagesContent({ auth, contacts, activeContact, messages: initialMessa
                                 <Link href={route('dashboard')} className="md:hidden w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full transition-colors shrink-0">
                                     <i className="fa-solid fa-arrow-left text-lg"></i>
                                 </Link>
-                                <h3 className="text-lg font-bold text-gray-800"><i className="fa-solid fa-users mr-2 text-emerald-600"></i> Contacts</h3>
+                                <h3 className="text-lg font-bold text-gray-800"><i className="fa-solid fa-users mr-2 text-emerald-600"></i> {t('messages.contacts')}</h3>
                             </div>
                             <div className="overflow-y-auto flex-grow">
                                 {contacts.length === 0 ? (
                                     <div className="p-6 text-center text-gray-500 text-sm">
-                                        Aucun contact pour le moment.
+                                        {t('messages.no_contacts')}
                                     </div>
                                 ) : (
                                     contacts.map(contact => (
@@ -173,7 +175,7 @@ function MessagesContent({ auth, contacts, activeContact, messages: initialMessa
                                             <div className="font-bold text-gray-900 text-base md:text-lg truncate">{activeContact.name}</div>
                                             {selectedVenue && (
                                                 <div className="text-[10px] md:text-xs text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full inline-block mt-0.5 truncate max-w-full border border-emerald-100">
-                                                    Lié à : {selectedVenue.title}
+                                                    {t('messages.linked_to')} {selectedVenue.title}
                                                 </div>
                                             )}
                                         </div>
@@ -189,7 +191,7 @@ function MessagesContent({ auth, contacts, activeContact, messages: initialMessa
                                                 <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-600/50">
                                                     <i className="fa-regular fa-comments text-4xl"></i>
                                                 </div>
-                                                <p className="text-sm">Envoyez un message pour démarrer la conversation.</p>
+                                                <p className="text-sm">{t('messages.start_conversation')}</p>
                                             </div>
                                         ) : (
                                             messages.map((msg, index) => {
@@ -222,7 +224,7 @@ function MessagesContent({ auth, contacts, activeContact, messages: initialMessa
                                                 type="text"
                                                 value={data.content}
                                                 onChange={e => setData('content', e.target.value)}
-                                                placeholder="Écrivez votre message..."
+                                                placeholder={t('messages.placeholder')}
                                                 className="w-full border-gray-300 rounded-full pl-5 pr-14 py-3 md:py-3.5 focus:border-emerald-500 focus:ring-emerald-500 bg-gray-50 text-base shadow-inner"
                                                 required
                                             />
@@ -241,7 +243,7 @@ function MessagesContent({ auth, contacts, activeContact, messages: initialMessa
                                     <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4 text-emerald-600/30">
                                         <i className="fa-regular fa-comment-dots text-5xl"></i>
                                     </div>
-                                    <p className="text-lg font-medium text-gray-500">Sélectionnez un contact pour discuter</p>
+                                    <p className="text-lg font-medium text-gray-500">{t('messages.select_contact')}</p>
                                 </div>
                             )}
                         </div>

@@ -14,6 +14,9 @@ use App\Http\Controllers\SubscriptionController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\LanguageController;
+
+Route::get('lang/{lang}', [LanguageController::class, 'switchLang'])->name('lang.switch');
 
 // Public Pages
 Route::get('/', [VenueController::class, 'home'])->name('home');

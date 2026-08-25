@@ -24,6 +24,17 @@
         @vite(['resources/js/app.jsx'])
         @inertiaHead
 
+        <!-- Dark Mode Initialization Script -->
+        <script>
+            if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                document.documentElement.setAttribute('data-theme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.documentElement.removeAttribute('data-theme');
+            }
+        </script>
+
         <style>
             /* Premium Page Loader */
             #page-loader {
@@ -101,7 +112,7 @@
             }
         </style>
     </head>
-    <body class="font-sans antialiased">
+    <body class="font-sans antialiased bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
         <!-- Page Loader -->
         <div id="page-loader">
             <div class="loader-content">

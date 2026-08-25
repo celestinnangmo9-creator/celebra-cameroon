@@ -4,8 +4,10 @@ import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Head, useForm, Link } from '@inertiajs/react';
+import { useLanguage } from '@/Contexts/LanguageContext';
 
 export default function CreateVenue({ auth, regionsAndCities, categories, availableAmenities }) {
+    const { t } = useLanguage();
     const initialRegion = Object.keys(regionsAndCities)[0];
     const initialCity = regionsAndCities[initialRegion][0];
 
@@ -71,7 +73,7 @@ export default function CreateVenue({ auth, regionsAndCities, categories, availa
                             <form onSubmit={submit} className="space-y-6">
                                 {/* Title */}
                                 <div>
-                                    <InputLabel htmlFor="title" value="Titre de l'espace *" />
+                                    <InputLabel htmlFor="title" value={t('venues.create.title_label')} />
                                     <TextInput
                                         id="title"
                                         type="text"
@@ -81,7 +83,7 @@ export default function CreateVenue({ auth, regionsAndCities, categories, availa
                                         autoComplete="title"
                                         isFocused={true}
                                         onChange={(e) => setData('title', e.target.value)}
-                                        placeholder="Ex: Palais des Lumières & Espace Banquet"
+                                        placeholder={t('venues.create.title_placeholder')}
                                         required
                                     />
                                     <InputError message={errors.title} className="mt-2" />
@@ -90,7 +92,7 @@ export default function CreateVenue({ auth, regionsAndCities, categories, availa
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     {/* Category */}
                                     <div>
-                                        <InputLabel htmlFor="category" value="Catégorie *" />
+                                        <InputLabel htmlFor="category" value={t('venues.create.category_label')} />
                                         <select
                                             id="category"
                                             name="category"
@@ -108,7 +110,7 @@ export default function CreateVenue({ auth, regionsAndCities, categories, availa
 
                                     {/* Region */}
                                     <div>
-                                        <InputLabel htmlFor="region" value="Région *" />
+                                        <InputLabel htmlFor="region" value={t('venues.create.region_label')} />
                                         <select
                                             id="region"
                                             name="region"
@@ -162,7 +164,7 @@ export default function CreateVenue({ auth, regionsAndCities, categories, availa
 
                                     {/* Address */}
                                     <div>
-                                        <InputLabel htmlFor="address" value="Adresse précise *" />
+                                        <InputLabel htmlFor="address" value={t('venues.create.address_label')} />
                                         <TextInput
                                             id="address"
                                             type="text"
@@ -180,7 +182,7 @@ export default function CreateVenue({ auth, regionsAndCities, categories, availa
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     {/* Capacity */}
                                     <div>
-                                        <InputLabel htmlFor="capacity" value="Capacité max. (Invités) *" />
+                                        <InputLabel htmlFor="capacity" value={t('venues.create.capacity_label')} />
                                         <TextInput
                                             id="capacity"
                                             type="number"
@@ -228,7 +230,7 @@ export default function CreateVenue({ auth, regionsAndCities, categories, availa
 
                                 {/* Description */}
                                 <div>
-                                    <InputLabel htmlFor="description" value="Description détaillée *" />
+                                    <InputLabel htmlFor="description" value={t('venues.create.description_label')} />
                                     <textarea
                                         id="description"
                                         name="description"
@@ -236,14 +238,14 @@ export default function CreateVenue({ auth, regionsAndCities, categories, availa
                                         className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-emerald-500 dark:focus:border-emerald-600 focus:ring-emerald-500 dark:focus:ring-emerald-600 rounded-md shadow-sm"
                                         rows="4"
                                         onChange={(e) => setData('description', e.target.value)}
-                                        placeholder="Décrivez l'ambiance, l'insonorisation, les conditions d'accès, etc."
+                                        placeholder={t('venues.create.description_placeholder')}
                                         required
                                     ></textarea>
                                     <InputError message={errors.description} className="mt-2" />
                                 </div>
 
                                 <div>
-                                    <InputLabel htmlFor="main_image" value="Image principale (Photo depuis la galerie ou caméra) *" />
+                                    <InputLabel htmlFor="main_image" value={t('venues.create.main_image_label')} />
                                     <input
                                         id="main_image"
                                         type="file"
@@ -257,7 +259,7 @@ export default function CreateVenue({ auth, regionsAndCities, categories, availa
                                 </div>
 
                                 <div>
-                                    <InputLabel htmlFor="gallery" value="Autres Photos & Vidéos (Sélectionnez plusieurs fichiers)" />
+                                    <InputLabel htmlFor="gallery" value={t('venues.create.gallery_label')} />
                                     <input
                                         id="gallery"
                                         type="file"

@@ -36,7 +36,7 @@ class ReviewController extends Controller
 
         $this->reviewService->createReview($venue, Auth::user(), $request->all());
 
-        return back()->with('success', 'Votre avis a été publié avec succès.');
+        return back()->with('success', __('Votre avis a été publié avec succès.'));
     }
 
     public function reply(Request $request, $id)
@@ -53,7 +53,7 @@ class ReviewController extends Controller
 
         $this->reviewService->replyToReview($review, $request->reply);
 
-        return back()->with('success', 'Votre réponse a été publiée avec succès.');
+        return back()->with('success', __('Votre réponse a été publiée avec succès.'));
     }
 }
 

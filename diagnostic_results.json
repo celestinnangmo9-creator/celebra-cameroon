@@ -1,0 +1,272 @@
+[
+  {
+    "file": "\\resources\\js\\Components\\BookingCalendar.jsx",
+    "line": 23,
+    "content": "event_type: 'Fête',"
+  },
+  {
+    "file": "\\resources\\js\\Components\\BookingCalendar.jsx",
+    "line": 143,
+    "content": "<option value=\"Fête\">{}</option>"
+  },
+  {
+    "file": "\\resources\\js\\Components\\BookingCalendar.jsx",
+    "line": 145,
+    "content": "<option value=\"Conférence\">{}</option>"
+  },
+  {
+    "file": "\\resources\\js\\Components\\ErrorBoundary.jsx",
+    "line": 38,
+    "content": "Désolé, le composant de cette page a rencontré une erreur inattendue. L'équipe technique (ou l'agent QA) a été avertie via la console."
+  },
+  {
+    "file": "\\resources\\js\\Components\\ErrorBoundary.jsx",
+    "line": 45,
+    "content": "Recharger la page"
+  },
+  {
+    "file": "\\resources\\js\\Components\\ErrorBoundary.jsx",
+    "line": 48,
+    "content": "{/* En environnement local, on affiche les détails techniques pour le débuggage */}"
+  },
+  {
+    "file": "\\resources\\js\\Components\\LanguageSwitcher.jsx",
+    "line": 38,
+    "content": "alt={locale === 'fr' ? 'Français' : 'English'}"
+  },
+  {
+    "file": "\\resources\\js\\Components\\LanguageSwitcher.jsx",
+    "line": 52,
+    "content": "Français"
+  },
+  {
+    "file": "\\resources\\js\\Components\\Messages\\ChatWindow.jsx",
+    "line": 50,
+    "content": "{/* Actions (Téléphone, Menu) */}"
+  },
+  {
+    "file": "\\resources\\js\\Components\\Messages\\ChatWindow.jsx",
+    "line": 73,
+    "content": "{/* Séparateur de date simulé */}"
+  },
+  {
+    "file": "\\resources\\js\\Components\\Messages\\ConversationItem.jsx",
+    "line": 20,
+    "content": "{/* Avatar avec indicateur en ligne (simulation) */}"
+  },
+  {
+    "file": "\\resources\\js\\Components\\Messages\\ConversationItem.jsx",
+    "line": 25,
+    "content": "{/* Indicateur \"En ligne\" simulé */}"
+  },
+  {
+    "file": "\\resources\\js\\Components\\Messages\\ConversationList.jsx",
+    "line": 78,
+    "content": "{search ? \"Aucune conversation trouvée.\" : \"Vous n'avez pas de message.\"}"
+  },
+  {
+    "file": "\\resources\\js\\Components\\Messages\\MessageInput.jsx",
+    "line": 7,
+    "content": "{/* Icône Pièce jointe */}"
+  },
+  {
+    "file": "\\resources\\js\\Components\\Messages\\MessageInput.jsx",
+    "line": 29,
+    "content": "style={{ fontSize: '16px' }} // Empêche le zoom auto sur iOS"
+  },
+  {
+    "file": "\\resources\\js\\Components\\Messages\\MessageInput.jsx",
+    "line": 34,
+    "content": "{/* Icônes optionnelles dans le champ (ex: micro) */}"
+  },
+  {
+    "file": "\\resources\\js\\Layouts\\AuthenticatedLayout.jsx",
+    "line": 107,
+    "content": "Rendez-vous"
+  },
+  {
+    "file": "\\resources\\js\\Layouts\\AuthenticatedLayout.jsx",
+    "line": 152,
+    "content": "title=\"Basculer le mode sombre/clair\""
+  },
+  {
+    "file": "\\resources\\js\\Layouts\\AuthenticatedLayout.jsx",
+    "line": 314,
+    "content": "Rendez-vous"
+  },
+  {
+    "file": "\\resources\\js\\Layouts\\AuthenticatedLayout.jsx",
+    "line": 387,
+    "content": "Abonnement expiré"
+  },
+  {
+    "file": "\\resources\\js\\Layouts\\AuthenticatedLayout.jsx",
+    "line": 390,
+    "content": "Votre période d'essai ou votre abonnement a expiré. Vos salles sont actuellement masquées."
+  },
+  {
+    "file": "\\resources\\js\\Layouts\\AuthenticatedLayout.jsx",
+    "line": 391,
+    "content": "Veuillez choisir une formule d'abonnement pour continuer à gérer vos salles et les rendre visibles à nouveau."
+  },
+  {
+    "file": "\\resources\\js\\Layouts\\AuthenticatedLayout.jsx",
+    "line": 398,
+    "content": "Voir les formules d'abonnement"
+  },
+  {
+    "file": "\\resources\\js\\Layouts\\GuestLayout.jsx",
+    "line": 66,
+    "content": "&copy; {new Date().getFullYear()} Celebra Cameroon. Tous droits réservés."
+  },
+  {
+    "file": "\\resources\\js\\Layouts\\PublicLayout.jsx",
+    "line": 114,
+    "content": "title=\"Basculer le mode sombre/clair\""
+  },
+  {
+    "file": "\\resources\\js\\Pages\\Admin\\Dashboard.jsx",
+    "line": 99,
+    "content": "Évolution des Réservations"
+  },
+  {
+    "file": "\\resources\\js\\Pages\\Admin\\Dashboard.jsx",
+    "line": 109,
+    "content": "<Area type=\"linear\" dataKey=\"count\" name=\"Réservations\" stroke=\"#064e3b\" fill=\"#ecfdf5\" strokeWidth={2} dot={{ stroke: '#064e3b', strokeWidth: 2, r: 3, fill: '#fff' }} />"
+  },
+  {
+    "file": "\\resources\\js\\Pages\\Admin\\Dashboard.jsx",
+    "line": 121,
+    "content": "Répartition par Catégorie"
+  },
+  {
+    "file": "\\resources\\js\\Pages\\Admin\\Dashboard.jsx",
+    "line": 161,
+    "content": "Revenus Générés"
+  },
+  {
+    "file": "\\resources\\js\\Pages\\Admin\\Dashboard.jsx",
+    "line": 220,
+    "content": "Croissance par Région"
+  },
+  {
+    "file": "\\resources\\js\\Pages\\Admin\\Settings.jsx",
+    "line": 26,
+    "content": "<Head title=\"Admin - Paramètres\" />"
+  },
+  {
+    "file": "\\resources\\js\\Pages\\Admin\\Settings.jsx",
+    "line": 113,
+    "content": "Enregistrer les paramètres"
+  },
+  {
+    "file": "\\resources\\js\\Pages\\Admin\\Subscriptions.jsx",
+    "line": 139,
+    "content": "<li>• {plan.max_venues ? `Maximum ${plan.max_venues} salles actives` : 'Salles actives illimitées'}</li>"
+  },
+  {
+    "file": "\\resources\\js\\Pages\\Admin\\Transactions.jsx",
+    "line": 66,
+    "content": "{booking.status === 'confirmed' ? 'Confirmé' : (booking.status === 'pending' ? 'En attente' : 'Annulé')}"
+  },
+  {
+    "file": "\\resources\\js\\Pages\\Admin\\Users.jsx",
+    "line": 20,
+    "content": "if(confirm(`Êtes-vous sûr de vouloir ${status === 'blocked' ? 'bloquer' : 'débloquer'} cet utilisateur ?`)) {"
+  },
+  {
+    "file": "\\resources\\js\\Pages\\Admin\\Users.jsx",
+    "line": 117,
+    "content": "Réinitialiser"
+  },
+  {
+    "file": "\\resources\\js\\Pages\\Admin\\Users.jsx",
+    "line": 184,
+    "content": "Détails"
+  },
+  {
+    "file": "\\resources\\js\\Pages\\Admin\\Users.jsx",
+    "line": 202,
+    "content": "Débloquer"
+  },
+  {
+    "file": "\\resources\\js\\Pages\\Admin\\Users.jsx",
+    "line": 219,
+    "content": "Aucun utilisateur ne correspond à votre recherche."
+  },
+  {
+    "file": "\\resources\\js\\Pages\\Admin\\Venues.jsx",
+    "line": 92,
+    "content": "Réinitialiser"
+  },
+  {
+    "file": "\\resources\\js\\Pages\\Admin\\Venues.jsx",
+    "line": 144,
+    "content": "Détails"
+  },
+  {
+    "file": "\\resources\\js\\Pages\\Admin\\Venues.jsx",
+    "line": 181,
+    "content": "Aucune salle trouvée."
+  },
+  {
+    "file": "\\resources\\js\\Pages\\Dashboard\\Subscription.jsx",
+    "line": 57,
+    "content": "Statut de votre compte :"
+  },
+  {
+    "file": "\\resources\\js\\Pages\\Dashboard\\Subscription.jsx",
+    "line": 86,
+    "content": "Passez à la vitesse supérieure et débloquez tout le potentiel de vos espaces événementiels sur Celebra Cameroon."
+  },
+  {
+    "file": "\\resources\\js\\Pages\\Dashboard\\Subscription.jsx",
+    "line": 95,
+    "content": "Recommandé"
+  },
+  {
+    "file": "\\resources\\js\\Pages\\Dashboard.jsx",
+    "line": 90,
+    "content": "{/* Table des Réservations Récentes */}"
+  },
+  {
+    "file": "\\resources\\js\\Pages\\Favorites\\Index.jsx",
+    "line": 40,
+    "content": "Explorer les espaces"
+  },
+  {
+    "file": "\\resources\\js\\Pages\\Host\\Appointments\\Index.jsx",
+    "line": 67,
+    "content": "Aucun rendez-vous trouvé dans cette catégorie."
+  },
+  {
+    "file": "\\resources\\js\\Pages\\Venues\\Create.jsx",
+    "line": 68,
+    "content": "Détails de l'espace"
+  },
+  {
+    "file": "\\resources\\js\\Pages\\Venues\\Edit.jsx",
+    "line": 68,
+    "content": "Édition de l'espace"
+  },
+  {
+    "file": "\\resources\\js\\Pages\\Venues\\Edit.jsx",
+    "line": 339,
+    "content": "Enregistrer les modifications"
+  },
+  {
+    "file": "\\resources\\js\\Pages\\Venues\\Stats.jsx",
+    "line": 72,
+    "content": "{/* Liste des indisponibilités */}"
+  },
+  {
+    "file": "\\resources\\js\\Pages\\Venues\\Stats.jsx",
+    "line": 99,
+    "content": "Débloquer"
+  },
+  {
+    "file": "\\resources\\js\\Pages\\Venues\\Stats.jsx",
+    "line": 113,
+    "content": "Réservation ({b.status})"
+  }
+]

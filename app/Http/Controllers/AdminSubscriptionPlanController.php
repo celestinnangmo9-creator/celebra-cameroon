@@ -32,6 +32,6 @@ class AdminSubscriptionPlanController extends Controller
 
         $plan->save();
 
-        return redirect()->back()->with('success', 'La formule ' . $plan->name . ' a été mise à jour avec succès.');
+        return redirect()->back()->with('success', __('La formule :plan a été mise à jour avec succès.', ['plan' => $plan->name]));
     }
 }

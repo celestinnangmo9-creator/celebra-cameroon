@@ -3,8 +3,10 @@ import { Head, Link, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import TextInput from '@/Components/TextInput';
 import InputLabel from '@/Components/InputLabel';
+import { useLanguage } from '@/Contexts/LanguageContext';
 
 export default function AdminUsers({ auth, users, filters = {} }) {
+    const { t } = useLanguage();
     const [processingId, setProcessingId] = useState(null);
     const [roleModal, setRoleModal] = useState({ show: false, userId: null, currentRole: '' });
 
@@ -15,7 +17,7 @@ export default function AdminUsers({ auth, users, filters = {} }) {
     });
 
     const updateStatus = (id, status) => {
-        if(confirm(`Êtes-vous sûr de vouloir ${status === 'blocked' ? 'bloquer' : 'débloquer'} cet utilisateur ?`)) {
+        if(confirm(t('admin.users.confirm_block_toggle', 'Êtes-vous sûr de vouloir modifier ce statut ?'))) {
             setProcessingId(id);
             router.patch(route('admin.users.updateStatus', id), { status }, {
                 preserveScroll: true,
@@ -34,7 +36,7 @@ export default function AdminUsers({ auth, users, filters = {} }) {
     };
 
     const deleteUser = (id) => {
-        if(confirm(`Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action placera le compte dans la corbeille (Soft Delete).`)) {
+        if(confirm(t('admin.users.confirm_delete'))) {
             setProcessingId(id);
             router.delete(route('admin.users.destroy', id), {
                 preserveScroll: true,
@@ -83,15 +85,15 @@ export default function AdminUsers({ auth, users, filters = {} }) {
                                     />
                                 </div>
                                 <div className="w-full md:w-1/4">
-                                    <InputLabel value="Rôle" />
+                                    <InputLabel value={t('admin.users.role')} />
                                     <select 
                                         className="w-full mt-1 border-gray-300 rounded-md shadow-sm"
                                         value={filterData.role}
                                         onChange={e => setFilterData('role', e.target.value)}
                                     >
-                                        <option value="">Tous les rôles</option>
+                                        <option value="">{t('admin.users.all_roles')}</option>
                                         <option value="client">Client</option>
-                                        <option value="host">Propriétaire</option>
+                                        <option value="host">{t('admin.users.role_host')}</option>
                                         <option value="admin">Administrateur</option>
                                     </select>
                                 </div>
@@ -102,9 +104,9 @@ export default function AdminUsers({ auth, users, filters = {} }) {
                                         value={filterData.status}
                                         onChange={e => setFilterData('status', e.target.value)}
                                     >
-                                        <option value="">Tous les statuts</option>
+                                        <option value="">{t('admin.users.all_statuses')}</option>
                                         <option value="active">Actif</option>
-                                        <option value="blocked">Bloqué</option>
+                                        <option value="blocked">{t('admin.users.status_blocked')}</option>
                                     </select>
                                 </div>
                                 <div className="flex gap-2 w-full md:w-auto">
@@ -156,7 +158,7 @@ export default function AdminUsers({ auth, users, filters = {} }) {
                                                         <button 
                                                             onClick={() => setRoleModal({ show: true, userId: user.id, currentRole: user.role })}
                                                             className="text-gray-400 hover:text-indigo-600"
-                                                            title="Changer de rôle"
+                                                            title={t('admin.users.change_role')}
                                                         >
                                                             <i className="fa-solid fa-pen text-xs"></i>
                                                         </button>
@@ -174,7 +176,7 @@ export default function AdminUsers({ auth, users, filters = {} }) {
                                                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                                                     ${user.status === 'active' || !user.status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}
                                                 `}>
-                                                    {user.status === 'active' || !user.status ? 'Actif' : 'Bloqué'}
+                                                    {user.status === 'active' || !user.status ? t('admin.users.status_active') : t('admin.users.status_blocked')}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 text-right space-x-2">
@@ -225,7 +227,7 @@ export default function AdminUsers({ auth, users, filters = {} }) {
                         {/* Pagination (Simple for Inertia links) */}
                         <div className="p-4 border-t border-gray-200 flex justify-between items-center">
                             <div className="text-sm text-gray-500">
-                                Affichage de {users.data.length} sur {users.total} utilisateurs
+                                {t('admin.users.showing_users').replace('{count}', users.data.length).replace('{total}', users.total)}
                             </div>
                             <div className="flex gap-1 flex-wrap">
                                 {users.links.map((link, k) => (

@@ -46,7 +46,7 @@ class ProfileController extends Controller
 
         $user->save();
 
-        return Redirect::route('profile.edit')->with('success', 'Profil mis à jour avec succès.');
+        return Redirect::route('profile.edit')->with('success', __('Profil mis à jour avec succès.'));
     }
 
     /**

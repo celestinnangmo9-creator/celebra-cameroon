@@ -21,12 +21,15 @@ class Booking extends Model
         'status',
         'special_requests',
         'decline_reason',
+        'host_message',
+        'amount_paid',
     ];
 
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
         'total_price' => 'decimal:2',
+        'amount_paid' => 'decimal:2',
     ];
 
     public function user()

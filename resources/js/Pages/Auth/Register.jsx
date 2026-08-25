@@ -4,8 +4,10 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
+import { useLanguage } from '../../Contexts/LanguageContext';
 
 export default function Register() {
+    const { t } = useLanguage();
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         email: '',
@@ -24,16 +26,16 @@ export default function Register() {
 
     return (
         <GuestLayout>
-            <Head title="Inscription - Celebra Cameroon" />
+            <Head title={t('auth.register.page_title')} />
 
             <div className="mb-6 text-center">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Créer un compte</h2>
-                <p className="text-sm text-gray-500 mt-1 dark:text-gray-400">Rejoignez la première plateforme événementielle du Cameroun</p>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t('auth.register.title')}</h2>
+                <p className="text-sm text-gray-500 mt-1 dark:text-gray-400">{t('auth.register.subtitle')}</p>
             </div>
 
             <form onSubmit={submit} className="space-y-5">
                 <div>
-                    <InputLabel htmlFor="name" value="Nom Complet" />
+                    <InputLabel htmlFor="name" value={t('auth.register.name')} />
 
                     <TextInput
                         id="name"
@@ -42,7 +44,7 @@ export default function Register() {
                         className="mt-1 block w-full"
                         autoComplete="name"
                         isFocused={true}
-                        placeholder="Ex: Jean Dupont"
+                        placeholder={t('auth.register.name_placeholder')}
                         onChange={(e) => setData('name', e.target.value)}
                         required
                     />
@@ -51,7 +53,7 @@ export default function Register() {
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="email" value="Adresse Email" />
+                    <InputLabel htmlFor="email" value={t('auth.register.email')} />
 
                     <TextInput
                         id="email"
@@ -60,7 +62,7 @@ export default function Register() {
                         value={data.email}
                         className="mt-1 block w-full"
                         autoComplete="username"
-                        placeholder="jean@exemple.com"
+                        placeholder={t('auth.register.email_placeholder')}
                         onChange={(e) => setData('email', e.target.value)}
                         required
                     />
@@ -70,7 +72,7 @@ export default function Register() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
-                        <InputLabel htmlFor="password" value="Mot de passe" />
+                        <InputLabel htmlFor="password" value={t('auth.register.password')} />
 
                         <TextInput
                             id="password"
@@ -89,7 +91,7 @@ export default function Register() {
                     <div>
                         <InputLabel
                             htmlFor="password_confirmation"
-                            value="Confirmer"
+                            value={t('auth.register.confirm_password')}
                         />
 
                         <TextInput
@@ -113,7 +115,7 @@ export default function Register() {
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="role" value="Je souhaite m'inscrire en tant que :" />
+                    <InputLabel htmlFor="role" value={t('auth.register.role_label')} />
 
                     <div className="relative mt-1">
                         <select
@@ -124,8 +126,8 @@ export default function Register() {
                             onChange={(e) => setData('role', e.target.value)}
                             required
                         >
-                            <option value="client">Client (Je cherche des espaces)</option>
-                            <option value="host">Hôte (Je propose des espaces)</option>
+                            <option value="client">{t('auth.register.role_client')}</option>
+                            <option value="host">{t('auth.register.role_host')}</option>
                         </select>
                         <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
                             <svg className="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
@@ -140,16 +142,16 @@ export default function Register() {
                         href={route('login')}
                         className="text-sm font-medium text-emerald-600 hover:text-emerald-500 dark:text-emerald-400 transition-colors"
                     >
-                        Déjà un compte ?
+                        {t('auth.register.already_registered')}
                     </Link>
 
                     <PrimaryButton disabled={processing}>
-                        S'inscrire
+                        {t('auth.register.register_btn')}
                     </PrimaryButton>
                 </div>
 
                 <div className="mt-6 flex items-center justify-center">
-                    <span className="text-sm text-gray-500 dark:text-gray-400">ou</span>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">{t('auth.register.or')}</span>
                 </div>
 
                 <div className="mt-4">
@@ -163,7 +165,7 @@ export default function Register() {
                             <path d="M5.26498 14.2949C5.02498 13.5699 4.88501 12.7999 4.88501 11.9999C4.88501 11.1999 5.01998 10.4299 5.26498 9.7049L1.275 6.60986C0.46 8.22986 0 10.0599 0 11.9999C0 13.9399 0.46 15.7699 1.28 17.3899L5.26498 14.2949Z" fill="#FBBC05" />
                             <path d="M12.0004 24.0001C15.2404 24.0001 17.9654 22.935 19.9454 21.095L16.0804 18.095C15.0054 18.82 13.6204 19.245 12.0004 19.245C8.8704 19.245 6.21537 17.135 5.26538 14.29L1.27539 17.385C3.25539 21.31 7.3104 24.0001 12.0004 24.0001Z" fill="#34A853" />
                         </svg>
-                        S'inscrire avec Google
+                        {t('auth.register.register_google')}
                     </a>
                 </div>
             </form>

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm, router } from '@inertiajs/react';
+import { useLanguage } from '@/Contexts/LanguageContext';
 
 export default function VenueStats({ auth, venue, stats, bookings, blockedDates }) {
+    const { t } = useLanguage();
     const { data, setData, post, processing, errors, reset } = useForm({
         start_date: '',
         end_date: '',
@@ -18,7 +20,7 @@ export default function VenueStats({ auth, venue, stats, bookings, blockedDates 
     };
 
     const unblockDate = (id) => {
-        if (confirm('Voulez-vous vraiment débloquer ces dates ?')) {
+        if (confirm(t('venues.stats.confirm_unblock'))) {
             router.delete(route('venues.unblockDate', [venue.id, id]), {
                 preserveScroll: true
             });

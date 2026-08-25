@@ -29,7 +29,7 @@ class PaymentController extends Controller
         }
 
         if ($booking->payment_status === 'paid') {
-            return redirect()->route('bookings.index')->with('success', 'Cette réservation est déjà payée.');
+            return redirect()->route('bookings.index')->with('success', __('Cette réservation est déjà payée.'));
         }
 
         return Inertia::render('Bookings/Payment', [
@@ -51,16 +51,19 @@ class PaymentController extends Controller
         $request->validate([
             'payment_method' => 'required|in:orange_money,mtn_momo',
             'phone_number' => 'required|string',
+            'payment_type' => 'required|in:deposit,full'
         ]);
 
-        $response = $this->paymentService->initiatePayment($booking, $request->payment_method, $request->phone_number);
+        $amountToPay = $request->payment_type === 'deposit' ? ($booking->total_price / 2) : $booking->total_price;
+
+        $response = $this->paymentService->initiatePayment($booking, $request->payment_method, $request->phone_number, $amountToPay);
 
         if ($response['status'] === 'success') {
             if (isset($response['mock_redirect_url'])) {
                 // SANDBOX MODE: Redirect to mock confirmation page
                 return redirect($response['mock_redirect_url']);
             }
-            return redirect()->route('bookings.index')->with('success', $response['message']);
+            return redirect()->route('bookings.index')->with('success', __($response['message']));
         }
 
         return back()->with('error', $response['message']);
@@ -96,7 +99,7 @@ class PaymentController extends Controller
         ]);
 
         $msg = $request->status === 'successful' ? 'Paiement simulé avec succès !' : 'Paiement simulé échoué.';
-        return redirect()->route('bookings.index')->with('success', $msg);
+        return redirect()->route('bookings.index')->with('success', __($msg));
     }
 
     /**

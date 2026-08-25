@@ -72,6 +72,6 @@ class AppointmentController extends Controller
             ]);
         }
 
-        return back()->with('success', 'Statut du rendez-vous mis à jour avec succès.');
+        return back()->with('success', __('Statut du rendez-vous mis à jour avec succès.'));
     }
 }

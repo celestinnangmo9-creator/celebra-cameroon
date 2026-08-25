@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 import { parseISO, startOfDay } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { fr, enUS } from 'date-fns/locale';
+import { useLanguage } from '../Contexts/LanguageContext';
 
 export default function VenueAvailabilityCalendar({ 
     unavailableDates = [], 
     onDateSelect 
 }) {
+    const { t, language } = useLanguage();
     const disabledDates = unavailableDates.map(dateStr => parseISO(dateStr));
     const today = startOfDay(new Date());
 
@@ -107,7 +109,7 @@ export default function VenueAvailabilityCalendar({
                 mode="range"
                 selected={selectedRange}
                 onSelect={handleSelect}
-                locale={fr}
+                locale={language === 'en' ? enUS : fr}
                 disabled={matcherDisabled}
                 modifiers={modifiers}
                 modifiersClassNames={modifiersClassNames}
@@ -118,17 +120,17 @@ export default function VenueAvailabilityCalendar({
             <div className="mt-5 flex flex-wrap justify-center gap-4 text-sm font-medium font-inter">
                 <div className="flex items-center gap-2">
                     <div className="w-4 h-4 rounded" style={{ backgroundColor: '#FAF6F0', border: '1px solid #d1d5db' }}></div>
-                    <span className="text-gray-700">Disponible</span>
+                    <span className="text-gray-700">{t('calendar.available')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="w-4 h-4 rounded" style={{ backgroundColor: '#0B3D2E' }}></div>
-                    <span className="text-gray-700">Sélectionné</span>
+                    <span className="text-gray-700">{t('calendar.selected')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="w-4 h-4 rounded relative overflow-hidden flex items-center justify-center" style={{ backgroundColor: '#fee2e2' }}>
                         <div className="w-full h-0.5 bg-red-600 absolute rotate-45 transform"></div>
                     </div>
-                    <span className="text-red-600">Réservé / Indisponible</span>
+                    <span className="text-red-600">{t('calendar.unavailable')}</span>
                 </div>
             </div>
         </div>

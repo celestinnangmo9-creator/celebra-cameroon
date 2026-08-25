@@ -21,6 +21,8 @@ router.on('navigate', () => {
     }
 });
 
+import { LanguageProvider } from './Contexts/LanguageContext';
+
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({
@@ -35,7 +37,9 @@ createInertiaApp({
 
         root.render(
             <ErrorBoundary>
-                <App {...props} />
+                <LanguageProvider initialLocale={props.initialPage.props.locale}>
+                    <App {...props} />
+                </LanguageProvider>
             </ErrorBoundary>
         );
     },

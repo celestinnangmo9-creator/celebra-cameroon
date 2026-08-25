@@ -165,7 +165,7 @@ class AdminController extends Controller
 
         // Notifications can be implemented here later
 
-        return back()->with('success', 'Statut de la salle mis à jour.');
+        return back()->with('success', __('Statut de la salle mis à jour.'));
     }
 
     /**
@@ -233,7 +233,7 @@ class AdminController extends Controller
         
         $user->save();
 
-        return back()->with('success', 'Utilisateur mis à jour avec succès.');
+        return back()->with('success', __('Utilisateur mis à jour avec succès.'));
     }
 
     public function destroyUser($id)
@@ -247,7 +247,7 @@ class AdminController extends Controller
         // Soft delete the user
         $user->delete();
 
-        return redirect()->route('admin.users')->with('success', 'Utilisateur supprimé (soft delete) avec succès.');
+        return redirect()->route('admin.users')->with('success', __('Utilisateur supprimé (soft delete) avec succès.'));
     }
 
     /**
@@ -295,6 +295,6 @@ class AdminController extends Controller
             'payment_mtn_momo_active' => $validated['payment_mtn_momo_active'] ? '1' : '0',
         ]);
 
-        return back()->with('success', 'Paramètres mis à jour avec succès.');
+        return back()->with('success', __('Paramètres mis à jour avec succès.'));
     }
 }

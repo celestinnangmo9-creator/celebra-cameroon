@@ -1,6 +1,8 @@
 import { Link, usePage } from '@inertiajs/react';
 import MobileBottomNav from '@/Components/MobileBottomNav';
 import { useState, useEffect } from 'react';
+import { useLanguage } from '../Contexts/LanguageContext';
+import LanguageSwitcher from '@/Components/LanguageSwitcher';
 
 export default function PublicLayout({ children }) {
     const { auth, flash } = usePage().props;
@@ -9,6 +11,24 @@ export default function PublicLayout({ children }) {
     const [scrolled, setScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [userMenuOpen, setUserMenuOpen] = useState(false);
+    const { t } = useLanguage();
+    const [isDarkMode, setIsDarkMode] = useState(
+        typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
+    );
+
+    const toggleDarkMode = () => {
+        if (isDarkMode) {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+            setIsDarkMode(false);
+        } else {
+            document.documentElement.classList.add('dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+            setIsDarkMode(true);
+        }
+    };
 
     useEffect(() => {
         if (window.AOS) {
@@ -65,16 +85,16 @@ export default function PublicLayout({ children }) {
                     </button>
 
                     <ul className="nav-links" id="nav-links">
-                        <li><Link href={route('home')} className={`nav-link ${route().current('home') ? 'active' : ''}`}>Accueil</Link></li>
-                        <li><Link href={route('venues.index')} className={`nav-link ${route().current('venues.*') && !route().current('venues.create') ? 'active' : ''}`}>Lieux & Salles</Link></li>
-                        <li><Link href={route('about')} className={`nav-link ${route().current('about') ? 'active' : ''}`}>À Propos</Link></li>
+                        <li><Link href={route('home')} className={`nav-link ${route().current('home') ? 'active' : ''}`}>{t('nav.home')}</Link></li>
+                        <li><Link href={route('venues.index')} className={`nav-link ${route().current('venues.*') && !route().current('venues.create') ? 'active' : ''}`}>{t('nav.venues')}</Link></li>
+                        <li><Link href={route('about')} className={`nav-link ${route().current('about') ? 'active' : ''}`}>{t('nav.about')}</Link></li>
                         {!user && (
                             <>
                                 <li className="md:hidden mt-4 pt-4 border-t border-gray-100/20">
-                                    <Link href={route('login')} className="nav-link font-bold">Connexion</Link>
+                                    <Link href={route('login')} className="nav-link font-bold">{t('nav.login')}</Link>
                                 </li>
                                 <li className="md:hidden">
-                                    <Link href={route('register')} className="nav-link font-bold text-emerald-400">Créer un compte</Link>
+                                    <Link href={route('register')} className="nav-link font-bold text-emerald-400">{t('nav.register')}</Link>
                                 </li>
                             </>
                         )}
@@ -83,16 +103,18 @@ export default function PublicLayout({ children }) {
                     <div className="nav-actions">
                         {(!user || user.role === 'host') && (
                             <Link href={route('venues.create')} className="nav-link font-semibold">
-                                Mettre mon espace en ligne
+                                {t('nav.host')}
                             </Link>
                         )}
                         
+                        <LanguageSwitcher />
+
                         <button 
-                            className="btn btn-ghost w-10 h-10 rounded-full p-0 flex items-center justify-center" 
-                            title="Basculer le mode sombre/clair" 
-                            onClick={() => document.body.classList.toggle('dark-mode')}
+                            className="btn btn-ghost w-10 h-10 rounded-full p-0 flex items-center justify-center transition-colors hover:bg-gray-100 dark:hover:bg-gray-800" 
+                            title={t('nav.toggle_theme', 'Basculer le mode sombre/clair')} 
+                            onClick={toggleDarkMode}
                         >
-                            <i className="fa-solid fa-moon"></i>
+                            <i className={`fa-solid ${isDarkMode ? 'fa-sun text-amber-400' : 'fa-moon text-gray-700'}`}></i>
                         </button>
 
                         {user ? (
@@ -117,27 +139,27 @@ export default function PublicLayout({ children }) {
                                             <div className="font-bold text-gray-900">{user.name}</div>
                                             <div className="text-xs text-gray-500 truncate">{user.email}</div>
                                         </div>
-                                        <Link href={route('dashboard')} className="px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-emerald-600 transition-colors font-medium flex items-center gap-3"><i className="fa-solid fa-chart-line w-4"></i> Tableau de bord</Link>
-                                        <Link href={route('messages.index')} className="px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-emerald-600 transition-colors font-medium flex items-center gap-3"><i className="fa-solid fa-envelope w-4"></i> Messagerie</Link>
-                                        <Link href={route('bookings.index')} className="px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-emerald-600 transition-colors font-medium flex items-center gap-3"><i className="fa-solid fa-calendar-check w-4"></i> Mes réservations</Link>
+                                        <Link href={route('dashboard')} className="px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-emerald-600 transition-colors font-medium flex items-center gap-3"><i className="fa-solid fa-chart-line w-4"></i> {t('nav.dashboard')}</Link>
+                                        <Link href={route('messages.index')} className="px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-emerald-600 transition-colors font-medium flex items-center gap-3"><i className="fa-solid fa-envelope w-4"></i> {t('nav.messages')}</Link>
+                                        <Link href={route('bookings.index')} className="px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-emerald-600 transition-colors font-medium flex items-center gap-3"><i className="fa-solid fa-calendar-check w-4"></i> {t('nav.bookings')}</Link>
                                         <div className="h-px bg-gray-100 my-2"></div>
                                         {user.role === 'host' && (
                                             <>
-                                                <Link href={route('venues.create')} className="px-5 py-2.5 text-sm text-emerald-600 hover:bg-gray-50 transition-colors font-bold flex items-center gap-3"><i className="fa-solid fa-plus w-4"></i> Publier un lieu</Link>
+                                                <Link href={route('venues.create')} className="px-5 py-2.5 text-sm text-emerald-600 hover:bg-gray-50 transition-colors font-bold flex items-center gap-3"><i className="fa-solid fa-plus w-4"></i> {t('nav.host')}</Link>
                                                 <div className="h-px bg-gray-100 my-2"></div>
                                             </>
                                         )}
-                                        <Link href={route('logout')} method="post" as="button" className="px-5 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors font-medium text-left flex items-center gap-3"><i className="fa-solid fa-arrow-right-from-bracket w-4"></i> Déconnexion</Link>
+                                        <Link href={route('logout')} method="post" as="button" className="px-5 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors font-medium text-left flex items-center gap-3"><i className="fa-solid fa-arrow-right-from-bracket w-4"></i> {t('nav.logout')}</Link>
                                     </div>
                                 )}
                             </div>
                         ) : (
                             <div className="hidden md:flex items-center gap-3">
                                 <Link href={route('login')} className="px-4 py-2 text-sm font-semibold text-[#0B3D2E] hover:text-[#C9A227] transition-colors" style={{fontFamily: 'Inter, sans-serif'}}>
-                                    Se connecter
+                                    {t('nav.login')}
                                 </Link>
                                 <Link href={route('register')} className="px-5 py-2 text-sm font-bold text-[#FAF6F0] bg-[#0B3D2E] hover:bg-[#072a1f] rounded-full transition-colors shadow-md" style={{fontFamily: 'Inter, sans-serif'}}>
-                                    Créer un compte
+                                    {t('nav.register')}
                                 </Link>
                             </div>
                         )}
@@ -182,11 +204,11 @@ export default function PublicLayout({ children }) {
                         <Link href={route('home')} className="logo inline-block mb-6">
                             <img src="/images/logo.png" alt="Celebra Cameroon" className="footer-logo-img h-10" />
                         </Link>
-                        <p className="text-gray-400 text-sm">La plateforme événementielle référence au Cameroun. Réservez des salles de fête, espaces verts, terrasses VIP et salles de conférence en quelques clics.</p>
+                        <p className="text-gray-400 text-sm">{t('footer.desc')}</p>
                     </div>
 
                     <div>
-                        <h4 className="text-lg font-bold mb-6">Les Villes Principales</h4>
+                        <h4 className="text-lg font-bold mb-6">{t('footer.cities')}</h4>
                         <div className="grid grid-cols-2 gap-4 text-sm text-gray-400">
                             <ul className="space-y-3">
                                 <li><Link href={route('venues.index', { city: 'Douala' })} className="hover:text-white transition"><i className="fa-solid fa-location-dot text-emerald-500 w-4"></i> Douala</Link></li>
@@ -202,7 +224,7 @@ export default function PublicLayout({ children }) {
                     </div>
 
                     <div>
-                        <h4 className="text-lg font-bold mb-6">Service Client</h4>
+                        <h4 className="text-lg font-bold mb-6">{t('footer.support')}</h4>
                         <p className="text-sm text-gray-400 mb-3"><i className="fa-solid fa-phone text-amber-500 mr-2"></i> +237 696675924</p>
                         <p className="text-sm text-gray-400 mb-3"><i className="fa-solid fa-envelope text-amber-500 mr-2"></i> celestinnangmo9@gmail.com</p>
                         <p className="text-sm text-gray-400"><i className="fa-solid fa-building text-amber-500 mr-2"></i> Akwa, Douala - Cameroun</p>
@@ -210,7 +232,7 @@ export default function PublicLayout({ children }) {
                 </div>
 
                 <div className="border-t border-gray-800 py-6 text-center text-sm text-gray-500">
-                    &copy; {new Date().getFullYear()} Celebra Cameroon. Tous droits réservés.
+                    &copy; {new Date().getFullYear()} Celebra Cameroon. {t('footer.rights')}
                 </div>
                 </footer>
             )}

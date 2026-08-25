@@ -23,7 +23,7 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $request->remember)) {
             $request->session()->regenerate();
-            return redirect()->intended(route('home'))->with('success', 'Bienvenue sur Celebra Cameroon !');
+            return redirect()->intended(route('home'))->with('success', __('Bienvenue sur Celebra Cameroon !'));
         }
 
         return back()->withErrors([
@@ -57,7 +57,7 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('home')->with('success', 'Votre compte a été créé avec succès !');
+        return redirect()->route('home')->with('success', __('Votre compte a été créé avec succès !'));
     }
 
     public function logout(Request $request)
@@ -88,6 +88,6 @@ class AuthController extends Controller
 
         $user->update($data);
 
-        return back()->with('success', 'Votre profil a été mis à jour avec succès.');
+        return back()->with('success', __('Votre profil a été mis à jour avec succès.'));
     }
 }

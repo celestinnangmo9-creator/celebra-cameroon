@@ -1,8 +1,10 @@
 import React from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm, usePage } from '@inertiajs/react';
+import { useLanguage } from '@/Contexts/LanguageContext';
 
 export default function Subscription({ auth, plans, userSubscription }) {
+    const { t } = useLanguage();
     const { post, processing } = useForm();
     const { flash } = usePage().props;
 
@@ -57,16 +59,16 @@ export default function Subscription({ auth, plans, userSubscription }) {
                                     isExpired ? 'bg-red-200 text-red-800' 
                                     : (userSubscription.status === 'trial' ? 'bg-blue-200 text-blue-800' : 'bg-green-200 text-green-800')
                                 }`}>
-                                    {isExpired ? 'Expiré' : (userSubscription.status === 'trial' ? 'Essai Gratuit' : 'Actif')}
+                                    {isExpired ? t('dashboard.subscription.status_expired') : (userSubscription.status === 'trial' ? t('dashboard.subscription.status_trial') : t('dashboard.subscription.status_active'))}
                                 </span>
                             </h3>
                             <p className="mt-2 text-gray-600 dark:text-gray-400">
                                 {isExpired ? (
-                                    "Votre abonnement est expiré. Vos salles sont masquées au public."
+                                    t('dashboard.subscription.expired_message')
                                 ) : userSubscription.status === 'trial' ? (
-                                    `Il vous reste ${daysRemaining} jour(s) d'essai gratuit.`
+                                    t('dashboard.subscription.trial_remaining').replace('{days}', daysRemaining)
                                 ) : (
-                                    `Votre abonnement ${userSubscription.plan === 'premium' ? 'Premium' : 'Basique'} est actif jusqu'au ${formatDate(userSubscription.subscription_ends_at)}.`
+                                    t('dashboard.subscription.active_until').replace('{plan}', userSubscription.plan === 'premium' ? t('dashboard.subscription.plan_premium') : t('dashboard.subscription.plan_basic')).replace('{date}', formatDate(userSubscription.subscription_ends_at))
                                 )}
                             </p>
                         </div>
@@ -104,15 +106,15 @@ export default function Subscription({ auth, plans, userSubscription }) {
                                     <ul className="space-y-4 mb-8">
                                         <li className="flex items-center text-gray-600 dark:text-gray-300">
                                             <i className="fa-solid fa-check text-green-500 w-6"></i>
-                                            <span>{plan.max_venues ? `Jusqu'à ${plan.max_venues} salles actives` : 'Salles actives illimitées'}</span>
+                                            <span>{plan.max_venues ? t('dashboard.subscription.up_to_venues').replace('{count}', plan.max_venues) : t('dashboard.subscription.unlimited_venues')}</span>
                                         </li>
                                         <li className="flex items-center text-gray-600 dark:text-gray-300">
                                             <i className="fa-solid fa-check text-green-500 w-6"></i>
-                                            <span>Gestion des réservations</span>
+                                            <span>{t('dashboard.subscription.booking_management')}</span>
                                         </li>
                                         <li className="flex items-center text-gray-600 dark:text-gray-300">
                                             <i className="fa-solid fa-check text-green-500 w-6"></i>
-                                            <span>Messagerie directe avec les clients</span>
+                                            <span>{t('dashboard.subscription.direct_messaging')}</span>
                                         </li>
                                         {plan.is_featured ? (
                                             <>
@@ -122,7 +124,7 @@ export default function Subscription({ auth, plans, userSubscription }) {
                                                 </li>
                                                 <li className="flex items-center text-gray-600 dark:text-gray-300 font-bold">
                                                     <i className="fa-solid fa-certificate text-[#C9A227] w-6"></i>
-                                                    <span>Badge "Prestataire Vérifié"</span>
+                                                    <span>{t('dashboard.subscription.verified_badge')}</span>
                                                 </li>
                                             </>
                                         ) : (
@@ -133,7 +135,7 @@ export default function Subscription({ auth, plans, userSubscription }) {
                                                 </li>
                                                 <li className="flex items-center text-gray-400 line-through">
                                                     <i className="fa-solid fa-xmark text-red-300 w-6"></i>
-                                                    <span>Badge "Prestataire Vérifié"</span>
+                                                    <span>{t('dashboard.subscription.verified_badge')}</span>
                                                 </li>
                                             </>
                                         )}
@@ -156,7 +158,7 @@ export default function Subscription({ auth, plans, userSubscription }) {
                                             </>
                                         ) : (
                                             <>
-                                                S'abonner à {plan.name}
+                                                {t('dashboard.subscription.subscribe_to').replace('{plan}', plan.name)}
                                                 {processing && <i className="fa-solid fa-circle-notch fa-spin"></i>}
                                             </>
                                         )}

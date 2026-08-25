@@ -1,8 +1,10 @@
 import React from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
+import { useLanguage } from '@/Contexts/LanguageContext';
 
 export default function FavoritesIndex({ auth, favorites }) {
+    const { t } = useLanguage();
     const { post } = useForm();
 
     const toggleFavorite = (venueId) => {

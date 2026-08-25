@@ -182,6 +182,6 @@ class MessageController extends Controller
 
         broadcast(new UnreadMessageNotification(Auth::id() ?? 1, $venue->user_id))->toOthers();
 
-        return back()->with('success', 'Rendez-vous planifie avec succes ! L\'hote en a ete notifie.');
+        return back()->with('success', __('Rendez-vous planifie avec succes ! L\'hote en a ete notifie.'));
     }
 }

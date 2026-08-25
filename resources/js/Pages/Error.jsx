@@ -1,7 +1,9 @@
 import React from 'react';
 import { Head, Link } from '@inertiajs/react';
+import { useLanguage } from '@/Contexts/LanguageContext';
 
 export default function ErrorPage({ status }) {
+    const { t } = useLanguage();
     const title = {
         503: '503: Service Unavailable',
         500: '500: Server Error',
@@ -10,10 +12,10 @@ export default function ErrorPage({ status }) {
     }[status] || 'Error';
 
     const description = {
-        503: 'Désolé, nous sommes en maintenance. Veuillez réessayer plus tard.',
-        500: 'Oups, quelque chose a mal tourné sur nos serveurs.',
-        404: 'Désolé, la page que vous recherchez est introuvable.',
-        403: 'Désolé, vous n\'êtes pas autorisé à accéder à cette page.',
+        503: t('errors.503'),
+        500: t('errors.500'),
+        404: t('errors.404'),
+        403: t('errors.403'),
     }[status] || 'Une erreur inattendue est survenue.';
 
     return (

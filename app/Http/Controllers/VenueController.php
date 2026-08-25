@@ -177,7 +177,7 @@ class VenueController extends Controller
             $request->file('gallery') ?? []
         );
 
-        return redirect()->route('venues.show', $venue->id)->with('success', 'Votre espace a été publié avec succès sur Celebra Cameroon !');
+        return redirect()->route('venues.show', $venue->id)->with('success', __('Votre espace a été publié avec succès sur Celebra Cameroon !'));
     }
 
     public function edit($id)
@@ -223,7 +223,7 @@ class VenueController extends Controller
             $request->file('gallery') ?? []
         );
 
-        return redirect()->route('venues.show', $venue->id)->with('success', 'L\'annonce a été mise à jour avec succès.');
+        return redirect()->route('venues.show', $venue->id)->with('success', __('L\'annonce a été mise à jour avec succès.'));
     }
 
     public function destroy($id)
@@ -236,7 +236,7 @@ class VenueController extends Controller
 
         $this->venueService->deleteVenue($venue);
 
-        return redirect()->route('venues.index')->with('success', 'L\'espace a été supprimé.');
+        return redirect()->route('venues.index')->with('success', __('L\'espace a été supprimé.'));
     }
 
     public function stats($id)
@@ -275,7 +275,7 @@ class VenueController extends Controller
 
         $this->venueService->blockDates($venue, $request->all());
 
-        return back()->with('success', 'Les dates ont été bloquées avec succès.');
+        return back()->with('success', __('Les dates ont été bloquées avec succès.'));
     }
 
     public function unblockDate($id, $blockedDateId)
@@ -288,7 +288,7 @@ class VenueController extends Controller
 
         $this->venueService->unblockDate($venue, $blockedDateId);
 
-        return back()->with('success', 'Le blocage a été retiré.');
+        return back()->with('success', __('Le blocage a été retiré.'));
     }
 }
 

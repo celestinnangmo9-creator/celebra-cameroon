@@ -1,7 +1,9 @@
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import { Link, usePage } from '@inertiajs/react';
+import { useLanguage } from '@/Contexts/LanguageContext';
 
 export default function GuestLayout({ children }) {
+    const { t } = useLanguage();
     const { flash } = usePage().props;
 
     return (

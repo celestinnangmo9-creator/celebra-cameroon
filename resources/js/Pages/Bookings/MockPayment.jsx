@@ -1,7 +1,9 @@
 import { Head, useForm, usePage } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { useLanguage } from '../../Contexts/LanguageContext';
 
 export default function MockPayment({ booking, transaction_id }) {
+    const { t } = useLanguage();
     const { auth } = usePage().props;
     const { data, setData, post, processing } = useForm({
         status: 'successful',
@@ -14,8 +16,8 @@ export default function MockPayment({ booking, transaction_id }) {
     };
 
     return (
-        <AuthenticatedLayout user={auth.user} header={<h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Simulation de Paiement</h2>}>
-            <Head title="Simulation de Paiement" />
+        <AuthenticatedLayout user={auth.user} header={<h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">{t('bookings.payment.simulation_title')}</h2>}>
+            <Head title={t('bookings.payment.simulation_title')} />
 
             <div className="py-12">
                 <div className="max-w-2xl mx-auto sm:px-6 lg:px-8">
@@ -26,16 +28,16 @@ export default function MockPayment({ booking, transaction_id }) {
                                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 text-blue-600 mb-4 text-2xl">
                                     <i className="fa-solid fa-mobile-screen"></i>
                                 </div>
-                                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Validation USSD (Sandbox)</h3>
+                                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{t('bookings.payment.ussd_title')}</h3>
                                 <p className="text-gray-500 mt-2">
-                                    Ceci est un environnement de test. Simulez l'action que l'utilisateur ferait sur son téléphone.
+                                    {t('bookings.payment.ussd_desc')}
                                 </p>
                             </div>
 
                             <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-xl mb-8">
                                 <p className="text-center font-mono text-sm text-gray-600 dark:text-gray-300">
                                     Transaction ID: <strong>{transaction_id}</strong><br/>
-                                    Montant: <strong>{new Intl.NumberFormat('fr-FR').format(booking.total_price)} FCFA</strong>
+                                    {t('bookings.payment.amount')} <strong>{new Intl.NumberFormat('fr-FR').format(booking.total_price)} FCFA</strong>
                                 </p>
                             </div>
 
@@ -46,7 +48,7 @@ export default function MockPayment({ booking, transaction_id }) {
                                     disabled={processing}
                                     className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all"
                                 >
-                                    Simuler "Code PIN validé (Succès)"
+                                    {t('bookings.payment.sim_success')}
                                 </button>
 
                                 <button 
@@ -55,7 +57,7 @@ export default function MockPayment({ booking, transaction_id }) {
                                     disabled={processing}
                                     className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all"
                                 >
-                                    Simuler "Paiement refusé / Annulé (Échec)"
+                                    {t('bookings.payment.sim_failed')}
                                 </button>
                             </form>
 

@@ -6,8 +6,10 @@ import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { useState } from 'react';
+import { useLanguage } from '../../Contexts/LanguageContext';
 
 export default function Login({ status, canResetPassword }) {
+    const { t } = useLanguage();
     const [showPassword, setShowPassword] = useState(false);
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
@@ -25,7 +27,7 @@ export default function Login({ status, canResetPassword }) {
 
     return (
         <GuestLayout>
-            <Head title="Log in" />
+            <Head title={t('auth.login.page_title')} />
 
             {status && (
                 <div className="mb-4 text-sm font-medium text-green-600">
@@ -35,7 +37,7 @@ export default function Login({ status, canResetPassword }) {
 
             <form onSubmit={submit}>
                 <div>
-                    <InputLabel htmlFor="email" value="Email" />
+                    <InputLabel htmlFor="email" value={t('auth.login.email')} />
 
                     <TextInput
                         id="email"
@@ -52,7 +54,7 @@ export default function Login({ status, canResetPassword }) {
                 </div>
 
                 <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
+                    <InputLabel htmlFor="password" value={t('auth.login.password')} />
 
                     <div className="relative">
                         <TextInput
@@ -68,7 +70,7 @@ export default function Login({ status, canResetPassword }) {
                             type="button"
                             className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700"
                             onClick={() => setShowPassword(!showPassword)}
-                            aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                            aria-label={showPassword ? t('auth.login.hide_password') : t('auth.login.show_password')}
                         >
                             <i className={`fa-solid ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
                         </button>
@@ -87,7 +89,7 @@ export default function Login({ status, canResetPassword }) {
                             }
                         />
                         <span className="ms-2 text-sm text-gray-600 dark:text-gray-400">
-                            Remember me
+                            {t('auth.login.remember_me')}
                         </span>
                     </label>
                 </div>
@@ -98,17 +100,17 @@ export default function Login({ status, canResetPassword }) {
                             href={route('password.request')}
                             className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
                         >
-                            Forgot your password?
+                            {t('auth.login.forgot_password')}
                         </Link>
                     )}
 
                     <PrimaryButton className="ms-4" disabled={processing}>
-                        Log in
+                        {t('auth.login.login_btn')}
                     </PrimaryButton>
                 </div>
 
                 <div className="mt-6 flex items-center justify-center">
-                    <span className="text-sm text-gray-500 dark:text-gray-400">ou</span>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">{t('auth.login.or')}</span>
                 </div>
 
                 <div className="mt-4">
@@ -122,7 +124,7 @@ export default function Login({ status, canResetPassword }) {
                             <path d="M5.26498 14.2949C5.02498 13.5699 4.88501 12.7999 4.88501 11.9999C4.88501 11.1999 5.01998 10.4299 5.26498 9.7049L1.275 6.60986C0.46 8.22986 0 10.0599 0 11.9999C0 13.9399 0.46 15.7699 1.28 17.3899L5.26498 14.2949Z" fill="#FBBC05" />
                             <path d="M12.0004 24.0001C15.2404 24.0001 17.9654 22.935 19.9454 21.095L16.0804 18.095C15.0054 18.82 13.6204 19.245 12.0004 19.245C8.8704 19.245 6.21537 17.135 5.26538 14.29L1.27539 17.385C3.25539 21.31 7.3104 24.0001 12.0004 24.0001Z" fill="#34A853" />
                         </svg>
-                        Continuer avec Google
+                        {t('auth.login.continue_google')}
                     </a>
                 </div>
             </form>

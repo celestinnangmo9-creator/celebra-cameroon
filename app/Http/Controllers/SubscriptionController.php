@@ -57,6 +57,6 @@ class SubscriptionController extends Controller
             // Optionnel : Gérer la limite de salles actives si basique (max_venues)
         }
 
-        return redirect()->back()->with('success', 'Votre abonnement '.$plan->name.' a été activé avec succès !');
+        return redirect()->back()->with('success', __('Votre abonnement :plan a été activé avec succès !', ['plan' => $plan->name]));
     }
 }

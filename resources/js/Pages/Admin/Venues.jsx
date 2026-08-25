@@ -2,8 +2,10 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import InputLabel from '@/Components/InputLabel';
+import { useLanguage } from '@/Contexts/LanguageContext';
 
 export default function AdminVenues({ auth, venues, filters = {} }) {
+    const { t } = useLanguage();
     const [processingId, setProcessingId] = useState(null);
     const [rejectionModal, setRejectionModal] = useState({ show: false, venueId: null, type: 'rejected' });
     
@@ -14,7 +16,7 @@ export default function AdminVenues({ auth, venues, filters = {} }) {
     const [reason, setReason] = useState('');
 
     const updateStatus = (id, status) => {
-        if(confirm(`Êtes-vous sûr de vouloir approuver cette salle ?`)) {
+        if(confirm(t('admin.venues.confirm_approve'))) {
             setProcessingId(id);
             router.patch(route('admin.venues.updateStatus', id), { status }, {
                 preserveScroll: true,
@@ -75,10 +77,10 @@ export default function AdminVenues({ auth, venues, filters = {} }) {
                                         value={filterData.status}
                                         onChange={e => setFilterData('status', e.target.value)}
                                     >
-                                        <option value="">Tous les statuts</option>
+                                        <option value="">{t('admin.venues.all_statuses')}</option>
                                         <option value="pending">En attente</option>
-                                        <option value="approved">Approuvée</option>
-                                        <option value="rejected">Rejetée</option>
+                                        <option value="approved">{t('admin.venues.status_approved')}</option>
+                                        <option value="rejected">{t('admin.venues.status_rejected')}</option>
                                         <option value="suspended">Suspendue</option>
                                     </select>
                                 </div>
@@ -187,7 +189,7 @@ export default function AdminVenues({ auth, venues, filters = {} }) {
                         {/* Pagination */}
                         <div className="p-4 border-t border-gray-200 flex justify-between items-center">
                             <div className="text-sm text-gray-500">
-                                Affichage de {venues.data.length} sur {venues.total} salles
+                                {t('admin.venues.showing_venues').replace('{count}', venues.data.length).replace('{total}', venues.total)}
                             </div>
                             <div className="flex gap-1 flex-wrap">
                                 {venues.links.map((link, k) => (
@@ -210,7 +212,7 @@ export default function AdminVenues({ auth, venues, filters = {} }) {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
                     <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl border border-gray-100">
                         <h3 className="text-xl font-bold text-gray-900 mb-4">
-                            {rejectionModal.type === 'suspended' ? 'Suspendre la salle' : 'Rejeter la salle'}
+                            {rejectionModal.type === 'suspended' ? t('admin.venues.suspend_venue') : t('admin.venues.reject_venue')}
                         </h3>
                         
                         <div className="mb-6">
@@ -218,7 +220,7 @@ export default function AdminVenues({ auth, venues, filters = {} }) {
                             <textarea
                                 className="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                                 rows="4"
-                                placeholder="Veuillez expliquer pourquoi cette salle ne respecte pas les critères..."
+                                placeholder={t('admin.venues.rejection_reason_placeholder')}
                                 value={reason}
                                 onChange={(e) => setReason(e.target.value)}
                                 required

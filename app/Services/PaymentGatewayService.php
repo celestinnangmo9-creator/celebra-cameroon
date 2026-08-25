@@ -13,8 +13,9 @@ class PaymentGatewayService
      * Initiate a payment request for a booking.
      * In Sandbox mode, we simulate the aggregator.
      */
-    public function initiatePayment(Booking $booking, string $method, string $phoneNumber)
+    public function initiatePayment(Booking $booking, string $method, string $phoneNumber, float $amountToPay = null)
     {
+        $amountToPay = $amountToPay ?? $booking->total_price;
         $transactionId = 'TXN-' . strtoupper(Str::random(10));
         
         $booking->update([
@@ -25,7 +26,7 @@ class PaymentGatewayService
 
         if (app()->environment('local')) {
             // SANDBOX MODE: Simulate a successful response from a payment gateway.
-            Log::info("Sandbox Payment Initiated: {$transactionId} via {$method} for {$booking->total_price} FCFA");
+            Log::info("Sandbox Payment Initiated: {$transactionId} via {$method} for {$amountToPay} FCFA");
             
             // In a real scenario, you'd get a payment URL to redirect the user to,
             // or send a USSD push and wait for the webhook.
@@ -42,7 +43,7 @@ class PaymentGatewayService
         // Example with a generic HTTP call:
         /*
         $response = Http::withToken(env('PAYMENT_GATEWAY_TOKEN'))->post('https://api.payment.com/v1/collect', [
-            'amount' => $booking->total_price,
+            'amount' => $amountToPay,
             'currency' => 'XAF',
             'external_reference' => $transactionId,
             'phone_number' => $phoneNumber,
@@ -71,6 +72,7 @@ class PaymentGatewayService
         // Sandbox mock or real integration validation
         $transactionId = $payload['transaction_id'] ?? null;
         $status = $payload['status'] ?? null; // 'successful', 'failed'
+        $amount = isset($payload['amount']) ? (float) $payload['amount'] : null;
 
         if (!$transactionId) return false;
 
@@ -78,12 +80,24 @@ class PaymentGatewayService
 
         if ($booking) {
             if ($status === 'successful') {
+                $newAmountPaid = $booking->amount_paid + ($amount ?? ($booking->total_price / 2)); // Default to 50% for mock
+                
                 $booking->update([
-                    'payment_status' => 'paid',
-                    // Optional: automatically confirm the booking if paid
+                    'amount_paid' => $newAmountPaid,
+                    'payment_status' => $newAmountPaid >= $booking->total_price ? 'paid' : 'partially_paid',
                     'status' => 'confirmed' 
                 ]);
-                Log::info("Payment successful for booking {$booking->id}");
+                
+                // Marquer les dates comme indisponibles maintenant que c'est confirmé
+                $availabilityService = app(\App\Services\VenueAvailabilityService::class);
+                $availabilityService->markDatesAsUnavailable(
+                    $booking->venue,
+                    $booking->id,
+                    $booking->start_date,
+                    $booking->end_date
+                );
+
+                Log::info("Payment successful for booking {$booking->id}. Amount Paid: {$newAmountPaid}");
             } else {
                 $booking->update(['payment_status' => 'failed']);
                 Log::info("Payment failed for booking {$booking->id}");

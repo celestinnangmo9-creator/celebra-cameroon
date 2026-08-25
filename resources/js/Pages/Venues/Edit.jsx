@@ -4,8 +4,10 @@ import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Head, useForm, Link } from '@inertiajs/react';
+import { useLanguage } from '@/Contexts/LanguageContext';
 
 export default function EditVenue({ auth, venue, regionsAndCities, categories, availableAmenities }) {
+    const { t } = useLanguage();
     const { data, setData, post, processing, errors } = useForm({
         _method: 'PUT',
         title: venue.title || '',
@@ -71,7 +73,7 @@ export default function EditVenue({ auth, venue, regionsAndCities, categories, a
                             <form onSubmit={submit} className="space-y-6">
                                 {/* Title */}
                                 <div>
-                                    <InputLabel htmlFor="title" value="Titre de l'espace *" />
+                                    <InputLabel htmlFor="title" value={t('venues.create.title_label')} />
                                     <TextInput
                                         id="title"
                                         type="text"
@@ -88,7 +90,7 @@ export default function EditVenue({ auth, venue, regionsAndCities, categories, a
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     {/* Category */}
                                     <div>
-                                        <InputLabel htmlFor="category" value="Catégorie *" />
+                                        <InputLabel htmlFor="category" value={t('venues.create.category_label')} />
                                         <select
                                             id="category"
                                             name="category"
@@ -106,7 +108,7 @@ export default function EditVenue({ auth, venue, regionsAndCities, categories, a
 
                                     {/* Region */}
                                     <div>
-                                        <InputLabel htmlFor="region" value="Région *" />
+                                        <InputLabel htmlFor="region" value={t('venues.create.region_label')} />
                                         <select
                                             id="region"
                                             name="region"
@@ -159,7 +161,7 @@ export default function EditVenue({ auth, venue, regionsAndCities, categories, a
 
                                     {/* Address */}
                                     <div>
-                                        <InputLabel htmlFor="address" value="Adresse précise *" />
+                                        <InputLabel htmlFor="address" value={t('venues.create.address_label')} />
                                         <TextInput
                                             id="address"
                                             type="text"
@@ -174,7 +176,7 @@ export default function EditVenue({ auth, venue, regionsAndCities, categories, a
 
                                     {/* Status */}
                                     <div>
-                                        <InputLabel htmlFor="status" value="Statut de la salle *" />
+                                        <InputLabel htmlFor="status" value={t('venues.edit.status_label')} />
                                         <select
                                             id="status"
                                             name="status"
@@ -185,7 +187,7 @@ export default function EditVenue({ auth, venue, regionsAndCities, categories, a
                                         >
                                             <option value="active">Actif (En location)</option>
                                             <option value="maintenance">En maintenance</option>
-                                            <option value="booked">Réservé</option>
+                                            <option value="booked">{t('venues.edit.status_booked')}</option>
                                         </select>
                                         <InputError message={errors.status} className="mt-2" />
                                     </div>
@@ -194,7 +196,7 @@ export default function EditVenue({ auth, venue, regionsAndCities, categories, a
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     {/* Capacity */}
                                     <div>
-                                        <InputLabel htmlFor="capacity" value="Capacité max. *" />
+                                        <InputLabel htmlFor="capacity" value={t('venues.create.capacity_label')} />
                                         <TextInput
                                             id="capacity"
                                             type="number"
@@ -239,7 +241,7 @@ export default function EditVenue({ auth, venue, regionsAndCities, categories, a
 
                                 {/* Description */}
                                 <div>
-                                    <InputLabel htmlFor="description" value="Description détaillée *" />
+                                    <InputLabel htmlFor="description" value={t('venues.create.description_label')} />
                                     <textarea
                                         id="description"
                                         name="description"
@@ -295,7 +297,7 @@ export default function EditVenue({ auth, venue, regionsAndCities, categories, a
                                             </div>
                                         </div>
                                         <div className="w-full md:w-2/3">
-                                            <InputLabel htmlFor="gallery" value="Ajouter de nouvelles photos/vidéos à la galerie (Optionnel)" />
+                                            <InputLabel htmlFor="gallery" value={t('venues.edit.gallery_add_label')} />
                                             <input
                                                 id="gallery"
                                                 type="file"
