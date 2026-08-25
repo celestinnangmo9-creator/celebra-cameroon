@@ -84,13 +84,6 @@ class BookingService
         return $booking;
     }
 
-    /**
-     * Get bookings for a host (owner), optionally filtered by status.
-     * 
-     * @param int $hostId
-     * @param string|null $status
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
     public function getReceivedBookings(int $hostId, ?string $status = null)
     {
         $query = Booking::with(['venue', 'user'])
@@ -104,6 +97,81 @@ class BookingService
         }
 
         return $query->get();
+    }
+
+    /**
+     * Get paginated bookings for a host (owner), filtered by tab.
+     *
+     * @param int $hostId
+     * @param string $tab 'pending', 'confirmed', or 'history'
+     * @return \Illuminate\Pagination\LengthAwarePaginator
+     */
+    public function getHostReservationsPaginated(int $hostId, string $tab = 'pending')
+    {
+        $query = Booking::with(['venue.photos', 'user'])
+            ->whereHas('venue', function($q) use ($hostId) {
+                $q->where('user_id', $hostId);
+            });
+
+        switch ($tab) {
+            case 'confirmed':
+                $query->whereIn('status', ['confirmed', 'accepted_awaiting_payment'])
+                      ->where('end_date', '>=', Carbon::now()->format('Y-m-d'));
+                break;
+            case 'history':
+                $query->where(function ($q) {
+                    $q->whereIn('status', ['completed', 'cancelled', 'declined'])
+                      ->orWhere(function ($q2) {
+                          $q2->whereNotIn('status', ['cancelled', 'declined'])
+                             ->where('end_date', '<', Carbon::now()->format('Y-m-d'));
+                      });
+                });
+                break;
+            case 'pending':
+            default:
+                $query->where('status', 'pending')
+                      ->where('end_date', '>=', Carbon::now()->format('Y-m-d'));
+                break;
+        }
+
+        return $query->latest()->paginate(10);
+    }
+
+    /**
+     * Get bookings made by a client, filtered by tab (upcoming, past, cancelled).
+     *
+     * @param int $userId
+     * @param string $tab 'upcoming', 'past', or 'cancelled'
+     * @return \Illuminate\Pagination\LengthAwarePaginator
+     */
+    public function getClientBookings(int $userId, string $tab = 'upcoming')
+    {
+        $query = Booking::with(['venue.user', 'venue.photos'])
+            ->where('user_id', $userId);
+
+        $now = Carbon::now()->startOfDay();
+
+        switch ($tab) {
+            case 'past':
+                $query->where(function ($q) use ($now) {
+                    $q->where('status', 'completed')
+                      ->orWhere(function ($q2) use ($now) {
+                          $q2->where('end_date', '<', $now->format('Y-m-d'))
+                             ->whereNotIn('status', ['cancelled', 'declined']);
+                      });
+                });
+                break;
+            case 'cancelled':
+                $query->whereIn('status', ['cancelled', 'declined']);
+                break;
+            case 'upcoming':
+            default:
+                $query->whereIn('status', ['pending', 'accepted_awaiting_payment', 'confirmed'])
+                      ->where('end_date', '>=', $now->format('Y-m-d'));
+                break;
+        }
+
+        return $query->latest()->paginate(10);
     }
 
     /**
@@ -122,6 +190,11 @@ class BookingService
             'status' => $status,
             'decline_reason' => $status === 'declined' ? $declineReason : null,
         ];
+
+        if ($status === 'cancelled') {
+            $updateData['cancelled_at'] = now();
+            $updateData['cancellation_reason'] = $declineReason;
+        }
 
         if (in_array($status, ['accepted_awaiting_payment', 'confirmed']) && $hostMessage !== null) {
             $updateData['host_message'] = $hostMessage;

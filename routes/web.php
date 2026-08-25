@@ -11,6 +11,9 @@ use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\ClientReservationController;
+use App\Http\Controllers\HostVenueController;
+use App\Http\Controllers\HostReservationController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -50,6 +53,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
     Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store');
     
+    // Client Reservations
+    Route::get('/client/reservations', [ClientReservationController::class, 'index'])->name('client.reservations.index');
+    
     // Favorites
     Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
     Route::post('/venues/{id}/favorite', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
@@ -80,6 +86,16 @@ Route::middleware('auth')->group(function () {
     // Host Appointments Management
     Route::get('/host/appointments', [AppointmentController::class, 'index'])->name('host.appointments.index');
     Route::patch('/appointments/{id}/status', [AppointmentController::class, 'updateStatus'])->name('appointments.updateStatus');
+
+    Route::get('/host/appointments/{id}/edit', [AppointmentController::class, 'edit'])->name('host.appointments.edit');
+    Route::put('/host/appointments/{id}', [AppointmentController::class, 'update'])->name('host.appointments.update');
+
+    // Host (Prestataire) Dashboard
+    Route::get('/prestataire/salles', [HostVenueController::class, 'index'])->name('host.venues.index');
+    Route::patch('/prestataire/salles/{id}/status', [HostVenueController::class, 'toggleStatus'])->name('host.venues.status');
+    Route::get('/prestataire/reservations', [HostReservationController::class, 'index'])->name('host.reservations.index');
+    Route::post('/prestataire/reservations/{id}/accepter', [HostReservationController::class, 'accept'])->name('host.reservations.accept');
+    Route::post('/prestataire/reservations/{id}/refuser', [HostReservationController::class, 'decline'])->name('host.reservations.decline');
 
     // Host Subscriptions
     Route::get('/dashboard/subscription', [SubscriptionController::class, 'index'])->name('subscriptions.index');

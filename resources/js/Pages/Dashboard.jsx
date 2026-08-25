@@ -1,6 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
 import { useLanguage } from '../Contexts/LanguageContext';
+import ProfileCard from '@/Components/ProfileCard';
 
 export default function Dashboard({ auth, userRole, userVenues, totalVenues, totalBookings, totalRevenue, pendingBookingsCount, recentBookings, upcomingAppointments, venuePerformances }) {
     const { t } = useLanguage();
@@ -191,8 +192,9 @@ export default function Dashboard({ auth, userRole, userVenues, totalVenues, tot
         >
             <Head title={t('dashboard.page_title')} />
 
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div className="py-6 space-y-6">
+                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-6">
+                    <ProfileCard user={auth.user} />
                     {userRole === 'host' || userRole === 'admin' ? renderHostDashboard() : renderClientDashboard()}
                 </div>
             </div>

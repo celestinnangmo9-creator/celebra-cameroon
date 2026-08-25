@@ -1,34 +1,51 @@
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import { Link, usePage } from '@inertiajs/react';
 import { useLanguage } from '@/Contexts/LanguageContext';
+import LanguageSwitcher from '@/Components/LanguageSwitcher';
+import { useState, useEffect } from 'react';
 
 export default function GuestLayout({ children }) {
     const { t } = useLanguage();
     const { flash } = usePage().props;
+    const [visibleFlash, setVisibleFlash] = useState(flash);
+
+    useEffect(() => {
+        setVisibleFlash(flash);
+        if (flash?.success || flash?.error || flash?.message) {
+            const timer = setTimeout(() => {
+                setVisibleFlash({ success: null, error: null, message: null });
+            }, 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [flash]);
 
     return (
         <div 
             className="flex min-h-screen flex-col items-center pt-6 sm:justify-center sm:pt-0 relative"
         >
+            <div className="absolute top-4 right-4 z-50 flex items-center gap-2">
+                <LanguageSwitcher />
+            </div>
+
             {/* Flash Messages */}
-            {(flash?.success || flash?.error || flash?.message) && (
-                <div className="fixed top-6 right-4 z-[100] flex flex-col gap-2 pointer-events-none">
-                    {flash.success && (
+            {(visibleFlash?.success || visibleFlash?.error || visibleFlash?.message) && (
+                <div className="fixed top-24 right-4 z-[100] flex flex-col gap-2 pointer-events-none">
+                    {visibleFlash.success && (
                         <div className="bg-emerald-100 border-l-4 border-emerald-500 text-emerald-800 px-5 py-4 rounded shadow-lg flex items-center gap-3 pointer-events-auto">
                             <i className="fa-solid fa-circle-check text-emerald-600 text-xl"></i>
-                            <div className="font-medium">{flash.success}</div>
+                            <div className="font-medium">{visibleFlash.success}</div>
                         </div>
                     )}
-                    {flash.error && (
+                    {visibleFlash.error && (
                         <div className="bg-red-100 border-l-4 border-red-500 text-red-800 px-5 py-4 rounded shadow-lg flex items-center gap-3 pointer-events-auto">
                             <i className="fa-solid fa-triangle-exclamation text-red-600 text-xl"></i>
-                            <div className="font-medium">{flash.error}</div>
+                            <div className="font-medium">{visibleFlash.error}</div>
                         </div>
                     )}
-                    {flash.message && (
+                    {visibleFlash.message && (
                         <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-800 px-5 py-4 rounded shadow-lg flex items-center gap-3 pointer-events-auto">
                             <i className="fa-solid fa-circle-info text-blue-600 text-xl"></i>
-                            <div className="font-medium">{flash.message}</div>
+                            <div className="font-medium">{visibleFlash.message}</div>
                         </div>
                     )}
                 </div>

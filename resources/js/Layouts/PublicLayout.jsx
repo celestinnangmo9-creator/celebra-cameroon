@@ -15,6 +15,17 @@ export default function PublicLayout({ children }) {
     const [isDarkMode, setIsDarkMode] = useState(
         typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
     );
+    const [visibleFlash, setVisibleFlash] = useState(flash);
+
+    useEffect(() => {
+        setVisibleFlash(flash);
+        if (flash?.success || flash?.error || flash?.message) {
+            const timer = setTimeout(() => {
+                setVisibleFlash({ success: null, error: null, message: null });
+            }, 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [flash]);
 
     const toggleDarkMode = () => {
         if (isDarkMode) {
@@ -83,6 +94,18 @@ export default function PublicLayout({ children }) {
                     >
                         <i className="fa-solid fa-bars"></i>
                     </button>
+
+                    {/* Mobile Global Actions (Language & Theme) */}
+                    <div className="flex md:hidden items-center gap-2 ml-auto mr-2">
+                        <LanguageSwitcher />
+                        <button 
+                            className="btn btn-ghost w-10 h-10 rounded-full p-0 flex items-center justify-center transition-colors hover:bg-gray-100 dark:hover:bg-gray-800" 
+                            title={t('nav.toggle_theme', 'Basculer le mode sombre/clair')} 
+                            onClick={toggleDarkMode}
+                        >
+                            <i className={`fa-solid ${isDarkMode ? 'fa-sun text-amber-400' : 'fa-moon text-gray-700'}`}></i>
+                        </button>
+                    </div>
 
                     <ul className="nav-links" id="nav-links">
                         <li><Link href={route('home')} className={`nav-link ${route().current('home') ? 'active' : ''}`}>{t('nav.home')}</Link></li>
@@ -168,24 +191,24 @@ export default function PublicLayout({ children }) {
             </header>
 
             {/* Flash Messages */}
-            {(flash?.success || flash?.error || flash?.message) && (
+            {(visibleFlash?.success || visibleFlash?.error || visibleFlash?.message) && (
                 <div className="fixed top-24 right-4 z-[100] flex flex-col gap-2 pointer-events-none">
-                    {flash.success && (
+                    {visibleFlash.success && (
                         <div className="bg-emerald-100 border-l-4 border-emerald-500 text-emerald-800 px-5 py-4 rounded shadow-lg flex items-center gap-3 pointer-events-auto">
                             <i className="fa-solid fa-circle-check text-emerald-600 text-xl"></i>
-                            <div className="font-medium">{flash.success}</div>
+                            <div className="font-medium">{visibleFlash.success}</div>
                         </div>
                     )}
-                    {flash.error && (
+                    {visibleFlash.error && (
                         <div className="bg-red-100 border-l-4 border-red-500 text-red-800 px-5 py-4 rounded shadow-lg flex items-center gap-3 pointer-events-auto">
                             <i className="fa-solid fa-triangle-exclamation text-red-600 text-xl"></i>
-                            <div className="font-medium">{flash.error}</div>
+                            <div className="font-medium">{visibleFlash.error}</div>
                         </div>
                     )}
-                    {flash.message && (
+                    {visibleFlash.message && (
                         <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-800 px-5 py-4 rounded shadow-lg flex items-center gap-3 pointer-events-auto">
                             <i className="fa-solid fa-circle-info text-blue-600 text-xl"></i>
-                            <div className="font-medium">{flash.message}</div>
+                            <div className="font-medium">{visibleFlash.message}</div>
                         </div>
                     )}
                 </div>

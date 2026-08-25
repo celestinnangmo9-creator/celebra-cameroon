@@ -28,7 +28,18 @@ class ProfileUpdateRequest extends FormRequest
             ],
             'phone' => ['nullable', 'string', 'max:20'],
             'bio' => ['nullable', 'string', 'max:1000'],
-            'avatar' => ['nullable', 'image', 'max:2048'],
+            'avatar' => ['nullable', 'image', 'max:5120'], // 5MB limit
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     */
+    public function messages(): array
+    {
+        return [
+            'avatar.image' => 'Le fichier doit être une image.',
+            'avatar.max' => 'La photo de profil ne doit pas dépasser 5 Mo.',
         ];
     }
 }
