@@ -123,7 +123,21 @@
       "pro_energy": "Pro energy",
       "starting_from": "Starting from",
       "per_day": "/day",
-      "max_guests": "max"
+      "max_guests": "max",
+      "publish_venue": "Publish",
+      "unpublish_venue": "Unpublish",
+      "status_published": "Published",
+      "status_draft": "Draft",
+      "status_suspended": "Suspended",
+      "add_venue": "Add a venue",
+      "add_first_venue": "Add my first venue",
+      "no_venue_registered": "No venue registered",
+      "no_venue_desc": "You haven't published any venues yet. Add your first venue to start receiving bookings.",
+      "my_venues_title": "My Venues",
+      "up_to": "Up to",
+      "received_bookings": "received bookings",
+      "edit": "Edit",
+      "view_listing": "View listing"
     },
     "show": {
       "no_more_photos": "No more photos",
@@ -200,7 +214,20 @@
       "rating_label": "Overall rating",
       "review_label": "Your review (Optional)",
       "review_placeholder": "Share your experience...",
-      "publish_review": "Publish review"
+      "publish_review": "Publish review",
+      "tab_history": "History",
+      "no_pending_requests": "No pending requests",
+      "no_confirmed_requests": "No confirmed requests",
+      "no_history_requests": "No requests in history",
+      "no_requests_in_category": "You don't have any bookings in this category at the moment.",
+      "contact": "Contact",
+      "no_upcoming_bookings": "No upcoming bookings",
+      "no_past_bookings": "No past bookings",
+      "no_cancelled_bookings": "No cancelled bookings",
+      "discover_venues": "Discover venues",
+      "rate_title": "Rate:",
+      "rating": "Rating out of 5",
+      "review_desc": "Your review (Optional)"
     },
     "payment": {
       "page_title": "Payment -",
@@ -227,6 +254,11 @@
       "amount": "Amount:",
       "sim_success": "Simulate \"PIN validated (Success)\"",
       "sim_failed": "Simulate \"Payment declined / Cancelled (Failure)\""
+    },
+    "card": {
+      "venue_unavailable": "Venue unavailable",
+      "unknown_host": "Unknown host",
+      "host": "Host:"
     }
   },
   "messages": {

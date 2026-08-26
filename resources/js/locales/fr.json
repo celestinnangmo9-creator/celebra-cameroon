@@ -123,7 +123,21 @@
       "pro_energy": "Énergie pro",
       "starting_from": "À partir de",
       "per_day": "/jour",
-      "max_guests": "max"
+      "max_guests": "max",
+      "publish_venue": "Publier",
+      "unpublish_venue": "Dépublier",
+      "status_published": "Publiée",
+      "status_draft": "Brouillon",
+      "status_suspended": "Suspendue",
+      "add_venue": "Ajouter une salle",
+      "add_first_venue": "Ajouter ma première salle",
+      "no_venue_registered": "Aucune salle enregistrée",
+      "no_venue_desc": "Vous n'avez pas encore publié de salle. Ajoutez votre première salle pour commencer à recevoir des réservations.",
+      "my_venues_title": "Mes salles",
+      "up_to": "Jusqu'à",
+      "received_bookings": "réservations reçues",
+      "edit": "Modifier",
+      "view_listing": "Voir l'annonce"
     },
     "show": {
       "no_more_photos": "Aucune photo supplémentaire",
@@ -200,7 +214,20 @@
       "rating_label": "Note globale",
       "review_label": "Votre avis (Optionnel)",
       "review_placeholder": "Partagez votre expérience...",
-      "publish_review": "Publier l'avis"
+      "publish_review": "Publier l'avis",
+      "tab_history": "Historique",
+      "no_pending_requests": "Aucune demande en attente",
+      "no_confirmed_requests": "Aucune demande confirmée",
+      "no_history_requests": "Aucune demande dans l'historique",
+      "no_requests_in_category": "Vous n'avez pas de réservations dans cette catégorie pour le moment.",
+      "contact": "Contacter",
+      "no_upcoming_bookings": "Aucune réservation à venir",
+      "no_past_bookings": "Aucune réservation passée",
+      "no_cancelled_bookings": "Aucune réservation annulée",
+      "discover_venues": "Découvrir des salles",
+      "rate_title": "Évaluer :",
+      "rating": "Note sur 5",
+      "review_desc": "Votre avis (Optionnel)"
     },
     "payment": {
       "page_title": "Paiement -",
@@ -227,6 +254,11 @@
       "amount": "Montant:",
       "sim_success": "Simuler \"Code PIN validé (Succès)\"",
       "sim_failed": "Simuler \"Paiement refusé / Annulé (Échec)\""
+    },
+    "card": {
+      "venue_unavailable": "Salle indisponible",
+      "unknown_host": "Hôte inconnu",
+      "host": "Hôte :"
     }
   },
   "messages": {

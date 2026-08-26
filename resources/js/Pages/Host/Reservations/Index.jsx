@@ -42,24 +42,24 @@ export default function HostReservationsIndex({ auth, bookings, activeTab }) {
     };
 
     const tabs = [
-        { id: 'pending', label: 'En attente' },
-        { id: 'confirmed', label: 'Confirmées' },
-        { id: 'history', label: 'Historique' },
+        { id: 'pending', label: t('bookings.index.status_pending') },
+        { id: 'confirmed', label: t('bookings.index.status_confirmed') },
+        { id: 'history', label: t('bookings.index.tab_history') },
     ];
 
     const getStatusBadge = (status) => {
         switch (status) {
             case 'pending':
-                return <span className="bg-amber-100 text-amber-800 border border-amber-200 px-3 py-1 rounded-full text-xs font-bold">En attente</span>;
+                return <span className="bg-amber-100 text-amber-800 border border-amber-200 px-3 py-1 rounded-full text-xs font-bold">{t('bookings.index.status_pending')}</span>;
             case 'accepted_awaiting_payment':
-                return <span className="bg-blue-100 text-blue-800 border border-blue-200 px-3 py-1 rounded-full text-xs font-bold">En attente de paiement</span>;
+                return <span className="bg-blue-100 text-blue-800 border border-blue-200 px-3 py-1 rounded-full text-xs font-bold">{t('bookings.index.status_awaiting_payment')}</span>;
             case 'confirmed':
-                return <span className="bg-emerald-100 text-emerald-800 border border-emerald-200 px-3 py-1 rounded-full text-xs font-bold">Confirmée</span>;
+                return <span className="bg-emerald-100 text-emerald-800 border border-emerald-200 px-3 py-1 rounded-full text-xs font-bold">{t('bookings.index.status_confirmed')}</span>;
             case 'completed':
-                return <span className="bg-gray-100 text-gray-800 border border-gray-200 px-3 py-1 rounded-full text-xs font-bold">Terminée</span>;
+                return <span className="bg-gray-100 text-gray-800 border border-gray-200 px-3 py-1 rounded-full text-xs font-bold">{t('bookings.index.status_paid')}</span>;
             case 'cancelled':
             case 'declined':
-                return <span className="bg-red-100 text-red-800 border border-red-200 px-3 py-1 rounded-full text-xs font-bold">{status === 'cancelled' ? 'Annulée' : 'Refusée'}</span>;
+                return <span className="bg-red-100 text-red-800 border border-red-200 px-3 py-1 rounded-full text-xs font-bold">{status === 'cancelled' ? t('bookings.index.status_cancelled') : t('bookings.index.status_declined')}</span>;
             default:
                 return <span className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-xs font-bold">{status}</span>;
         }
@@ -68,9 +68,9 @@ export default function HostReservationsIndex({ auth, bookings, activeTab }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-2xl font-fraunces text-gray-800 dark:text-gray-200 leading-tight">Réservations</h2>}
+            header={<h2 className="font-semibold text-2xl font-fraunces text-gray-800 dark:text-gray-200 leading-tight">{t('nav.bookings')}</h2>}
         >
-            <Head title="Réservations reçues - Prestataire" />
+            <Head title={`${t('nav.bookings')} - Prestataire`} />
 
             <div className="py-8">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -116,10 +116,10 @@ export default function HostReservationsIndex({ auth, bookings, activeTab }) {
                                         <div className="text-sm text-gray-600 dark:text-gray-400 flex flex-wrap gap-4 mb-3">
                                             <span className="flex items-center gap-1"><i className="fa-solid fa-user text-[#C9A227]"></i> Client: {booking.user?.name}</span>
                                             <span className="flex items-center gap-1"><i className="fa-solid fa-calendar text-[#C9A227]"></i> {new Date(booking.start_date).toLocaleDateString()} {booking.start_date !== booking.end_date && `- ${new Date(booking.end_date).toLocaleDateString()}`}</span>
-                                            <span className="flex items-center gap-1"><i className="fa-solid fa-people-group text-[#C9A227]"></i> {booking.guest_count} invités</span>
+                                            <span className="flex items-center gap-1"><i className="fa-solid fa-people-group text-[#C9A227]"></i> {booking.guest_count} {t('bookings.index.guests')}</span>
                                         </div>
                                         <div className="text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 px-3 py-2 rounded-lg inline-block">
-                                            <strong>Type d'événement:</strong> {booking.event_type}
+                                            <strong>{t('bookings.index.event')}</strong> {booking.event_type}
                                         </div>
                                     </div>
                                     <div className="shrink-0 text-right w-full md:w-auto flex flex-col gap-3 items-end">
@@ -138,7 +138,7 @@ export default function HostReservationsIndex({ auth, bookings, activeTab }) {
                                                         disabled={acceptProcessing}
                                                         className="text-sm font-semibold bg-[#0B3D2E] hover:bg-[#124d3a] text-white rounded-lg px-4 py-2 transition-colors disabled:opacity-50 shadow-sm"
                                                     >
-                                                        <i className="fa-solid fa-check mr-1"></i> Accepter
+                                                        <i className="fa-solid fa-check mr-1"></i> {t('bookings.index.accept')}
                                                     </button>
                                                     <button 
                                                         onClick={() => {
@@ -147,7 +147,7 @@ export default function HostReservationsIndex({ auth, bookings, activeTab }) {
                                                         }}
                                                         className="text-sm font-semibold text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg px-4 py-2 transition-colors"
                                                     >
-                                                        <i className="fa-solid fa-xmark mr-1"></i> Refuser
+                                                        <i className="fa-solid fa-xmark mr-1"></i> {t('bookings.index.decline')}
                                                     </button>
                                                 </>
                                             )}
@@ -157,7 +157,7 @@ export default function HostReservationsIndex({ auth, bookings, activeTab }) {
                                                     href={route('messages.index')}
                                                     className="text-sm font-semibold text-[#0B3D2E] dark:text-[#C9A227] hover:bg-emerald-50 dark:hover:bg-gray-700 border border-emerald-200 dark:border-gray-600 rounded-lg px-4 py-2 transition-colors"
                                                 >
-                                                    <i className="fa-solid fa-comment-dots mr-1"></i> Contacter
+                                                    <i className="fa-solid fa-comment-dots mr-1"></i> {t('bookings.index.contact')}
                                                 </Link>
                                             )}
                                         </div>
@@ -171,10 +171,10 @@ export default function HostReservationsIndex({ auth, bookings, activeTab }) {
                                 <i className="fa-solid fa-inbox text-4xl text-[#0B3D2E] dark:text-[#C9A227]"></i>
                             </div>
                             <h3 className="text-xl font-fraunces font-bold text-gray-900 dark:text-gray-100 mb-2">
-                                Aucune demande {activeTab === 'pending' ? 'en attente' : activeTab === 'confirmed' ? 'confirmée' : 'dans l\'historique'}
+                                {activeTab === 'pending' ? t('bookings.index.no_pending_requests') : activeTab === 'confirmed' ? t('bookings.index.no_confirmed_requests') : t('bookings.index.no_history_requests')}
                             </h3>
                             <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-md mx-auto">
-                                Vous n'avez pas de réservations dans cette catégorie pour le moment.
+                                {t('bookings.index.no_requests_in_category')}
                             </p>
                         </div>
                     )}
@@ -218,17 +218,16 @@ export default function HostReservationsIndex({ auth, bookings, activeTab }) {
                                         </div>
                                         <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                                             <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100" id="modal-title">
-                                                Refuser la réservation
+                                                {t('bookings.index.decline_modal_title')}
                                             </h3>
                                             <div className="mt-2">
                                                 <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                                                    Êtes-vous sûr de vouloir refuser cette réservation ? Cette action est irréversible et le client sera notifié.
+                                                    {t('bookings.index.decline_modal_desc')}
                                                 </p>
-                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Raison du refus (Optionnel, sera envoyé au client)</label>
                                                 <textarea 
                                                     className="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
                                                     rows="3"
-                                                    placeholder="La salle est indisponible à cette date..."
+                                                    placeholder={t('bookings.index.decline_modal_placeholder')}
                                                     value={declineData.decline_reason}
                                                     onChange={e => setDeclineData('decline_reason', e.target.value)}
                                                     style={{ fontSize: '16px' }} // prevent iOS zoom
@@ -243,14 +242,14 @@ export default function HostReservationsIndex({ auth, bookings, activeTab }) {
                                         disabled={declineProcessing}
                                         className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50"
                                     >
-                                        Confirmer le refus
+                                        {t('bookings.index.decline_btn')}
                                     </button>
                                     <button 
                                         type="button" 
                                         onClick={() => setDeclineModal({ show: false, bookingId: null })}
                                         className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-800 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                                     >
-                                        Retour
+                                        {t('bookings.index.back')}
                                     </button>
                                 </div>
                             </form>

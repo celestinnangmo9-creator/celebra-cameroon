@@ -26,8 +26,8 @@ export default function BookingCard({ booking, onCancel, onReview }) {
     const mainPhoto = booking.venue?.photos?.[0]?.photo_path 
         ? `/storage/${booking.venue.photos[0].photo_path}` 
         : '/images/placeholder-venue.jpg'; // fallback
-    const venueName = booking.venue?.title || 'Salle indisponible';
-    const hostName = booking.venue?.user?.name || 'Hôte inconnu';
+    const venueName = booking.venue?.title || t('bookings.card.venue_unavailable');
+    const hostName = booking.venue?.user?.name || t('bookings.card.unknown_host');
     const isCancelable = ['pending', 'accepted_awaiting_payment'].includes(booking.status);
     const canReview = booking.status === 'completed';
 
@@ -61,11 +61,11 @@ export default function BookingCard({ booking, onCancel, onReview }) {
                         </div>
                         <div className="flex items-center gap-2">
                             <i className="fa-regular fa-user text-[#C9A227] w-4 text-center"></i>
-                            <span>Hôte : {hostName}</span>
+                            <span>{t('bookings.card.host')} {hostName}</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <i className="fa-solid fa-users text-[#C9A227] w-4 text-center"></i>
-                            <span>{booking.guest_count} invités</span>
+                            <span>{booking.guest_count} {t('bookings.index.guests')}</span>
                         </div>
                     </div>
                 </div>

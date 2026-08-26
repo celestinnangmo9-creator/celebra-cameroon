@@ -22,12 +22,12 @@ export default function HostVenuesIndex({ auth, venues }) {
     const getStatusBadge = (status) => {
         switch (status) {
             case 'active':
-                return <span className="bg-emerald-100 text-emerald-800 border border-emerald-200 px-3 py-1 rounded-full text-xs font-bold">Publiée</span>;
+                return <span className="bg-emerald-100 text-emerald-800 border border-emerald-200 px-3 py-1 rounded-full text-xs font-bold">{t('venues.index.status_published')}</span>;
             case 'draft':
             case 'maintenance':
-                return <span className="bg-gray-100 text-gray-800 border border-gray-200 px-3 py-1 rounded-full text-xs font-bold">Brouillon</span>;
+                return <span className="bg-gray-100 text-gray-800 border border-gray-200 px-3 py-1 rounded-full text-xs font-bold">{t('venues.index.status_draft')}</span>;
             case 'suspended':
-                return <span className="bg-red-100 text-red-800 border border-red-200 px-3 py-1 rounded-full text-xs font-bold">Suspendue</span>;
+                return <span className="bg-red-100 text-red-800 border border-red-200 px-3 py-1 rounded-full text-xs font-bold">{t('venues.index.status_suspended')}</span>;
             default:
                 return <span className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-xs font-bold">{status}</span>;
         }
@@ -38,18 +38,18 @@ export default function HostVenuesIndex({ auth, venues }) {
             user={auth.user}
             header={
                 <div className="flex justify-between items-center">
-                    <h2 className="font-semibold text-2xl font-fraunces text-gray-800 dark:text-gray-200 leading-tight">Mes salles</h2>
+                    <h2 className="font-semibold text-2xl font-fraunces text-gray-800 dark:text-gray-200 leading-tight">{t('venues.index.my_venues_title')}</h2>
                     <Link
                         href={route('venues.create')}
                         className="inline-flex items-center px-4 py-2 bg-[#0B3D2E] text-white font-semibold rounded-lg hover:bg-[#124d3a] transition-colors shadow-sm"
                     >
                         <i className="fa-solid fa-plus mr-2"></i>
-                        Ajouter une salle
+                        {t('venues.index.add_venue')}
                     </Link>
                 </div>
             }
         >
-            <Head title="Mes salles - Prestataire" />
+            <Head title={`${t('venues.index.my_venues_title')} - Prestataire`} />
 
             <div className="py-8">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -83,11 +83,11 @@ export default function HostVenuesIndex({ auth, venues }) {
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <i className="fa-solid fa-users text-[#C9A227] w-4 text-center"></i>
-                                                <span>Jusqu'à {venue.capacity} personnes</span>
+                                                <span>{t('venues.index.up_to')} {venue.capacity} {t('bookings.index.people')}</span>
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <i className="fa-solid fa-calendar-check text-[#C9A227] w-4 text-center"></i>
-                                                <span>{venue.bookings_count} réservations reçues</span>
+                                                <span>{venue.bookings_count} {t('venues.index.received_bookings')}</span>
                                             </div>
                                         </div>
                                         
@@ -96,14 +96,14 @@ export default function HostVenuesIndex({ auth, venues }) {
                                                 href={route('venues.edit', venue.id)}
                                                 className="px-3 py-1.5 text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 rounded-lg transition-colors border border-gray-200 dark:border-gray-600"
                                             >
-                                                Modifier
+                                                {t('venues.index.edit')}
                                             </Link>
                                             
                                             <Link
                                                 href={route('venues.show', venue.id)}
                                                 className="px-3 py-1.5 text-sm font-semibold text-[#0B3D2E] bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800 rounded-lg transition-colors border border-emerald-200"
                                             >
-                                                Voir l'annonce
+                                                {t('venues.index.view_listing')}
                                             </Link>
                                             
                                             {venue.status !== 'suspended' && (
@@ -116,7 +116,7 @@ export default function HostVenuesIndex({ auth, venues }) {
                                                             : 'text-[#C9A227] bg-[#FAF6F0] border-[#C9A227]/30 hover:bg-[#F2ECE4] dark:bg-gray-800 dark:border-gray-600'
                                                     }`}
                                                 >
-                                                    {venue.status === 'active' ? 'Dépublier' : 'Publier'}
+                                                    {venue.status === 'active' ? t('venues.index.unpublish_venue') : t('venues.index.publish_venue')}
                                                 </button>
                                             )}
                                         </div>
@@ -130,17 +130,17 @@ export default function HostVenuesIndex({ auth, venues }) {
                                 <i className="fa-solid fa-building text-4xl text-[#0B3D2E] dark:text-[#C9A227]"></i>
                             </div>
                             <h3 className="text-xl font-fraunces font-bold text-gray-900 dark:text-gray-100 mb-2">
-                                Aucune salle enregistrée
+                                {t('venues.index.no_venue_registered')}
                             </h3>
                             <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-md mx-auto">
-                                Vous n'avez pas encore publié de salle. Ajoutez votre première salle pour commencer à recevoir des réservations.
+                                {t('venues.index.no_venue_desc')}
                             </p>
                             <Link
                                 href={route('venues.create')}
                                 className="inline-flex items-center px-6 py-3 bg-[#0B3D2E] text-white font-medium rounded-xl hover:bg-[#124d3a] transition-all shadow-md hover:shadow-lg gap-2"
                             >
                                 <i className="fa-solid fa-plus"></i>
-                                Ajouter ma première salle
+                                {t('venues.index.add_first_venue')}
                             </Link>
                         </div>
                     )}

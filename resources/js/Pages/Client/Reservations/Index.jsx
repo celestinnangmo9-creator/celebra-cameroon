@@ -58,9 +58,9 @@ export default function ReservationsIndex({ auth, bookings, activeTab }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-2xl font-fraunces text-gray-800 dark:text-gray-200 leading-tight">Mes réservations</h2>}
+            header={<h2 className="font-semibold text-2xl font-fraunces text-gray-800 dark:text-gray-200 leading-tight">{t('nav.bookings')}</h2>}
         >
-            <Head title="Mes réservations - Celebra Cameroon" />
+            <Head title={`${t('nav.bookings')} - Celebra Cameroon`} />
 
             <div className="py-8">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -108,17 +108,17 @@ export default function ReservationsIndex({ auth, bookings, activeTab }) {
                                 <i className="fa-regular fa-calendar-xmark text-4xl text-[#0B3D2E] dark:text-[#C9A227]"></i>
                             </div>
                             <h3 className="text-xl font-fraunces font-bold text-gray-900 dark:text-gray-100 mb-2">
-                                Aucune réservation {activeTab === 'upcoming' ? 'à venir' : activeTab === 'past' ? 'passée' : 'annulée'}
+                                {activeTab === 'upcoming' ? t('bookings.index.no_upcoming_bookings') : activeTab === 'past' ? t('bookings.index.no_past_bookings') : t('bookings.index.no_cancelled_bookings')}
                             </h3>
                             <p className="text-gray-500 dark:text-gray-400 mb-8 max-w-md mx-auto">
-                                Vous n'avez pas de réservations dans cette catégorie pour le moment.
+                                {t('bookings.index.no_requests_in_category')}
                             </p>
                             <Link
                                 href={route('venues.index')}
                                 className="inline-flex items-center px-6 py-3 bg-[#0B3D2E] text-white font-medium rounded-xl hover:bg-[#124d3a] transition-all shadow-md hover:shadow-lg gap-2"
                             >
                                 <i className="fa-solid fa-magnifying-glass"></i>
-                                Découvrir des salles
+                                {t('bookings.index.discover_venues')}
                             </Link>
                         </div>
                     )}
@@ -162,11 +162,11 @@ export default function ReservationsIndex({ auth, bookings, activeTab }) {
                                         </div>
                                         <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                                             <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100" id="modal-title">
-                                                Annuler la réservation
+                                                {t('bookings.index.cancel_modal_title')}
                                             </h3>
                                             <div className="mt-2">
                                                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    Êtes-vous sûr de vouloir annuler cette réservation ? Cette action est irréversible.
+                                                    {t('bookings.index.cancel_modal_desc')}
                                                 </p>
                                             </div>
                                         </div>
@@ -178,14 +178,14 @@ export default function ReservationsIndex({ auth, bookings, activeTab }) {
                                         disabled={cancelProcessing}
                                         className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50"
                                     >
-                                        Confirmer l'annulation
+                                        {t('bookings.index.cancel_btn')}
                                     </button>
                                     <button 
                                         type="button" 
                                         onClick={() => setCancelModal({ show: false, bookingId: null, reason: '' })}
                                         className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-800 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                                     >
-                                        Retour
+                                        {t('bookings.index.back')}
                                     </button>
                                 </div>
                             </form>
@@ -204,10 +204,10 @@ export default function ReservationsIndex({ auth, bookings, activeTab }) {
                             <form onSubmit={submitReview}>
                                 <div className="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                                     <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100 mb-4" id="modal-title">
-                                        Évaluer : {reviewModal.venueTitle}
+                                        {t('bookings.index.rate_title')} {reviewModal.venueTitle}
                                     </h3>
                                     <div className="mb-4">
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Note sur 5</label>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('bookings.index.rating')}</label>
                                         <div className="flex gap-2 text-2xl text-gray-300">
                                             {[1,2,3,4,5].map(star => (
                                                 <button 
@@ -222,11 +222,11 @@ export default function ReservationsIndex({ auth, bookings, activeTab }) {
                                         </div>
                                     </div>
                                     <div className="mb-4">
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Votre avis (Optionnel)</label>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t('bookings.index.review_desc')}</label>
                                         <textarea 
                                             className="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
                                             rows="4"
-                                            placeholder="Partagez votre expérience..."
+                                            placeholder={t('bookings.index.review_placeholder')}
                                             value={reviewData.comment}
                                             onChange={e => setReviewData('comment', e.target.value)}
                                             style={{ fontSize: '16px' }} // prevent iOS zoom
@@ -239,14 +239,14 @@ export default function ReservationsIndex({ auth, bookings, activeTab }) {
                                         disabled={reviewProcessing}
                                         className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-[#0B3D2E] text-base font-medium text-white hover:bg-[#124d3a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0B3D2E] sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50"
                                     >
-                                        Publier l'avis
+                                        {t('bookings.index.publish_review')}
                                     </button>
                                     <button 
                                         type="button" 
                                         onClick={() => setReviewModal({ show: false, venueId: null, venueTitle: '', rating: 5, comment: '' })}
                                         className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-800 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                                     >
-                                        Annuler
+                                        {t('bookings.index.cancel')}
                                     </button>
                                 </div>
                             </form>
