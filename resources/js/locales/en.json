@@ -449,7 +449,10 @@
     "estimated_total": "Estimated total",
     "processing": "Processing...",
     "book_space": "Book this space",
-    "no_charge": "You won't be charged yet."
+    "no_charge": "You won't be charged yet.",
+    "negotiate_price": "Propose a different price (Negotiate)",
+    "proposed_price": "Proposed price (FCFA)",
+    "proposed_price_placeholder": "Ex: 50000"
   },
   "calendar": {
     "available": "Available",

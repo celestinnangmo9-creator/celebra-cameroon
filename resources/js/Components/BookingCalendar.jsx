@@ -14,6 +14,7 @@ export default function BookingCalendar({ venue, initialBookedDates }) {
 
     const [bookedDates, setBookedDates] = useState(initialBookedDates || []);
     const [totalPrice, setTotalPrice] = useState(0);
+    const [isNegotiating, setIsNegotiating] = useState(false);
 
     const { data, setData, post, processing, errors } = useForm({
         venue_id: venue.id,
@@ -21,7 +22,8 @@ export default function BookingCalendar({ venue, initialBookedDates }) {
         end_date: '',
         guest_count: 1,
         event_type: 'Fête',
-        special_requests: ''
+        special_requests: '',
+        proposed_price: ''
     });
 
     // Fetch availability in real-time on mount
@@ -182,10 +184,49 @@ export default function BookingCalendar({ venue, initialBookedDates }) {
                     </div>
 
                     {totalPrice > 0 && (
-                        <div className="bg-emerald-50 rounded-xl p-4 mb-6 flex justify-between items-center border border-emerald-100">
-                            <span className="font-semibold text-emerald-800">{t('booking_calendar.estimated_total')}</span>
-                            <span className="font-black text-xl text-emerald-700">{new Intl.NumberFormat('fr-FR').format(totalPrice)} FCFA</span>
-                        </div>
+                        <>
+                            <div className="bg-emerald-50 rounded-xl p-4 mb-4 flex justify-between items-center border border-emerald-100">
+                                <span className="font-semibold text-emerald-800">{t('booking_calendar.estimated_total')}</span>
+                                <span className={`font-black text-xl text-emerald-700 ${isNegotiating ? 'line-through opacity-60' : ''}`}>
+                                    {new Intl.NumberFormat('fr-FR').format(totalPrice)} FCFA
+                                </span>
+                            </div>
+
+                            <div className="mb-6">
+                                <label className="flex items-center gap-2 cursor-pointer mb-3">
+                                    <input 
+                                        type="checkbox" 
+                                        className="rounded border-gray-300 text-emerald-600 shadow-sm focus:border-emerald-300 focus:ring focus:ring-emerald-200 focus:ring-opacity-50"
+                                        checked={isNegotiating}
+                                        onChange={(e) => {
+                                            setIsNegotiating(e.target.checked);
+                                            if (!e.target.checked) setData('proposed_price', '');
+                                        }}
+                                    />
+                                    <span className="text-sm font-semibold text-gray-700">{t('booking_calendar.negotiate_price')}</span>
+                                </label>
+                                
+                                {isNegotiating && (
+                                    <div className="bg-white border border-amber-200 rounded-xl p-4 shadow-inner">
+                                        <label className="block text-sm font-bold text-gray-900 mb-2 uppercase tracking-wide">{t('booking_calendar.proposed_price')}</label>
+                                        <div className="relative">
+                                            <input 
+                                                type="number" 
+                                                min="1"
+                                                className="w-full pl-4 pr-16 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all" 
+                                                placeholder={t('booking_calendar.proposed_price_placeholder')}
+                                                value={data.proposed_price}
+                                                onChange={e => setData('proposed_price', e.target.value)}
+                                            />
+                                            <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                                <span className="text-gray-500 font-bold">FCFA</span>
+                                            </div>
+                                        </div>
+                                        {errors.proposed_price && <p className="text-red-500 text-xs mt-1">{errors.proposed_price}</p>}
+                                    </div>
+                                )}
+                            </div>
+                        </>
                     )}
 
                     <button 

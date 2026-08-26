@@ -61,6 +61,7 @@ class BookingController extends Controller
             'guest_count' => 'required|integer|min:1',
             'event_type' => 'required|string',
             'special_requests' => 'nullable|string',
+            'proposed_price' => 'nullable|numeric|min:0',
         ]);
 
         $venue = Venue::findOrFail($validatedData['venue_id']);

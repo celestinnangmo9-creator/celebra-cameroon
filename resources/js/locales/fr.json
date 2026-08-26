@@ -449,7 +449,10 @@
     "estimated_total": "Total estimé",
     "processing": "Traitement...",
     "book_space": "Réserver cet espace",
-    "no_charge": "Aucun montant ne vous sera débité pour le moment."
+    "no_charge": "Aucun montant ne vous sera débité pour le moment.",
+    "negotiate_price": "Proposer un prix différent (Négociation)",
+    "proposed_price": "Prix proposé (FCFA)",
+    "proposed_price_placeholder": "Ex: 50000"
   },
   "calendar": {
     "available": "Disponible",

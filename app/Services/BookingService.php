@@ -62,11 +62,20 @@ class BookingService
         // 1. Vérifier la disponibilité (lève l'exception si conflit)
         $this->checkAvailability($venue, $data['start_date'], $data['end_date']);
 
-        // 2. Calculer le prix total dynamiquement pour éviter la fraude côté frontend
+        // 2. Calculer le prix total dynamiquement
         $startDate = Carbon::parse($data['start_date']);
         $endDate = Carbon::parse($data['end_date']);
         $daysCount = max(1, $startDate->diffInDays($endDate) + 1);
-        $totalPrice = $daysCount * $venue->price_per_day;
+        $calculatedPrice = $daysCount * $venue->price_per_day;
+        
+        $totalPrice = $calculatedPrice;
+        $specialRequests = $data['special_requests'] ?? null;
+
+        if (isset($data['proposed_price']) && is_numeric($data['proposed_price']) && $data['proposed_price'] > 0) {
+            $totalPrice = (float) $data['proposed_price'];
+            $negNote = "[Demande de négociation : Le client propose " . number_format($totalPrice, 0, ',', ' ') . " FCFA au lieu de " . number_format($calculatedPrice, 0, ',', ' ') . " FCFA.]";
+            $specialRequests = $specialRequests ? $negNote . "\n\n" . $specialRequests : $negNote;
+        }
 
         // 3. Persister la réservation
         $booking = Booking::create([
@@ -78,7 +87,7 @@ class BookingService
             'event_type' => $data['event_type'],
             'total_price' => $totalPrice,
             'status' => 'pending',
-            'special_requests' => $data['special_requests'] ?? null,
+            'special_requests' => $specialRequests,
         ]);
 
         return $booking;
