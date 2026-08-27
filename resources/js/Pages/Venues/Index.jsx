@@ -303,6 +303,9 @@ export default function VenuesIndex({ venues, regionsAndCities, categories, filt
                                                                 <span className="price-val text-sm font-bold text-[#0B3D2E]">FCFA</span>
                                                                 <span className="price-unit text-xs text-gray-400 font-medium">{t('venues.index.per_day')}</span>
                                                             </div>
+                                                            <div className="text-[10px] text-gray-400 mt-1">
+                                                                <i className="fa-regular fa-clock"></i> Publié le {new Date(venue.created_at).toLocaleDateString('fr-FR')}
+                                                            </div>
                                                         </div>
                                                         <span className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center text-gray-400 group-hover:bg-[#C9A227] group-hover:text-white transition-colors">
                                                             <i className="fa-solid fa-arrow-right"></i>

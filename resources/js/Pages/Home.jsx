@@ -27,6 +27,9 @@ export default function Home({ auth, featuredVenues = [], latestVenues = [], reg
                         <div>
                             <span className="text-xl font-black text-emerald-700 dark:text-emerald-400">{new Intl.NumberFormat('fr-FR').format(venue.price_per_day)} FCFA</span>
                             <span className="text-xs text-gray-500 dark:text-gray-400 ml-1 block">{t('home.per_day')}</span>
+                            <span className="text-[10px] text-gray-400 dark:text-gray-500 mt-1 block">
+                                <i className="fa-regular fa-clock"></i> Publié le {new Date(venue.created_at).toLocaleDateString('fr-FR')}
+                            </span>
                         </div>
                         <span className="btn btn-primary px-5 py-2.5 text-sm">{t('home.view_listing')}</span>
                     </div>

@@ -93,6 +93,10 @@ function SidebarContent({ user, auth, totalUnread, t }) {
                 <SidebarItem href={route('messages.index')} active={route().current('messages.*')} icon={<i className="fa-solid fa-comments"></i>} badge={totalUnread > 0 ? totalUnread : null}>
                     {t('layouts.messages')}
                 </SidebarItem>
+
+                <SidebarItem href={route('favorites.index')} active={route().current('favorites.*')} icon={<i className="fa-solid fa-heart text-red-500"></i>}>
+                    Mes Favoris
+                </SidebarItem>
                 
                 <SidebarItem href={route('profile.edit')} active={route().current('profile.edit')} icon={<i className="fa-solid fa-user-gear"></i>}>
                     {t('layouts.settings')}

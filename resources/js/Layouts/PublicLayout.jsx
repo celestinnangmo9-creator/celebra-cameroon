@@ -164,6 +164,7 @@ export default function PublicLayout({ children }) {
                                         </div>
                                         <Link href={route('dashboard')} className="px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-emerald-600 transition-colors font-medium flex items-center gap-3"><i className="fa-solid fa-chart-line w-4"></i> {t('nav.dashboard')}</Link>
                                         <Link href={route('messages.index')} className="px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-emerald-600 transition-colors font-medium flex items-center gap-3"><i className="fa-solid fa-envelope w-4"></i> {t('nav.messages')}</Link>
+                                        <Link href={route('favorites.index')} className="px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-emerald-600 transition-colors font-medium flex items-center gap-3"><i className="fa-solid fa-heart w-4"></i> Mes Favoris</Link>
                                         <Link href={route('bookings.index')} className="px-5 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-emerald-600 transition-colors font-medium flex items-center gap-3"><i className="fa-solid fa-calendar-check w-4"></i> {t('nav.bookings')}</Link>
                                         <div className="h-px bg-gray-100 my-2"></div>
                                         {user.role === 'host' && (
