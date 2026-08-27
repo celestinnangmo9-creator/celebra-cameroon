@@ -266,11 +266,7 @@ export default function VenuesIndex({ venues, regionsAndCities, categories, filt
                                                         {venue.category}
                                                     </span>
                                                     
-                                                    {venue.rating > 0 && (
-                                                        <span className="venue-rating absolute top-4 right-4 bg-white/95 backdrop-blur shadow-sm px-3 py-1.5 rounded-full text-xs font-bold text-gray-800 flex items-center gap-1.5">
-                                                            <i className="fa-solid fa-star text-[#C9A227]"></i> {Number(venue.rating).toFixed(1)}
-                                                        </span>
-                                                    )}
+
                                                     
                                                     <button 
                                                         onClick={(e) => toggleFavorite(e, venue.id)}

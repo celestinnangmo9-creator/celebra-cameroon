@@ -113,8 +113,12 @@ export default function Dashboard({ auth, userRole, userVenues, totalVenues, tot
                                     <tr key={booking.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center">
-                                                <div className="h-10 w-10 flex-shrink-0 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold">
-                                                    {booking.user?.name.charAt(0)}
+                                                <div className="h-10 w-10 flex-shrink-0 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold overflow-hidden">
+                                                    {booking.user?.avatar ? (
+                                                        <img src={booking.user.avatar.startsWith('http') || booking.user.avatar.startsWith('/') ? booking.user.avatar : `/storage/${booking.user.avatar}`} alt={booking.user.name} className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        booking.user?.name.charAt(0)
+                                                    )}
                                                 </div>
                                                 <div className="ml-4">
                                                     <div className="font-medium text-gray-900 dark:text-white">{booking.user?.name}</div>

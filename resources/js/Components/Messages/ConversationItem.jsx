@@ -19,8 +19,12 @@ export default function ConversationItem({ contact, isActive, unreadCount }) {
             <div className="flex items-center gap-3">
                 {/* Avatar avec indicateur en ligne (simulation) */}
                 <div className="relative shrink-0">
-                    <div className="w-12 h-12 rounded-full bg-[#0B3D2E] text-white flex items-center justify-center font-bold text-lg shadow-sm">
-                        {contact.name.charAt(0)}
+                    <div className="w-12 h-12 rounded-full bg-[#0B3D2E] text-white flex items-center justify-center font-bold text-lg shadow-sm overflow-hidden">
+                        {contact.avatar ? (
+                            <img src={contact.avatar.startsWith('http') || contact.avatar.startsWith('/') ? contact.avatar : `/storage/${contact.avatar}`} alt={contact.name} className="w-full h-full object-cover" />
+                        ) : (
+                            contact.name.charAt(0)
+                        )}
                     </div>
                     {/* Indicateur "En ligne" simulé */}
                     <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>

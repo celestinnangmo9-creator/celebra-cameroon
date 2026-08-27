@@ -32,6 +32,96 @@ function SidebarItem({ href, active, icon, children, badge }) {
     );
 }
 
+function SidebarContent({ user, auth, totalUnread, t }) {
+    return (
+        <>
+            <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-center shrink-0">
+                <Link href={route('home')}>
+                    <ApplicationLogo className="h-10 w-auto" />
+                </Link>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-4 space-y-1.5 scrollbar-thin">
+                <SidebarItem href={route('dashboard')} active={route().current('dashboard')} icon={<i className="fa-solid fa-chart-pie"></i>}>
+                    {t('layouts.dashboard')}
+                </SidebarItem>
+
+                {user?.role === 'host' && (
+                    <>
+                        <SidebarItem href={route('host.venues.index')} active={route().current('host.venues.*')} icon={<i className="fa-solid fa-building"></i>}>
+                            {t('layouts.my_venues')}
+                        </SidebarItem>
+                        <SidebarItem href={route('host.reservations.index')} active={route().current('host.reservations.*')} icon={<i className="fa-solid fa-calendar-alt"></i>}>
+                            {t('layouts.reservations')}
+                        </SidebarItem>
+                        <SidebarItem href={route('host.appointments.index')} active={route().current('host.appointments.*')} icon={<i className="fa-solid fa-calendar-check"></i>} badge={auth.pending_appointments_count > 0 ? auth.pending_appointments_count : null}>
+                            {t('layouts.appointments')}
+                        </SidebarItem>
+                        <SidebarItem href={route('subscriptions.index')} active={route().current('subscriptions.*')} icon={<i className="fa-solid fa-crown text-amber-500"></i>}>
+                            {t('layouts.subscription')}
+                        </SidebarItem>
+                    </>
+                )}
+
+                {user?.role === 'admin' && (
+                    <>
+                        <SidebarItem href={route('admin.dashboard')} active={route().current('admin.dashboard')} icon={<i className="fa-solid fa-chart-line"></i>}>
+                            {t('layouts.admin')}
+                        </SidebarItem>
+                        <SidebarItem href={route('admin.users')} active={route().current('admin.users')} icon={<i className="fa-solid fa-users"></i>}>
+                            {t('layouts.admin_users')}
+                        </SidebarItem>
+                        <SidebarItem href={route('admin.venues')} active={route().current('admin.venues')} icon={<i className="fa-solid fa-building"></i>}>
+                            {t('layouts.admin_venues')}
+                        </SidebarItem>
+                        <SidebarItem href={route('admin.transactions')} active={route().current('admin.transactions')} icon={<i className="fa-solid fa-money-bill-transfer"></i>}>
+                            {t('layouts.admin_transactions')}
+                        </SidebarItem>
+                        <SidebarItem href={route('admin.subscriptions')} active={route().current('admin.subscriptions')} icon={<i className="fa-solid fa-crown text-amber-500"></i>}>
+                            {t('layouts.admin_subscriptions')}
+                        </SidebarItem>
+                        <SidebarItem href={route('admin.settings')} active={route().current('admin.settings')} icon={<i className="fa-solid fa-gear"></i>}>
+                            {t('layouts.admin_settings')}
+                        </SidebarItem>
+                    </>
+                )}
+
+                <SidebarItem href={route('client.reservations.index')} active={route().current('client.reservations.*')} icon={<i className="fa-solid fa-calendar-alt"></i>}>
+                    {t('layouts.my_reservations')}
+                </SidebarItem>
+
+                <SidebarItem href={route('messages.index')} active={route().current('messages.*')} icon={<i className="fa-solid fa-comments"></i>} badge={totalUnread > 0 ? totalUnread : null}>
+                    {t('layouts.messages')}
+                </SidebarItem>
+                
+                <SidebarItem href={route('profile.edit')} active={route().current('profile.edit')} icon={<i className="fa-solid fa-user-gear"></i>}>
+                    {t('layouts.settings')}
+                </SidebarItem>
+            </div>
+
+            {/* User Profile Mini (Bottom of Sidebar) */}
+            <div className="p-4 border-t border-gray-100 dark:border-gray-700 shrink-0">
+                <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold overflow-hidden shadow-sm shrink-0">
+                        {user.avatar ? (
+                            <img src={user.avatar.startsWith('http') || user.avatar.startsWith('/') ? user.avatar : `/storage/${user.avatar}`} alt="Avatar" className="w-full h-full object-cover" />
+                        ) : (
+                            user.name.charAt(0).toUpperCase()
+                        )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                        <div className="text-sm font-bold text-gray-900 dark:text-gray-100 truncate">{user.name}</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 truncate">{user.email}</div>
+                    </div>
+                    <Link href={route('logout')} method="post" as="button" className="p-2 text-gray-400 hover:text-red-500 transition-colors" title={t('layouts.logout')}>
+                        <i className="fa-solid fa-arrow-right-from-bracket"></i>
+                    </Link>
+                </div>
+            </div>
+        </>
+    );
+}
+
 function LayoutContent({ header, children }) {
     const { auth, flash } = usePage().props;
     const user = auth.user;
@@ -98,85 +188,44 @@ function LayoutContent({ header, children }) {
                 </div>
             )}
             
-            {/* Nouveau Message Toast */}
             {latestMessageToast && (
                 <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] flex flex-col gap-2 pointer-events-none animate-bounce">
                     <Link href={route('messages.index')} className="bg-[#0B3D2E] text-[#FAF6F0] px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 pointer-events-auto border border-[#C9A227] hover:bg-[#124d3a] transition-all">
                         <i className="fa-solid fa-comment-dots text-[#C9A227] text-xl"></i>
-                        <div className="font-medium">Nouveau message reçu !</div>
+                        <div className="font-medium">{t('layouts.new_message_toast')}</div>
                     </Link>
                 </div>
             )}
 
             {/* Sidebar (Desktop) */}
             <aside className="hidden md:flex flex-col w-72 bg-white dark:bg-gray-800 border-r border-gray-100 dark:border-gray-700 h-full shrink-0 shadow-sm z-20">
-                <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-center">
-                    <Link href={route('home')}>
-                        <ApplicationLogo className="h-10 w-auto" />
-                    </Link>
-                </div>
-
-                <div className="flex-1 overflow-y-auto p-4 space-y-1.5 scrollbar-thin">
-                    <SidebarItem href={route('dashboard')} active={route().current('dashboard')} icon={<i className="fa-solid fa-chart-pie"></i>}>
-                        Dashboard
-                    </SidebarItem>
-
-                    {user?.role === 'host' && (
-                        <>
-                            <SidebarItem href={route('host.venues.index')} active={route().current('host.venues.*')} icon={<i className="fa-solid fa-building"></i>}>
-                                Mes Salles
-                            </SidebarItem>
-                            <SidebarItem href={route('host.reservations.index')} active={route().current('host.reservations.*')} icon={<i className="fa-solid fa-calendar-alt"></i>}>
-                                Réservations
-                            </SidebarItem>
-                            <SidebarItem href={route('host.appointments.index')} active={route().current('host.appointments.*')} icon={<i className="fa-solid fa-calendar-check"></i>} badge={auth.pending_appointments_count > 0 ? auth.pending_appointments_count : null}>
-                                Rendez-vous
-                            </SidebarItem>
-                            <SidebarItem href={route('subscriptions.index')} active={route().current('subscriptions.*')} icon={<i className="fa-solid fa-crown text-amber-500"></i>}>
-                                Abonnement
-                            </SidebarItem>
-                        </>
-                    )}
-
-                    {user?.role === 'admin' && (
-                        <SidebarItem href={route('admin.dashboard')} active={route().current('admin.*')} icon={<i className="fa-solid fa-shield-halved"></i>}>
-                            Administration
-                        </SidebarItem>
-                    )}
-
-                    <SidebarItem href={route('client.reservations.index')} active={route().current('client.reservations.*')} icon={<i className="fa-solid fa-calendar-alt"></i>}>
-                        Mes réservations
-                    </SidebarItem>
-
-                    <SidebarItem href={route('messages.index')} active={route().current('messages.*')} icon={<i className="fa-solid fa-comments"></i>} badge={totalUnread > 0 ? totalUnread : null}>
-                        Messages
-                    </SidebarItem>
-                    
-                    <SidebarItem href={route('profile.edit')} active={route().current('profile.edit')} icon={<i className="fa-solid fa-user-gear"></i>}>
-                        Paramètres
-                    </SidebarItem>
-                </div>
-
-                {/* User Profile Mini (Bottom of Sidebar) */}
-                <div className="p-4 border-t border-gray-100 dark:border-gray-700">
-                    <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold overflow-hidden shadow-sm shrink-0">
-                            {user.avatar ? (
-                                <img src={`/storage/${user.avatar}`} alt="Avatar" className="w-full h-full object-cover" />
-                            ) : (
-                                user.name.charAt(0).toUpperCase()
-                            )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                            <div className="text-sm font-bold text-gray-900 dark:text-gray-100 truncate">{user.name}</div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400 truncate">{user.email}</div>
-                        </div>
-                        <Link href={route('logout')} method="post" as="button" className="p-2 text-gray-400 hover:text-red-500 transition-colors" title="Déconnexion">
-                            <i className="fa-solid fa-arrow-right-from-bracket"></i>
-                        </Link>
-                    </div>
-                </div>
+                <SidebarContent user={user} auth={auth} totalUnread={totalUnread} t={t} />
             </aside>
+
+            {/* Mobile Sidebar Overlay */}
+            {showingNavigationDropdown && (
+                <div 
+                    className="fixed inset-0 z-40 bg-gray-900/50 backdrop-blur-sm md:hidden transition-opacity"
+                    onClick={() => setShowingNavigationDropdown(false)}
+                ></div>
+            )}
+
+            {/* Mobile Sidebar Drawer */}
+            <div 
+                className={`fixed inset-y-0 left-0 z-50 w-72 bg-white dark:bg-gray-800 shadow-xl transform transition-transform duration-300 ease-in-out flex flex-col md:hidden ${
+                    showingNavigationDropdown ? 'translate-x-0' : '-translate-x-full'
+                }`}
+            >
+                <div className="flex justify-end p-4 absolute top-0 right-0">
+                    <button 
+                        onClick={() => setShowingNavigationDropdown(false)}
+                        className="p-2 rounded-full text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                        <i className="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
+                <SidebarContent user={user} auth={auth} totalUnread={totalUnread} t={t} />
+            </div>
 
             {/* Main Content Wrapper */}
             <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
@@ -228,10 +277,10 @@ function LayoutContent({ header, children }) {
 
                                 <Dropdown.Content width="w-80">
                                     <div className="p-3 text-sm font-bold border-b border-gray-100 dark:border-gray-700 flex justify-between items-center text-gray-800 dark:text-gray-200">
-                                        <span>Notifications</span>
+                                        <span>{t('layouts.notifications')}</span>
                                         {auth.unread_notifications?.length > 0 && (
                                             <Link href={route('notifications.markRead')} method="post" as="button" className="text-xs text-emerald-600 font-medium hover:underline">
-                                                Marquer lu
+                                                {t('layouts.mark_read')}
                                             </Link>
                                         )}
                                     </div>
@@ -245,7 +294,7 @@ function LayoutContent({ header, children }) {
                                             ))
                                         ) : (
                                             <div className="p-4 text-center text-gray-500 text-sm">
-                                                Aucune nouvelle notification
+                                                {t('layouts.no_notifications')}
                                             </div>
                                         )}
                                     </div>
@@ -268,49 +317,6 @@ function LayoutContent({ header, children }) {
                     </div>
                 </header>
 
-                {/* Mobile Dropdown Menu (Hidden on Desktop) */}
-                <div className={(showingNavigationDropdown ? 'block' : 'hidden') + ' md:hidden absolute top-16 left-0 right-0 bg-white dark:bg-gray-800 shadow-xl z-20 border-b border-gray-100 dark:border-gray-700'}>
-                    <div className="space-y-1 pb-3 pt-2">
-                        <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}><i className="fa-solid fa-chart-pie mr-2"></i> Dashboard</ResponsiveNavLink>
-                        {user?.role === 'host' && (
-                            <>
-                                <ResponsiveNavLink href={route('venues.index')} active={route().current('venues.*')}><i className="fa-solid fa-building mr-2"></i> Mes Salles</ResponsiveNavLink>
-                                <ResponsiveNavLink href={route('host.appointments.index')} active={route().current('host.appointments.*')}>
-                                    <i className="fa-solid fa-calendar-check mr-2"></i> Rendez-vous
-                                    {auth.pending_appointments_count > 0 && <span className="ml-2 inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-orange-500 rounded-full">{auth.pending_appointments_count}</span>}
-                                </ResponsiveNavLink>
-                                <ResponsiveNavLink href={route('subscriptions.index')} active={route().current('subscriptions.*')} className="text-[#C9A227] font-bold">
-                                    <i className="fa-solid fa-crown mr-2"></i> Abonnement
-                                </ResponsiveNavLink>
-                            </>
-                        )}
-                        {user?.role === 'admin' && (
-                            <ResponsiveNavLink href={route('admin.dashboard')} active={route().current('admin.*')} className="text-purple-600 font-bold">
-                                <i className="fa-solid fa-shield-halved mr-2"></i> Administration
-                            </ResponsiveNavLink>
-                        )}
-                        <ResponsiveNavLink href={route('messages.index')} active={route().current('messages.*')}>
-                            <i className="fa-solid fa-comments mr-2"></i> Messages
-                            {totalUnread > 0 && <span className="ml-2 inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-red-600 rounded-full">{totalUnread}</span>}
-                        </ResponsiveNavLink>
-                    </div>
-                    <div className="border-t border-gray-100 dark:border-gray-700 pb-1 pt-4">
-                        <div className="px-4 flex items-center gap-3">
-                            <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold overflow-hidden shadow-sm shrink-0">
-                                {user.avatar ? <img src={`/storage/${user.avatar}`} alt="Avatar" className="w-full h-full object-cover" /> : user.name.charAt(0).toUpperCase()}
-                            </div>
-                            <div>
-                                <div className="text-base font-bold text-gray-800 dark:text-gray-200">{user.name}</div>
-                                <div className="text-sm font-medium text-gray-500">{user.email}</div>
-                            </div>
-                        </div>
-                        <div className="mt-3 space-y-1">
-                            <ResponsiveNavLink href={route('profile.edit')}><i className="fa-solid fa-user-gear mr-2"></i> Paramètres</ResponsiveNavLink>
-                            <ResponsiveNavLink method="post" href={route('logout')} as="button" className="text-red-600"><i className="fa-solid fa-arrow-right-from-bracket mr-2"></i> Déconnexion</ResponsiveNavLink>
-                        </div>
-                    </div>
-                </div>
-
                 {/* Main scrollable area */}
                 <main className={`flex-1 overflow-y-auto ${route().current('messages.*') ? 'p-0 relative flex flex-col bg-white dark:bg-gray-900 h-full' : 'p-4 md:p-8 pb-24 md:pb-8'}`}>
                     {/* Mobile Page Header */}
@@ -328,14 +334,13 @@ function LayoutContent({ header, children }) {
                                 <i className="fa-solid fa-lock text-red-600 text-2xl"></i>
                             </div>
                             <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4 font-['Fraunces']">
-                                Abonnement expiré
+                                {t('layouts.expired_title')}
                             </h2>
                             <p className="text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
-                                Votre période d'essai ou votre abonnement a expiré. Vos salles sont actuellement masquées. 
-                                Veuillez choisir une formule d'abonnement pour continuer à gérer vos salles et les rendre visibles à nouveau.
+                                {t('layouts.expired_desc')}
                             </p>
                             <Link href={route('subscriptions.index')} className="inline-flex justify-center items-center px-6 py-3 bg-[#0B3D2E] hover:bg-[#124d3a] text-white font-bold rounded-lg shadow-lg transition-all border border-[#C9A227] hover:scale-105 w-full">
-                                <i className="fa-solid fa-crown mr-2 text-[#C9A227]"></i> Voir les formules d'abonnement
+                                <i className="fa-solid fa-crown mr-2 text-[#C9A227]"></i> {t('layouts.view_plans')}
                             </Link>
                         </div>
                     </div>

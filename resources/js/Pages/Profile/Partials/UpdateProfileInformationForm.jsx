@@ -49,7 +49,7 @@ export default function UpdateProfileInformation({
                             {data.avatar ? (
                                 <img src={URL.createObjectURL(data.avatar)} className="w-full h-full object-cover" />
                             ) : user.avatar ? (
-                                <img src={`/storage/${user.avatar}`} className="w-full h-full object-cover" />
+                                <img src={user.avatar.startsWith('http') || user.avatar.startsWith('/') ? user.avatar : `/storage/${user.avatar}`} className="w-full h-full object-cover" />
                             ) : (
                                 <i className="fa-solid fa-user text-3xl text-gray-300"></i>
                             )}

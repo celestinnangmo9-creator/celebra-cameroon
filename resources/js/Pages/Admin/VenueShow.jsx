@@ -157,8 +157,12 @@ export default function VenueShow({ auth, venue }) {
                                 <div className="bg-gray-50 p-4 rounded-lg border border-gray-100">
                                     <h4 className="font-bold text-lg mb-4">Informations Hôte</h4>
                                     <div className="flex items-center gap-3 mb-3">
-                                        <div className="h-10 w-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-700 font-bold">
-                                            {venue.user.name.charAt(0)}
+                                        <div className="h-10 w-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-700 font-bold overflow-hidden">
+                                            {venue.user.avatar ? (
+                                                <img src={venue.user.avatar.startsWith('http') || venue.user.avatar.startsWith('/') ? venue.user.avatar : `/storage/${venue.user.avatar}`} alt={venue.user.name} className="w-full h-full object-cover" />
+                                            ) : (
+                                                venue.user.name.charAt(0)
+                                            )}
                                         </div>
                                         <div>
                                             <Link href={route('admin.users.show', venue.user.id)} className="font-bold hover:underline">{venue.user.name}</Link>

@@ -36,8 +36,12 @@ export default function ChatWindow({
                         <i className="fa-solid fa-arrow-left text-lg"></i>
                     </Link>
                     <div className="relative shrink-0">
-                        <div className="w-10 h-10 rounded-full bg-[#0B3D2E] text-white flex items-center justify-center font-bold text-lg shadow-sm">
-                            {activeContact.name.charAt(0)}
+                        <div className="w-10 h-10 rounded-full bg-[#0B3D2E] text-white flex items-center justify-center font-bold text-lg shadow-sm overflow-hidden">
+                            {activeContact.avatar ? (
+                                <img src={activeContact.avatar.startsWith('http') || activeContact.avatar.startsWith('/') ? activeContact.avatar : `/storage/${activeContact.avatar}`} alt={activeContact.name} className="w-full h-full object-cover" />
+                            ) : (
+                                activeContact.name.charAt(0)
+                            )}
                         </div>
                         <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-white rounded-full"></div>
                     </div>

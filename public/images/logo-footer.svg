@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 350 120">
+  <defs>
+    <!-- Masque pour découper le marqueur et créer le C parfait -->
+    <mask id="c-mask">
+      <rect width="100%" height="100%" fill="white" />
+      <!-- Trou central du pointeur -->
+      <circle cx="50" cy="45" r="16" fill="black" />
+      <!-- Découpe sur la droite pour former le 'C' -->
+      <rect x="50" y="20" width="40" height="35" fill="black" />
+    </mask>
+  </defs>
+
+  <!-- Pointeur de localisation formant un C (Couleur Teal) -->
+  <path mask="url(#c-mask)" 
+        d="M 50 110 
+           C 50 110, 10 65, 10 45 
+           A 40 40 0 1 1 90 45 
+           C 90 65, 50 110, 50 110 Z" 
+        fill="#10b981" /> <!-- emerald-500 pour qu'il ressorte sur fond noir -->
+
+  <!-- Texte "elebra" (Blanc) -->
+  <text x="68" y="61" 
+        font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" 
+        font-weight="800" 
+        font-size="48" 
+        fill="#ffffff" 
+        letter-spacing="-1.5">elebra</text>
+
+  <!-- Texte "Cameroon" (Blanc avec opacité ou gris clair pour contraster) -->
+  <text x="45" y="104" 
+        font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" 
+        font-weight="800" 
+        font-size="44" 
+        fill="#e5e7eb" 
+        letter-spacing="-1">Cameroon</text>
+</svg>

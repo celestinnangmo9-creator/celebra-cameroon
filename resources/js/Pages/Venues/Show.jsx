@@ -13,6 +13,7 @@ export default function VenueShow({ venue, similarVenues, bookedDates }) {
     const { post: togglePost } = useForm();
     
     const [mainImage, setMainImage] = useState(venue.main_image);
+    const [showHostPhotoModal, setShowHostPhotoModal] = useState(false);
     
     // Process gallery images (assuming they are in a JSON array or similar)
     // If it's a string, we parse it, otherwise we use it
@@ -91,89 +92,111 @@ export default function VenueShow({ venue, similarVenues, bookedDates }) {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 relative pb-20">
                     
                     {/* Left Column: Details */}
-                    <div className="lg:col-span-2">
+                    <div className="lg:col-span-2 flex flex-col">
                         {/* Title & Badges */}
-                        <div className="mb-8 border-b border-gray-100 pb-8 flex justify-between items-start">
+                        <div className="mb-8 border-b border-gray-100 pb-8 flex justify-between items-start order-1">
                             <div>
-                                <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-4 tracking-tight leading-tight">
+                                <h1 className="text-4xl md:text-5xl font-black text-[#0B3D2E] mb-4 tracking-tight leading-tight font-['Fraunces']">
                                     {venue.title}
                                 </h1>
-                                <div className="flex flex-wrap items-center gap-4 text-gray-600 font-medium">
-                                    <span className="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full border border-emerald-100">
-                                        <i className="fa-solid fa-tag"></i> {venue.category}
+                                <div className="flex flex-wrap items-center gap-3 text-gray-700 font-medium text-sm">
+                                    <span className="flex items-center gap-2 bg-[#FAF6F0] text-[#0B3D2E] px-4 py-2 rounded-xl border border-emerald-100 font-bold uppercase tracking-wider">
+                                        <i className="fa-solid fa-tag text-[#C9A227]"></i> {venue.category}
                                     </span>
-                                    <span className="flex items-center gap-2">
+                                    <span className="flex items-center gap-2 bg-gray-50 text-gray-700 px-4 py-2 rounded-xl border border-gray-200 font-bold">
                                         <i className="fa-solid fa-location-dot text-emerald-600"></i> {venue.city}, {venue.district}
-                                    </span>
-                                    <span className="flex items-center gap-2">
-                                        <i className="fa-solid fa-star text-amber-500"></i> {Number(venue.rating).toFixed(2)}
                                     </span>
                                 </div>
                             </div>
                             <button 
                                 onClick={toggleFavorite}
-                                className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center transition-all shadow-sm border ${favoriteVenueIds.includes(venue.id) ? 'bg-red-50 border-red-100 text-red-500' : 'bg-white border-gray-200 text-gray-400 hover:text-red-500 hover:border-red-200 hover:bg-red-50'}`}
+                                className={`flex-shrink-0 w-14 h-14 rounded-full flex items-center justify-center transition-all shadow-md border-2 ${favoriteVenueIds.includes(venue.id) ? 'bg-red-50 border-red-200 text-red-500' : 'bg-white border-gray-100 text-gray-400 hover:text-red-500 hover:border-red-200 hover:bg-red-50 hover:scale-110'}`}
                                 title={t('venues.index.add_favorite')}
                             >
-                                <i className={`${favoriteVenueIds.includes(venue.id) ? 'fa-solid' : 'fa-regular'} fa-heart text-xl`}></i>
+                                <i className={`${favoriteVenueIds.includes(venue.id) ? 'fa-solid' : 'fa-regular'} fa-heart text-2xl`}></i>
                             </button>
                         </div>
 
                         {/* Description */}
-                        <div className="mb-10 border-b border-gray-100 pb-10">
-                            <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('venues.show.about_this_place')}</h2>
-                            <p className="text-gray-600 leading-relaxed text-lg whitespace-pre-line break-words">
+                        <div className="mb-10 bg-[#FAF6F0] p-8 rounded-3xl border border-emerald-100/60 shadow-sm relative overflow-hidden order-3 md:order-2">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-100 rounded-bl-full opacity-30 pointer-events-none"></div>
+                            <h2 className="text-2xl font-black text-[#0B3D2E] mb-4 font-['Fraunces']">{t('venues.show.about_this_place')}</h2>
+                            <p className="text-gray-700 leading-relaxed text-lg whitespace-pre-line break-words font-medium relative z-10">
                                 {venue.description}
                             </p>
                         </div>
 
                         {/* Amenities */}
-                        <div className="mb-10 border-b border-gray-100 pb-10">
-                            <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('venues.show.what_it_offers')}</h2>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-8">
-                                <div className="flex items-center gap-4 text-gray-700 text-lg">
-                                    <i className="fa-solid fa-users text-gray-400 w-6 text-center text-xl"></i>
-                                    <span>{t('venues.show.capacity_of')} {venue.capacity} {t('venues.show.people')}</span>
+                        <div className="mb-10 order-4 md:order-3">
+                            <h2 className="text-2xl font-black text-[#0B3D2E] mb-6 font-['Fraunces']">{t('venues.show.what_it_offers')}</h2>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="flex items-center gap-4 bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-emerald-200 transition-all group">
+                                    <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition-transform">
+                                        <i className="fa-solid fa-users"></i>
+                                    </div>
+                                    <span className="font-bold text-gray-800 text-lg">{t('venues.show.capacity_of')} {venue.capacity} {t('venues.show.people')}</span>
                                 </div>
-                                <div className="flex items-center gap-4 text-gray-700 text-lg">
-                                    <i className="fa-solid fa-bolt text-gray-400 w-6 text-center text-xl"></i>
-                                    <span>{t('venues.show.generator')}</span>
+                                <div className="flex items-center gap-4 bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-emerald-200 transition-all group">
+                                    <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition-transform">
+                                        <i className="fa-solid fa-bolt"></i>
+                                    </div>
+                                    <span className="font-bold text-gray-800 text-lg">{t('venues.show.generator')}</span>
                                 </div>
-                                <div className="flex items-center gap-4 text-gray-700 text-lg">
-                                    <i className="fa-solid fa-wind text-gray-400 w-6 text-center text-xl"></i>
-                                    <span>{t('venues.show.ac')}</span>
+                                <div className="flex items-center gap-4 bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-emerald-200 transition-all group">
+                                    <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition-transform">
+                                        <i className="fa-solid fa-wind"></i>
+                                    </div>
+                                    <span className="font-bold text-gray-800 text-lg">{t('venues.show.ac')}</span>
                                 </div>
-                                <div className="flex items-center gap-4 text-gray-700 text-lg">
-                                    <i className="fa-solid fa-square-parking text-gray-400 w-6 text-center text-xl"></i>
-                                    <span>{t('venues.show.parking')}</span>
+                                <div className="flex items-center gap-4 bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-emerald-200 transition-all group">
+                                    <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-500 flex items-center justify-center text-xl shadow-inner group-hover:scale-110 transition-transform">
+                                        <i className="fa-solid fa-square-parking"></i>
+                                    </div>
+                                    <span className="font-bold text-gray-800 text-lg">{t('venues.show.parking')}</span>
                                 </div>
                             </div>
                         </div>
 
                         {/* Host Info */}
-                        <div className="flex items-center gap-6 mb-10 border-b border-gray-100 pb-10">
-                            <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 text-2xl font-bold">
-                                {venue.user?.name?.charAt(0)}
-                            </div>
-                            <div>
-                                <h3 className="text-xl font-bold text-gray-900">{t('venues.show.host')} {venue.user?.name}</h3>
-                                <p className="text-gray-500">{t('venues.show.member_since')} {new Date(venue.user?.created_at).getFullYear()}</p>
-                            </div>
-                            {(!user || user.id !== venue.user_id) && (
-                                user ? (
-                                    <Link href={route('messages.index', { contact: venue.user_id, venue_id: venue.id })} className="ml-auto btn btn-outline">
-                                        <i className="fa-solid fa-comment-dots mr-2"></i> {t('venues.show.contact_host')}
-                                    </Link>
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-6 mb-6 sm:mb-10 bg-white p-4 sm:p-8 rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden order-2 md:order-4">
+                            <div className="absolute top-0 right-0 w-20 h-20 sm:w-32 sm:h-32 bg-gradient-to-bl from-emerald-100 to-transparent rounded-bl-full -z-0 opacity-50 pointer-events-none"></div>
+                            
+                            <div className="flex items-center gap-3 sm:gap-6 w-full sm:w-auto">
+                                <div 
+                                    className="w-12 h-12 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-[#0B3D2E] to-emerald-700 flex items-center justify-center text-white text-xl sm:text-4xl font-black shadow-md relative z-10 border-2 sm:border-4 border-white overflow-hidden shrink-0 cursor-pointer hover:scale-105 transition-transform"
+                                    onClick={() => venue.user?.avatar && setShowHostPhotoModal(true)}
+                                >
+                                {venue.user?.avatar ? (
+                                    <img src={venue.user.avatar.startsWith('http') || venue.user.avatar.startsWith('/') ? venue.user.avatar : `/storage/${venue.user.avatar}`} alt={venue.user.name} className="w-full h-full object-cover" />
                                 ) : (
-                                    <button onClick={() => window.location.href = route('login')} className="ml-auto btn btn-outline">
-                                        <i className="fa-solid fa-comment-dots mr-2"></i> {t('venues.show.contact_host')}
-                                    </button>
-                                )
-                            )}
+                                    venue.user?.name?.charAt(0)
+                                )}
+                                </div>
+                                <div className="relative z-10 text-left flex-1">
+                                    <h3 className="text-base sm:text-xl font-black text-gray-900 mb-0 sm:mb-1 leading-tight">{t('venues.show.host')} <span className="text-[#0B3D2E]">{venue.user?.name}</span></h3>
+                                    <p className="text-gray-500 font-bold text-xs sm:text-sm flex items-center gap-1.5 mt-1 sm:mt-0">
+                                        <i className="fa-solid fa-calendar-check text-[#C9A227]"></i> 
+                                        {t('venues.show.member_since')} {new Date(venue.user?.created_at).getFullYear()}
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="relative z-10 w-full sm:w-auto mt-1 sm:mt-0">
+                                {(!user || user.id !== venue.user_id) && (
+                                    user ? (
+                                        <Link href={route('messages.index', { contact: venue.user_id, venue_id: venue.id })} className="w-full sm:w-auto inline-flex items-center justify-center bg-[#0B3D2E] hover:bg-emerald-900 text-white font-bold py-2.5 px-4 sm:py-3 sm:px-8 rounded-xl shadow-md sm:shadow-lg shadow-emerald-900/30 transition-transform transform hover:-translate-y-1 text-sm sm:text-base">
+                                            <i className="fa-solid fa-comment-dots mr-2 text-[#C9A227]"></i> {t('venues.show.contact_host')}
+                                        </Link>
+                                    ) : (
+                                        <button onClick={() => window.location.href = route('login')} className="w-full sm:w-auto inline-flex items-center justify-center bg-[#0B3D2E] hover:bg-emerald-900 text-white font-bold py-2.5 px-4 sm:py-3 sm:px-8 rounded-xl shadow-md sm:shadow-lg shadow-emerald-900/30 transition-transform transform hover:-translate-y-1 text-sm sm:text-base">
+                                            <i className="fa-solid fa-comment-dots mr-2 text-[#C9A227]"></i> {t('venues.show.contact_host')}
+                                        </button>
+                                    )
+                                )}
+                            </div>
                         </div>
 
                         {/* Availability Calendar (New Section) */}
-                        <div className="mb-10">
+                        <div className="mb-10 order-5">
                             <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('venues.show.availabilities')}</h2>
                             <p className="text-gray-600 text-lg mb-8">{t('venues.show.availabilities_desc')}</p>
                             <VenueAvailabilityCalendar unavailableDates={bookedDates} />
@@ -195,8 +218,12 @@ export default function VenueShow({ venue, similarVenues, bookedDates }) {
                             {venue.reviews.map(review => (
                                 <div key={review.id} className="bg-gray-50 p-6 rounded-2xl">
                                     <div className="flex items-center gap-4 mb-4">
-                                        <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center font-bold text-emerald-700">
-                                            {review.user?.name?.charAt(0)}
+                                        <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center font-bold text-emerald-700 overflow-hidden">
+                                            {review.user?.avatar ? (
+                                                <img src={review.user.avatar.startsWith('http') || review.user.avatar.startsWith('/') ? review.user.avatar : `/storage/${review.user.avatar}`} alt={review.user.name} className="w-full h-full object-cover" />
+                                            ) : (
+                                                review.user?.name?.charAt(0)
+                                            )}
                                         </div>
                                         <div>
                                             <h4 className="font-bold text-gray-900">{review.user?.name}</h4>
@@ -259,6 +286,26 @@ export default function VenueShow({ venue, similarVenues, bookedDates }) {
                 )}
                 
             </div>
+
+            {/* Host Photo Modal */}
+            {showHostPhotoModal && venue.user?.avatar && (
+                <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm" onClick={() => setShowHostPhotoModal(false)}>
+                    <div className="relative max-w-2xl max-h-screen flex flex-col items-center">
+                        <button className="absolute -top-12 right-0 text-white/70 hover:text-white text-3xl transition-colors" onClick={() => setShowHostPhotoModal(false)}>
+                            <i className="fa-solid fa-xmark"></i>
+                        </button>
+                        <img 
+                            src={venue.user.avatar.startsWith('http') || venue.user.avatar.startsWith('/') ? venue.user.avatar : `/storage/${venue.user.avatar}`} 
+                            alt={venue.user.name} 
+                            className="max-w-full max-h-[80vh] object-contain rounded-2xl shadow-2xl" 
+                            onClick={(e) => e.stopPropagation()}
+                        />
+                        <div className="text-white mt-4 font-medium text-lg bg-black/50 px-6 py-2 rounded-full backdrop-blur-md">
+                            {venue.user.name}
+                        </div>
+                    </div>
+                </div>
+            )}
         </PublicLayout>
     );
 }

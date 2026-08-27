@@ -140,8 +140,12 @@ function MessagesContent({ auth, contacts, activeContact, messages: initialMessa
                                             className={`block p-4 border-b border-gray-100 hover:bg-emerald-50 transition-colors ${activeContact?.id === contact.id ? 'bg-emerald-100/50 border-l-4 border-l-emerald-600' : 'border-l-4 border-l-transparent'}`}
                                         >
                                             <div className="flex items-center gap-3">
-                                                <div className="w-12 h-12 md:w-10 md:h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold shrink-0 text-lg md:text-base shadow-sm">
-                                                    {contact.name.charAt(0)}
+                                                <div className="w-12 h-12 md:w-10 md:h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold shrink-0 text-lg md:text-base shadow-sm overflow-hidden">
+                                                    {contact.avatar ? (
+                                                        <img src={contact.avatar.startsWith('http') || contact.avatar.startsWith('/') ? contact.avatar : `/storage/${contact.avatar}`} alt={contact.name} className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        contact.name.charAt(0)
+                                                    )}
                                                 </div>
                                                 <div className="overflow-hidden flex-grow">
                                                     <div className="font-bold text-gray-900 truncate text-base md:text-sm">{contact.name}</div>
@@ -168,8 +172,12 @@ function MessagesContent({ auth, contacts, activeContact, messages: initialMessa
                                         <Link href={route('messages.index')} className="md:hidden w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-full transition-colors shrink-0">
                                             <i className="fa-solid fa-arrow-left text-lg"></i>
                                         </Link>
-                                        <div className="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold shrink-0 shadow-sm">
-                                            {activeContact.name.charAt(0)}
+                                        <div className="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold shrink-0 shadow-sm overflow-hidden">
+                                            {activeContact.avatar ? (
+                                                <img src={activeContact.avatar.startsWith('http') || activeContact.avatar.startsWith('/') ? activeContact.avatar : `/storage/${activeContact.avatar}`} alt={activeContact.name} className="w-full h-full object-cover" />
+                                            ) : (
+                                                activeContact.name.charAt(0)
+                                            )}
                                         </div>
                                         <div className="overflow-hidden">
                                             <div className="font-bold text-gray-900 text-base md:text-lg truncate">{activeContact.name}</div>

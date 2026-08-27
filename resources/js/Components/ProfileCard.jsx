@@ -67,7 +67,7 @@ export default function ProfileCard({ user }) {
         }
     };
 
-    const displayAvatar = previewUrl || (user.avatar ? `/storage/${user.avatar}` : null);
+    const displayAvatar = previewUrl || (user.avatar ? (user.avatar.startsWith('http') || user.avatar.startsWith('/') ? user.avatar : `/storage/${user.avatar}`) : null);
 
     return (
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700/50 p-6 flex flex-col md:flex-row items-center gap-6 relative overflow-hidden">

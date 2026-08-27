@@ -136,8 +136,12 @@ export default function AdminUsers({ auth, users, filters = {} }) {
                                         <tr key={user.id} className="hover:bg-gray-50">
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center">
-                                                    <div className="h-10 w-10 flex-shrink-0 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold">
-                                                        {user.name.charAt(0)}
+                                                    <div className="h-10 w-10 flex-shrink-0 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold overflow-hidden">
+                                                        {user.avatar ? (
+                                                            <img src={user.avatar.startsWith('http') || user.avatar.startsWith('/') ? user.avatar : `/storage/${user.avatar}`} alt={user.name} className="w-full h-full object-cover" />
+                                                        ) : (
+                                                            user.name.charAt(0)
+                                                        )}
                                                     </div>
                                                     <div className="ml-4">
                                                         <Link href={route('admin.users.show', user.id)} className="text-sm font-bold text-indigo-600 hover:underline">{user.name}</Link>

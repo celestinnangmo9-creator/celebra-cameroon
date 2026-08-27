@@ -1,7 +1,7 @@
 {
   "nav": {
     "home": "Home",
-    "venues": "Venues & Halls",
+    "venues": "Venues",
     "about": "About",
     "login": "Log in",
     "register": "Sign up",
@@ -9,7 +9,9 @@
     "dashboard": "Dashboard",
     "messages": "Messages",
     "bookings": "My bookings",
-    "logout": "Log out"
+    "logout": "Log out",
+    "publish": "Publish",
+    "profile": "Profile"
   },
   "home": {
     "hero_title_1": "Find the Perfect Venue",
@@ -59,7 +61,8 @@
     "step3_desc": "Calculate your instant quote and confirm your booking with secure payment or on-site deposit.",
     "per_day": "/ day",
     "view_listing": "View listing",
-    "max_capacity": "max"
+    "max_capacity": "max",
+    "region": "Region"
   },
   "footer": {
     "desc": "The benchmark event platform in Cameroon. Book party halls, green spaces, VIP terraces and conference rooms in a few clicks.",
@@ -306,6 +309,13 @@
       "page_title": "Forgot Password",
       "description": "Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.",
       "email_btn": "Email Password Reset Link"
+    },
+    "reset": {
+      "page_title": "Reset Password",
+      "email": "Email",
+      "password": "New Password",
+      "confirm_password": "Confirm Password",
+      "btn": "Reset Password"
     }
   },
   "profile": {
@@ -517,5 +527,29 @@
   },
   "head": {
     "home_title": "Celebra Cameroon - Find & Book Venues"
+  },
+  "layouts": {
+    "dashboard": "Dashboard",
+    "my_venues": "My Venues",
+    "reservations": "Bookings",
+    "appointments": "Appointments",
+    "subscription": "Subscription",
+    "admin": "Administration",
+    "my_reservations": "My Bookings",
+    "messages": "Messages",
+    "settings": "Settings",
+    "logout": "Log Out",
+    "notifications": "Notifications",
+    "mark_read": "Mark read",
+    "no_notifications": "No new notifications",
+    "new_message_toast": "New message received!",
+    "expired_title": "Subscription Expired",
+    "expired_desc": "Your trial or subscription has expired. Your venues are currently hidden. Please choose a subscription plan to continue managing your venues and make them visible again.",
+    "view_plans": "View subscription plans",
+    "admin_users": "Users",
+    "admin_venues": "All Venues",
+    "admin_transactions": "Transactions",
+    "admin_subscriptions": "Plans & Subscriptions",
+    "admin_settings": "Configuration"
   }
 }

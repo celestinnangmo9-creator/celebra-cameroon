@@ -59,9 +59,7 @@ export default function FavoritesIndex({ auth, favorites }) {
                                     <div className="p-5">
                                         <div className="flex justify-between items-start mb-2">
                                             <div className="text-xs text-emerald-600 font-bold uppercase">{favorite.venue.city}</div>
-                                            <div className="flex items-center text-xs font-bold text-amber-500 bg-amber-50 px-2 py-1 rounded-lg">
-                                                <i className="fa-solid fa-star mr-1"></i> {Number(favorite.venue.rating).toFixed(1)}
-                                            </div>
+
                                         </div>
                                         <h4 className="font-bold text-gray-900 text-lg mb-1 line-clamp-1">{favorite.venue.title}</h4>
                                         <p className="text-sm text-gray-500 line-clamp-2 mb-4">{favorite.venue.description}</p>

@@ -83,7 +83,7 @@ export default function PublicLayout({ children }) {
             <header className={`header ${scrolled ? 'header-scrolled' : ''}`}>
                 <div className={`nav-container ${mobileMenuOpen ? 'mobile-menu-active' : ''}`}>
                     <Link href={route('home')} className="logo" style={{ padding: '0.25rem 0' }}>
-                        <img src="/images/logo.png" alt="Celebra Cameroon" className="logo-img" />
+                        <img src="/images/logo.svg" alt="Celebra Cameroon" className="logo-img" />
                     </Link>
 
                     <button 
@@ -225,7 +225,7 @@ export default function PublicLayout({ children }) {
                 <div className="footer-container max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div>
                         <Link href={route('home')} className="logo inline-block mb-6">
-                            <img src="/images/logo.png" alt="Celebra Cameroon" className="footer-logo-img h-10" />
+                            <img src="/images/logo-footer.svg" alt="Celebra Cameroon" className="footer-logo-img h-12" />
                         </Link>
                         <p className="text-gray-400 text-sm">{t('footer.desc')}</p>
                     </div>

@@ -7,32 +7,28 @@ export default function Home({ auth, featuredVenues = [], latestVenues = [], reg
     const { t } = useLanguage();
 
     const renderVenueCard = (venue) => (
-        <div key={venue.id} className="venue-card bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 transition-all hover:shadow-lg">
+        <div key={venue.id} className="venue-card bg-white dark:bg-slate-800 relative">
             <Link href={route('venues.show', venue.id)} className="block">
-                <div className="venue-image-wrapper relative h-48 overflow-hidden">
-                    <img src={venue.main_image} alt={venue.title} className="venue-image w-full h-full object-cover transition-transform duration-500 hover:scale-110" />
-                    <span className="venue-badge absolute top-3 left-3 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-emerald-800">{venue.category}</span>
-                    <span className="venue-rating absolute top-3 right-3 bg-white/90 backdrop-blur px-2 py-1 rounded-full text-xs font-bold text-gray-800 flex items-center gap-1">
-                        <i className="fa-solid fa-star text-amber-500"></i> {Number(venue.rating).toFixed(2)}
-                    </span>
+                <div className="venue-image-wrapper h-56">
+                    <img src={venue.main_image} alt={venue.title} className="w-full h-full object-cover" />
+                    <span className="venue-badge absolute top-4 left-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-emerald-800 dark:text-emerald-400 border border-white/50 dark:border-slate-700/50 shadow-sm">{venue.category}</span>
                 </div>
-                <div className="venue-body p-5 text-left">
-                    <div className="venue-location text-xs text-gray-500 mb-2 flex items-center gap-1 uppercase tracking-wider font-semibold">
+                <div className="venue-body p-6 text-left">
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mb-2 flex items-center gap-1 uppercase tracking-wider font-semibold">
                         <i className="fa-solid fa-location-dot text-emerald-500"></i> {venue.city} - {venue.district}
                     </div>
-                    <h3 className="venue-title text-lg font-bold text-gray-900 mb-2 line-clamp-1">{venue.title}</h3>
-                    <p className="text-sm text-gray-500 mb-4 line-clamp-2">
-                        {venue.description}
-                    </p>
-                    <div className="venue-specs flex flex-wrap gap-3 mb-4 text-xs font-medium text-gray-600 bg-gray-50 p-2 rounded-lg">
-                        <span className="flex items-center gap-1"><i className="fa-solid fa-users text-gray-400"></i> {venue.capacity} max</span>
+                    <h3 className="venue-title text-xl font-bold text-gray-900 dark:text-white mb-2 line-clamp-1" style={{fontFamily: 'Fraunces, serif'}}>{venue.title}</h3>
+                    
+                    <div className="flex flex-wrap gap-3 mb-5 text-xs font-medium text-gray-600 dark:text-gray-300">
+                        <span className="flex items-center gap-1 bg-gray-50 dark:bg-slate-700 px-2.5 py-1.5 rounded-lg"><i className="fa-solid fa-users text-emerald-500"></i> {venue.capacity} max</span>
                     </div>
-                    <div className="venue-price flex items-center justify-between border-t border-gray-100 pt-4">
+                    
+                    <div className="flex items-center justify-between border-t border-gray-100 dark:border-slate-700 pt-4 mt-2">
                         <div>
-                            <span className="price-val text-lg font-black text-gray-900">{new Intl.NumberFormat('fr-FR').format(venue.price_per_day)} FCFA</span>
-                            <span className="price-unit text-xs text-gray-500 ml-1">{t('home.per_day')}</span>
+                            <span className="text-xl font-black text-emerald-700 dark:text-emerald-400">{new Intl.NumberFormat('fr-FR').format(venue.price_per_day)} FCFA</span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400 ml-1 block">{t('home.per_day')}</span>
                         </div>
-                        <span className="btn btn-primary btn-sm px-4 py-2 text-sm rounded-lg bg-emerald-600 text-white font-semibold transition-colors hover:bg-emerald-700">{t('home.view_listing')}</span>
+                        <span className="btn btn-primary px-5 py-2.5 text-sm">{t('home.view_listing')}</span>
                     </div>
                 </div>
             </Link>
@@ -45,7 +41,7 @@ export default function Home({ auth, featuredVenues = [], latestVenues = [], reg
             
 
 {/*  Hero Banner  */}
-<section className="hero">
+<section className="hero" style={{ backgroundImage: "url('/images/hero-bg.jpg')" }}>
   <div className="hero-overlay"></div>
   <div className="hero-content" data-aos="fade-in" data-aos-duration="1000">
     <h1 className="hero-title">{t('home.hero_title_1')}<br/>{t('home.hero_title_2')}</h1>
@@ -63,20 +59,23 @@ export default function Home({ auth, featuredVenues = [], latestVenues = [], reg
     )}
 
     {/*  Search Box Form  */}
-    <form action={route('venues.index')} method="GET" className="search-card" data-aos="fade-up" data-aos-delay="300">
-      <div className="form-group" style={{display: 'flex', gap: '0.5rem', width: '100%', flexWrap: 'wrap'}}>
-        <div style={{flex: '1', minWidth: '9.375rem'}}>
-          <label className="form-label"><i className="fa-solid fa-map" style={{color: 'var(--primary)'}}></i> Région</label>
-          <select name="region" id="region-select" className="form-control">
+    <form action={route('venues.index')} method="GET" className="premium-search-bar" data-aos="fade-up" data-aos-delay="300">
+      
+        <div>
+          <label className="form-label" style={{color: 'rgba(255,255,255,0.9)', fontSize: '0.8rem'}}><i className="fa-solid fa-map"></i> {t('home.region')}</label>
+          <select name="region" id="region-select" className="form-control search-field" style={{background: 'transparent', border: 'none', padding: '0'}}>
             <option value="">{t('home.all_regions')}</option>
             {Object.keys(regionsAndCities).map(region => (
                 <option key={region} value={region}>{region}</option>
             ))}
           </select>
         </div>
-        <div style={{flex: '1', minWidth: '9.375rem'}}>
-          <label className="form-label"><i className="fa-solid fa-location-dot" style={{color: 'var(--primary)'}}></i> {t('home.location')}</label>
-          <select name="city" id="city-select" className="form-control">
+        
+        <div className="search-divider"></div>
+        
+        <div>
+          <label className="form-label" style={{color: 'rgba(255,255,255,0.9)', fontSize: '0.8rem'}}><i className="fa-solid fa-location-dot"></i> {t('home.location')}</label>
+          <select name="city" id="city-select" className="form-control search-field" style={{background: 'transparent', border: 'none', padding: '0'}}>
             <option value="">{t('home.all_cities')}</option>
             {Object.entries(regionsAndCities).map(([region, cities]) => (
                 <optgroup key={region} label={region}>
@@ -87,11 +86,12 @@ export default function Home({ auth, featuredVenues = [], latestVenues = [], reg
             ))}
           </select>
         </div>
-      </div>
 
-      <div className="form-group">
-        <label className="form-label"><i className="fa-solid fa-list-check" style={{color: 'var(--primary)'}}></i> {t('home.type')}</label>
-        <select name="category" className="form-control">
+      <div className="search-divider" style={{width: '1px', height: '40px', background: 'rgba(255,255,255,0.2)'}}></div>
+
+      <div>
+        <label className="form-label" style={{color: 'rgba(255,255,255,0.9)', fontSize: '0.8rem'}}><i className="fa-solid fa-list-check"></i> {t('home.type')}</label>
+        <select name="category" className="form-control search-field" style={{background: 'transparent', border: 'none', padding: '0'}}>
           <option value="">{t('home.all_types')}</option>
           {categories.map(cat => (
               <option key={cat} value={cat}>{cat}</option>
@@ -99,14 +99,16 @@ export default function Home({ auth, featuredVenues = [], latestVenues = [], reg
         </select>
       </div>
 
-      <div className="form-group">
-        <label className="form-label"><i className="fa-solid fa-users" style={{color: 'var(--primary)'}}></i> {t('home.guests')}</label>
-        <input type="number" name="capacity" className="form-control" placeholder="Ex: 100" />
+      <div className="search-divider" style={{width: '1px', height: '40px', background: 'rgba(255,255,255,0.2)'}}></div>
+
+      <div>
+        <label className="form-label" style={{color: 'rgba(255,255,255,0.9)', fontSize: '0.8rem'}}><i className="fa-solid fa-users"></i> {t('home.guests')}</label>
+        <input type="number" name="capacity" className="form-control search-field" style={{background: 'transparent', border: 'none', padding: '0'}} placeholder="Ex: 100" />
       </div>
 
-      <div className="form-group" style={{alignSelf: 'flex-end'}}>
-        <button type="submit" className="btn btn-primary" style={{padding: '0.8rem 2rem', width: '100%'}}>
-          <i className="fa-solid fa-magnifying-glass"></i> {t('home.search_btn')}
+      <div className="search-submit-container">
+        <button type="submit" className="search-submit-btn">
+          <i className="fa-solid fa-magnifying-glass"></i>
         </button>
       </div>
     </form>

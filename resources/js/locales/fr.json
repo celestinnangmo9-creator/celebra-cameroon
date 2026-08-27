@@ -1,15 +1,17 @@
 {
   "nav": {
     "home": "Accueil",
-    "venues": "Lieux & Salles",
-    "about": "À Propos",
+    "venues": "Salles",
+    "about": "À propos",
     "login": "Connexion",
     "register": "Créer un compte",
     "host": "Mettre mon espace en ligne",
     "dashboard": "Tableau de bord",
     "messages": "Messagerie",
     "bookings": "Mes réservations",
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "publish": "Publier",
+    "profile": "Profil"
   },
   "home": {
     "hero_title_1": "Trouvez le Lieu Idéal",
@@ -59,7 +61,8 @@
     "step3_desc": "Calculez votre devis instantané et confirmez votre réservation avec paiement sécurisé ou acompte sur place.",
     "per_day": "/ jour",
     "view_listing": "Voir l'annonce",
-    "max_capacity": "max"
+    "max_capacity": "max",
+    "region": "Région"
   },
   "footer": {
     "desc": "La plateforme événementielle référence au Cameroun. Réservez des salles de fête, espaces verts, terrasses VIP et salles de conférence en quelques clics.",
@@ -306,6 +309,13 @@
       "page_title": "Mot de passe oublié",
       "description": "Mot de passe oublié ? Aucun problème. Indiquez-nous votre adresse e-mail et nous vous enverrons un lien de réinitialisation qui vous permettra d'en choisir un nouveau.",
       "email_btn": "Envoyer le lien de réinitialisation"
+    },
+    "reset": {
+      "page_title": "Réinitialiser le mot de passe",
+      "email": "Email",
+      "password": "Nouveau mot de passe",
+      "confirm_password": "Confirmer le mot de passe",
+      "btn": "Réinitialiser le mot de passe"
     }
   },
   "profile": {
@@ -517,5 +527,29 @@
   },
   "head": {
     "home_title": "Celebra Cameroon - Trouver & Réserver des Salles"
+  },
+  "layouts": {
+    "dashboard": "Dashboard",
+    "my_venues": "Mes Salles",
+    "reservations": "Réservations",
+    "appointments": "Rendez-vous",
+    "subscription": "Abonnement",
+    "admin": "Administration",
+    "my_reservations": "Mes réservations",
+    "messages": "Messages",
+    "settings": "Paramètres",
+    "logout": "Déconnexion",
+    "notifications": "Notifications",
+    "mark_read": "Marquer lu",
+    "no_notifications": "Aucune nouvelle notification",
+    "new_message_toast": "Nouveau message reçu !",
+    "expired_title": "Abonnement expiré",
+    "expired_desc": "Votre période d'essai ou votre abonnement a expiré. Vos salles sont actuellement masquées. Veuillez choisir une formule d'abonnement pour continuer à gérer vos salles et les rendre visibles à nouveau.",
+    "view_plans": "Voir les formules d'abonnement",
+    "admin_users": "Utilisateurs",
+    "admin_venues": "Toutes les Salles",
+    "admin_transactions": "Transactions",
+    "admin_subscriptions": "Plans & Abonnements",
+    "admin_settings": "Configuration"
   }
 }

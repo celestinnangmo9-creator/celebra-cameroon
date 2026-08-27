@@ -22,8 +22,12 @@ export default function UserShow({ auth, user }) {
 
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900 border-b border-gray-100 flex items-center gap-6">
-                            <div className="h-24 w-24 flex-shrink-0 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 text-3xl font-bold">
-                                {user.name.charAt(0)}
+                            <div className="h-24 w-24 flex-shrink-0 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 text-3xl font-bold overflow-hidden">
+                                {user.avatar ? (
+                                    <img src={user.avatar.startsWith('http') || user.avatar.startsWith('/') ? user.avatar : `/storage/${user.avatar}`} alt={user.name} className="w-full h-full object-cover" />
+                                ) : (
+                                    user.name.charAt(0)
+                                )}
                             </div>
                             <div>
                                 <h3 className="text-2xl font-bold">{user.name}</h3>
