@@ -342,33 +342,41 @@
       }
     });
 
-    // Page Loader Logic
-    window.addEventListener('load', () => {
+    // Safe Page Loader Logic with multiple fallbacks
+    function dismissLayoutLoader() {
       const loader = document.getElementById('page-loader');
-      if (loader) {
-        // Un léger délai pour profiter de l'animation de chargement
+      if (loader && !loader.classList.contains('loaded')) {
+        loader.classList.add('loaded');
         setTimeout(() => {
-          loader.classList.add('loaded');
-          // Suppression du DOM après la transition
-          setTimeout(() => {
-            if (loader.parentNode) {
-              loader.parentNode.removeChild(loader);
-            }
-          }, 800);
-        }, 500);
+          if (loader && loader.parentNode) {
+            loader.parentNode.removeChild(loader);
+          }
+        }, 600);
       }
-    });
+    }
+
+    if (document.readyState === 'complete') {
+      dismissLayoutLoader();
+    } else {
+      window.addEventListener('load', dismissLayoutLoader);
+      document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(dismissLayoutLoader, 400);
+      });
+      setTimeout(dismissLayoutLoader, 800);
+    }
   </script>
 
   <!-- AOS Animation Initialization -->
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script>
-    AOS.init({
-      duration: 800, // duration of animation
-      once: true, // whether animation should happen only once - while scrolling down
-      offset: 50, // offset (in px) from the original trigger point
-      easing: 'ease-out-cubic' // easing for the animation
-    });
+    if (typeof AOS !== 'undefined') {
+      AOS.init({
+        duration: 800,
+        once: true,
+        offset: 50,
+        easing: 'ease-out-cubic'
+      });
+    }
   </script>
 
   @yield('scripts')

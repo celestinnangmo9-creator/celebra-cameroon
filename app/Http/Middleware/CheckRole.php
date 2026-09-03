@@ -15,7 +15,27 @@ class CheckRole
      */
     public function handle(Request $request, Closure $next, string $role): Response
     {
-        if (! $request->user() || $request->user()->role !== $role) {
+        $user = $request->user();
+        if (! $user) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // Super Admin has universal access
+        if ($user->role === 'super_admin') {
+            return $next($request);
+        }
+
+        // Admin routes can be accessed by admin or super_admin
+        if ($role === 'admin' && ($user->role === 'admin' || $user->role === 'super_admin')) {
+            return $next($request);
+        }
+
+        // Host routes can be accessed by host or admin
+        if ($role === 'host' && ($user->role === 'host' || $user->role === 'admin' || $user->role === 'super_admin')) {
+            return $next($request);
+        }
+
+        if ($user->role !== $role) {
             abort(403, 'Unauthorized action.');
         }
 

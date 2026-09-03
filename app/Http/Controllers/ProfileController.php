@@ -34,8 +34,9 @@ class ProfileController extends Controller
         $user->fill($request->safe()->except(['avatar']));
 
         if ($request->hasFile('avatar')) {
-            if ($user->avatar) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
+            $oldAvatar = $user->getRawOriginal('avatar');
+            if ($oldAvatar && !str_starts_with($oldAvatar, 'http') && !str_starts_with($oldAvatar, '/images/')) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($oldAvatar);
             }
             $user->avatar = $request->file('avatar')->store('avatars', 'public');
         }

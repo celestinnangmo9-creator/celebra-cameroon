@@ -24,6 +24,56 @@ export default function UpdateProfileInformation({
             avatar: null,
         });
 
+    const handleAvatarChange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Auto-optimize image client side if needed
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    const maxDim = 1200;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > maxDim || height > maxDim) {
+                        if (width > height) {
+                            height = Math.round((height * maxDim) / width);
+                            width = maxDim;
+                        } else {
+                            width = Math.round((width * maxDim) / height);
+                            height = maxDim;
+                        }
+                    }
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    canvas.toBlob((blob) => {
+                        if (blob) {
+                            const optimizedFile = new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".jpg", {
+                                type: 'image/jpeg',
+                                lastModified: Date.now()
+                            });
+                            setData('avatar', optimizedFile);
+                        } else {
+                            setData('avatar', file);
+                        }
+                    }, 'image/jpeg', 0.88);
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        } else {
+            setData('avatar', file);
+        }
+    };
+
     const submit = (e) => {
         e.preventDefault();
         post(route('profile.update'), { preserveScroll: true, forceFormData: true });
@@ -45,25 +95,25 @@ export default function UpdateProfileInformation({
                 <div className="flex flex-col md:flex-row gap-6">
                     {/* Avatar preview */}
                     <div className="shrink-0 flex flex-col items-center gap-3">
-                        <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-gray-100 shadow-sm bg-gray-50 flex items-center justify-center">
+                        <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-gray-100 dark:border-gray-700 shadow-md bg-gray-50 dark:bg-gray-800 flex items-center justify-center">
                             {data.avatar ? (
-                                <img src={URL.createObjectURL(data.avatar)} className="w-full h-full object-cover" />
+                                <img src={URL.createObjectURL(data.avatar)} className="w-full h-full object-cover" alt="Preview" />
                             ) : user.avatar ? (
-                                <img src={user.avatar.startsWith('http') || user.avatar.startsWith('/') ? user.avatar : `/storage/${user.avatar}`} className="w-full h-full object-cover" />
+                                <img src={user.avatar.startsWith('http') || user.avatar.startsWith('/') ? user.avatar : `/storage/${user.avatar}`} className="w-full h-full object-cover" alt={user.name} />
                             ) : (
                                 <i className="fa-solid fa-user text-3xl text-gray-300"></i>
                             )}
                         </div>
-                        <label className="cursor-pointer bg-white border border-gray-300 hover:border-emerald-500 hover:text-emerald-600 text-gray-700 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors">
-                            <span>{t('profile.information.change_photo')}</span>
+                        <label className="cursor-pointer bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:border-emerald-500 hover:text-emerald-600 text-gray-700 dark:text-gray-200 text-xs font-semibold px-3 py-1.5 rounded-xl transition-colors shadow-sm">
+                            <span>{t('profile.information.change_photo', 'Changer la photo')}</span>
                             <input 
                                 type="file" 
                                 className="hidden" 
-                                accept="image/*"
-                                onChange={e => setData('avatar', e.target.files[0])}
+                                accept="image/jpeg,image/png,image/webp,image/gif"
+                                onChange={handleAvatarChange}
                             />
                         </label>
-                        <InputError className="mt-1 text-center" message={errors.avatar} />
+                        <InputError className="mt-1 text-center text-xs" message={errors.avatar === 'validation.uploaded' ? "L'image n'a pas pu être téléchargée. Veuillez choisir une autre photo ou un fichier moins lourd." : errors.avatar} />
                     </div>
 
                     <div className="grow space-y-6">

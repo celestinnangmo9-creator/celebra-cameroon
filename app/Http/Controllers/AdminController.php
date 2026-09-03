@@ -214,7 +214,7 @@ class AdminController extends Controller
     {
         $request->validate([
             'status' => 'nullable|in:active,blocked',
-            'role' => 'nullable|in:client,host,admin'
+            'role' => 'nullable|in:client,host,admin,super_admin'
         ]);
 
         $user = User::findOrFail($id);
@@ -296,5 +296,79 @@ class AdminController extends Controller
         ]);
 
         return back()->with('success', __('Paramètres mis à jour avec succès.'));
+    }
+
+    /**
+     * Super Admins & Administrators management
+     */
+    public function superAdmins(Request $request)
+    {
+        $superAdmins = User::whereIn('role', ['super_admin', 'admin'])
+            ->latest()
+            ->get();
+
+        $otherUsers = User::whereNotIn('role', ['super_admin', 'admin'])
+            ->select('id', 'name', 'email', 'role')
+            ->latest()
+            ->limit(100)
+            ->get();
+
+        return Inertia::render('Admin/SuperAdmins', [
+            'superAdmins' => $superAdmins,
+            'otherUsers' => $otherUsers,
+        ]);
+    }
+
+    public function storeSuperAdmin(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|max:255',
+            'role' => 'required|in:super_admin,admin',
+            'name' => 'nullable|string|max:255',
+            'password' => 'nullable|string|min:6',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if ($user) {
+            $user->role = $request->role;
+            $user->status = 'active';
+            if ($request->filled('password')) {
+                $user->password = \Illuminate\Support\Facades\Hash::make($request->password);
+            }
+            if ($request->filled('name')) {
+                $user->name = $request->name;
+            }
+            $user->save();
+            $msg = 'Utilisateur ' . $user->email . ' promu en ' . ($request->role === 'super_admin' ? 'Super Admin' : 'Admin') . ' avec succès.';
+        } else {
+            $name = $request->name ?: explode('@', $request->email)[0];
+            $password = $request->password ?: 'ange2727';
+            $user = User::create([
+                'name' => $name,
+                'email' => $request->email,
+                'password' => \Illuminate\Support\Facades\Hash::make($password),
+                'role' => $request->role,
+                'status' => 'active',
+                'email_verified_at' => now(),
+            ]);
+            $msg = 'Nouvel administrateur ' . $user->email . ' créé avec succès.';
+        }
+
+        return back()->with('success', $msg);
+    }
+
+    public function removeSuperAdmin($id)
+    {
+        $user = User::findOrFail($id);
+
+        if ($user->id === auth()->id()) {
+            return back()->withErrors(['error' => 'Vous ne pouvez pas modifier ou rétrograder votre propre compte.']);
+        }
+
+        $user->role = 'client';
+        $user->save();
+
+        return back()->with('success', 'Rôle administrateur retiré avec succès.');
     }
 }

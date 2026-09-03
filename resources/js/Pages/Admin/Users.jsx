@@ -67,9 +67,20 @@ export default function AdminUsers({ auth, users, filters = {} }) {
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 border-b border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                             <h3 className="text-lg font-bold text-gray-900">Tous les Utilisateurs ({users.total})</h3>
-                            <Link href={route('admin.dashboard')} className="text-sm text-indigo-600 hover:underline">
-                                &larr; Retour au Dashboard
-                            </Link>
+                            <div className="flex items-center gap-3">
+                                {auth.user.role === 'super_admin' && (
+                                    <Link
+                                        href={route('admin.superAdmins')}
+                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-rose-600 hover:from-amber-600 hover:to-rose-700 text-white text-xs font-bold shadow-sm transition-all"
+                                    >
+                                        <i className="fa-solid fa-crown"></i>
+                                        Gérer les Super Admins
+                                    </Link>
+                                )}
+                                <Link href={route('admin.dashboard')} className="text-sm text-indigo-600 hover:underline">
+                                    &larr; Retour au Dashboard
+                                </Link>
+                            </div>
                         </div>
                         
                         {/* Filters */}
@@ -95,6 +106,7 @@ export default function AdminUsers({ auth, users, filters = {} }) {
                                         <option value="client">Client</option>
                                         <option value="host">{t('admin.users.role_host')}</option>
                                         <option value="admin">Administrateur</option>
+                                        <option value="super_admin">👑 Super Admin</option>
                                     </select>
                                 </div>
                                 <div className="w-full md:w-1/4">
@@ -152,11 +164,12 @@ export default function AdminUsers({ auth, users, filters = {} }) {
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-2">
                                                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium uppercase
+                                                        ${user.role === 'super_admin' ? 'bg-amber-100 text-amber-900 border border-amber-300 font-bold' : ''}
                                                         ${user.role === 'admin' ? 'bg-purple-100 text-purple-800' : ''}
                                                         ${user.role === 'host' ? 'bg-amber-100 text-amber-800' : ''}
                                                         ${user.role === 'client' ? 'bg-emerald-100 text-emerald-800' : ''}
                                                     `}>
-                                                        {user.role}
+                                                        {user.role === 'super_admin' ? '👑 Super Admin' : user.role}
                                                     </span>
                                                     {user.id !== auth.user.id && (
                                                         <button 
@@ -277,6 +290,18 @@ export default function AdminUsers({ auth, users, filters = {} }) {
                                     <div className="text-xs text-gray-500">Accès total à la plateforme</div>
                                 </div>
                             </label>
+                            {auth.user.role === 'super_admin' && (
+                                <label className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-amber-50 border-amber-200">
+                                    <input type="radio" name="role" value="super_admin" checked={roleModal.currentRole === 'super_admin'} onChange={e => setRoleModal({...roleModal, currentRole: e.target.value})} className="text-amber-600" />
+                                    <div>
+                                        <div className="font-bold text-sm text-amber-700 flex items-center gap-1.5">
+                                            <i className="fa-solid fa-crown text-amber-500"></i>
+                                            Super Admin
+                                        </div>
+                                        <div className="text-xs text-gray-500">Droits suprêmes & gestion des administrateurs</div>
+                                    </div>
+                                </label>
+                            )}
                         </div>
                         
                         <div className="flex gap-3 justify-end">

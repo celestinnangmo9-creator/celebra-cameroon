@@ -63,11 +63,16 @@ function SidebarContent({ user, auth, totalUnread, t }) {
                     </>
                 )}
 
-                {user?.role === 'admin' && (
+                {(user?.role === 'admin' || user?.role === 'super_admin') && (
                     <>
                         <SidebarItem href={route('admin.dashboard')} active={route().current('admin.dashboard')} icon={<i className="fa-solid fa-chart-line"></i>}>
                             {t('layouts.admin')}
                         </SidebarItem>
+                        {user?.role === 'super_admin' && (
+                            <SidebarItem href={route('admin.superAdmins')} active={route().current('admin.superAdmins')} icon={<i className="fa-solid fa-crown text-amber-500"></i>}>
+                                Super Admins
+                            </SidebarItem>
+                        )}
                         <SidebarItem href={route('admin.users')} active={route().current('admin.users')} icon={<i className="fa-solid fa-users"></i>}>
                             {t('layouts.admin_users')}
                         </SidebarItem>

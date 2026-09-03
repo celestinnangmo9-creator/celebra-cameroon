@@ -126,30 +126,43 @@
 
         <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
         <script>
-            // Initialize AOS Animation
-            window.addEventListener('load', () => {
-                AOS.init({
-                    duration: 800,
-                    once: true,
-                    offset: 50,
-                    easing: 'ease-out-cubic'
-                });
-            });
-
-            // Page Loader Logic
-            window.addEventListener('load', () => {
-                const loader = document.getElementById('page-loader');
-                if (loader) {
-                    setTimeout(() => {
-                        loader.classList.add('loaded');
-                        setTimeout(() => {
-                            if (loader.parentNode) {
-                                loader.parentNode.removeChild(loader);
-                            }
-                        }, 800);
-                    }, 500);
+            // Initialize AOS Animation safely
+            function initAOS() {
+                if (typeof AOS !== 'undefined') {
+                    AOS.init({
+                        duration: 800,
+                        once: true,
+                        offset: 50,
+                        easing: 'ease-out-cubic'
+                    });
                 }
-            });
+            }
+            window.addEventListener('load', initAOS);
+
+            // Safe Page Loader Logic with multiple fallbacks
+            function dismissPageLoader() {
+                const loader = document.getElementById('page-loader');
+                if (loader && !loader.classList.contains('loaded')) {
+                    loader.classList.add('loaded');
+                    setTimeout(() => {
+                        if (loader && loader.parentNode) {
+                            loader.parentNode.removeChild(loader);
+                        }
+                    }, 600);
+                }
+            }
+
+            // Trigger on load, DOMContentLoaded, or maximum 800ms timeout
+            if (document.readyState === 'complete') {
+                dismissPageLoader();
+            } else {
+                window.addEventListener('load', dismissPageLoader);
+                document.addEventListener('DOMContentLoaded', () => {
+                    setTimeout(dismissPageLoader, 400);
+                });
+                // Fallback guarantee: never block user for more than 800ms
+                setTimeout(dismissPageLoader, 800);
+            }
         </script>
     </body>
 </html>

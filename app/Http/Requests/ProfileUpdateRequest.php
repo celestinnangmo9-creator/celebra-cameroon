@@ -28,7 +28,7 @@ class ProfileUpdateRequest extends FormRequest
             ],
             'phone' => ['nullable', 'string', 'max:20'],
             'bio' => ['nullable', 'string', 'max:1000'],
-            'avatar' => ['nullable', 'image', 'max:5120'], // 5MB limit
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,gif', 'max:10240'], // 10MB limit
         ];
     }
 
@@ -38,8 +38,10 @@ class ProfileUpdateRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'avatar.image' => 'Le fichier doit être une image.',
-            'avatar.max' => 'La photo de profil ne doit pas dépasser 5 Mo.',
+            'avatar.image' => 'Le fichier doit être une image valide.',
+            'avatar.mimes' => 'La photo de profil doit être au format JPEG, PNG, WEBP ou GIF.',
+            'avatar.max' => 'La photo de profil ne doit pas dépasser 10 Mo.',
+            'avatar.uploaded' => 'Le téléchargement de l\'image a échoué. Le fichier est peut-être trop volumineux ou corrompu.',
         ];
     }
 }

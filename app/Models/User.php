@@ -101,11 +101,16 @@ class User extends Authenticatable
 
     public function isHost()
     {
-        return $this->role === 'host' || $this->role === 'admin';
+        return $this->role === 'host' || $this->role === 'admin' || $this->role === 'super_admin';
     }
 
     public function isAdmin()
     {
-        return $this->role === 'admin';
+        return $this->role === 'admin' || $this->role === 'super_admin';
+    }
+
+    public function isSuperAdmin()
+    {
+        return $this->role === 'super_admin';
     }
 }

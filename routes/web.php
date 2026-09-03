@@ -116,6 +116,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/settings', [\App\Http\Controllers\AdminController::class, 'updateSettings'])->name('settings.update');
         Route::get('/subscriptions', [\App\Http\Controllers\AdminSubscriptionPlanController::class, 'index'])->name('subscriptions');
         Route::put('/subscriptions/{id}', [\App\Http\Controllers\AdminSubscriptionPlanController::class, 'update'])->name('subscriptions.update');
+        Route::get('/super-admins', [\App\Http\Controllers\AdminController::class, 'superAdmins'])->name('superAdmins');
+        Route::post('/super-admins', [\App\Http\Controllers\AdminController::class, 'storeSuperAdmin'])->name('superAdmins.store');
+        Route::delete('/super-admins/{id}', [\App\Http\Controllers\AdminController::class, 'removeSuperAdmin'])->name('superAdmins.destroy');
     });
 });
 

@@ -42,6 +42,17 @@ createInertiaApp({
                 </LanguageProvider>
             </ErrorBoundary>
         );
+
+        // Immediately dismiss loader once React mounts
+        const pageLoader = document.getElementById('page-loader');
+        if (pageLoader) {
+            pageLoader.classList.add('loaded');
+            setTimeout(() => {
+                if (pageLoader && pageLoader.parentNode) {
+                    pageLoader.parentNode.removeChild(pageLoader);
+                }
+            }, 500);
+        }
     },
     progress: {
         color: '#4B5563',
